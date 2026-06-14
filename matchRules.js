@@ -1,0 +1,341 @@
+// Split from the original prototype script. Keep load order in index.html.
+
+const chainRules = {
+  "collar-tie>snapdown": { label: "Collar Tie to Snapdown", submission: 8, control: 1 },
+  "snapdown>guillotine": { label: "Snapdown to Guillotine", submission: 22, control: 1 },
+  "snapdown>darce": { label: "Snapdown to D'Arce", submission: 18, control: 1 },
+  "snapdown>anaconda": { label: "Snapdown to Anaconda", submission: 18, control: 1 },
+  "wrist-control>arm-drag": { label: "Wrist Control to Arm Drag", control: 1 },
+  "arm-drag>rear-naked-choke": { label: "Arm Drag to RNC", submission: 22 },
+  "duck-under>rear-naked-choke": { label: "Duck Under to RNC", submission: 20 },
+  "knee-slice>mount": { label: "Knee Slice to Mount", control: 1 },
+  "body-lock-pass>mount": { label: "Body Lock Pass to Mount", control: 1 },
+  "mount>arm-triangle": { label: "Mount to Arm Triangle", submission: 20 },
+  "closed-guard-sweep>armbar": { label: "Flower Sweep to Armbar", submission: 18 },
+  "hip-bump-sweep>armbar": { label: "Hip Bump to Armbar", submission: 18 },
+  "guard-pull>triangle": { label: "Guard Pull to Triangle", submission: 14 },
+  "scissor-sweep>knee-slice": { label: "Sweep to Pass Pressure", control: 1 },
+  "single-leg>body-lock-pass": { label: "Single Leg to Body Lock Pass", control: 1 },
+  "butterfly-sweep>straight-ankle-lock": { label: "Butterfly Entry to Ankle Lock", submission: 14 },
+  "old-school-sweep>heel-hook": { label: "Half Guard to Heel Hook", submission: 16 }
+};
+
+function getChainBonus(previousId, currentId) {
+  if (!previousId) return null;
+  return chainRules[`${previousId}>${currentId}`] || null;
+}
+
+function playTurn(playerCardId) {
+  if (state.finished || state.animating) return;
+  previewPose = null;
+
+  const playerCard = cards.find((card) => card.id === playerCardId);
+  const opponentCard = state.intentCard || chooseOpponentCard();
+  const fromPosition = state.position;
+  const chain = getChainBonus(state.lastPlayerCardId, playerCard.id);
+  const logStart = state.log.length;
+  const turnReview = beginTurnReview(playerCard, opponentCard, fromPosition, chain, logStart);
+  state.turnFinishAttempts = [];
+  state.lastChain = chain;
+  state.lastMoveType = playerCard.type;
+
+  addLog(state, `You choose ${playerCard.name}. ${state.ai.name} chooses ${opponentCard.name}.`);
+  if (chain) addLog(state, `Chain bonus: ${chain.label}.`);
+
+  spendStamina("player", effectiveCardCost(playerCard, "player"));
+  spendStamina("opponent", opponentCard.cost);
+  if (chain?.control) {
+    addControl(state, "player", chain.control, `Your ${chain.label} adds control.`);
+  }
+
+  resolveCards(playerCard, opponentCard);
+
+  if (!state.finished) {
+    state.turn += 1;
+    state.lastPlayerCardId = playerCard.id;
+    recoverStandingStamina();
+    if (state.turn > MAX_TURNS) endByPoints();
+  }
+
+  finishTurnReview(turnReview);
+  state.turnFinishAttempts = [];
+
+  if (!state.finished) {
+    drawHand();
+    prepareOpponentIntent();
+  }
+  state.animating = true;
+  state.animation = {
+    card: playerCard,
+    opponentCard,
+    fromPosition,
+    toPosition: state.position
+  };
+  render();
+  pulseMat();
+  window.setTimeout(() => {
+    state.animating = false;
+    state.animation = null;
+    render();
+  }, ANIMATION_MS);
+}
+
+function chooseOpponentCard() {
+  const playable = cards.filter((card) => canPlay(card, "opponent") && state.opponent.stamina >= card.cost);
+  if (state.mindEffects?.opponentAggressive) {
+    const aggressive = playable.filter((card) => ["takedown", "pass", "submission", "pressure"].includes(card.type));
+    if (aggressive.length) return shuffle(aggressive)[0];
+  }
+  const styled = playable.filter((card) => state.ai.favoriteTypes.includes(card.type));
+  return shuffle(styled.length ? styled : playable)[0] || cards.find((card) => card.id === "rest");
+}
+
+function resolveCards(playerCard, opponentCard) {
+  const playerCounters = playerCard.type === "counter" && beats(playerCard, opponentCard);
+  const opponentCounters = opponentCard.type === "counter" && beats(opponentCard, playerCard);
+
+  if (playerCounters) {
+    addLog(state, `Your ${playerCard.name} shuts down ${opponentCard.name}.`);
+    playerCard.play(state, "player");
+    applyCounterMindGameBonus();
+    return;
+  }
+
+  if (opponentCounters) {
+    addLog(state, `${state.ai.name}'s ${opponentCard.name} shuts down your ${playerCard.name}.`);
+    opponentCard.play(state, "opponent");
+    return;
+  }
+
+  playerCard.play(state, "player");
+  if (!state.finished) opponentCard.play(state, "opponent");
+}
+
+function applyCounterMindGameBonus() {
+  if (!state.mindEffects?.counterControlBonus) return;
+  addControl(state, "player", state.mindEffects.counterControlBonus, "Your bait works and you win the next grip exchange.");
+}
+
+function beats(counterCard, attackCard) {
+  if (counterCard.id === "sprawl") return attackCard.type === "takedown";
+  if (counterCard.id === "frame") return ["pass", "pressure"].includes(attackCard.type);
+  return false;
+}
+
+function canPlay(card, actor) {
+  const position = actor === "player" ? state.position : mirrorPosition(state.position);
+  return card.requires.includes(position);
+}
+
+function mirrorPosition(position) {
+  const map = {
+    "Top Guard": "Bottom Guard",
+    "Bottom Guard": "Top Guard",
+    "Top Half Guard": "Bottom Half Guard",
+    "Bottom Half Guard": "Top Half Guard",
+    "Side Control": "Under Side Control",
+    "Under Side Control": "Side Control",
+    "Mount": "Mounted",
+    "Mounted": "Mount",
+    "Back Control": "Back Taken",
+    "Back Taken": "Back Control",
+    "Front Headlock": "Caught Front Headlock",
+    "Caught Front Headlock": "Front Headlock"
+  };
+  return map[position] || position;
+}
+
+function moveToTopGuard(state, actor, points) {
+  score(state, actor, points);
+  setRelativePosition(state, actor, "Top Guard", actionLine(actor, "blast through a double leg", "blasts through a double leg"));
+}
+
+function passGuard(state, actor, nextPosition, points) {
+  score(state, actor, points);
+  setRelativePosition(state, actor, nextPosition, actionLine(actor, "cut through with a knee slice", "cuts through with a knee slice"));
+}
+
+function takedownTo(state, actor, relativePosition, points, playerPhrase, opponentPhrase) {
+  score(state, actor, points);
+  setRelativePosition(state, actor, relativePosition, actionLine(actor, playerPhrase, opponentPhrase));
+}
+
+function passTo(state, actor, relativePosition, points, playerPhrase, opponentPhrase) {
+  score(state, actor, points);
+  setRelativePosition(state, actor, relativePosition, actionLine(actor, playerPhrase, opponentPhrase));
+}
+
+function sweepTo(state, actor, relativePosition, points, playerPhrase, opponentPhrase) {
+  score(state, actor, points);
+  setRelativePosition(state, actor, relativePosition, actionLine(actor, playerPhrase, opponentPhrase));
+}
+
+function conditionalBackTake(state, actor, playerPhrase, opponentPhrase) {
+  const success = state[actor].stamina >= state[other(actor)].stamina;
+  if (success) {
+    score(state, actor, 4);
+    setRelativePosition(state, actor, "Back Control", actionLine(actor, playerPhrase, opponentPhrase));
+  } else {
+    addControl(state, actor, 1, actionLine(actor, "almost cut the angle", "almost cuts the angle"));
+  }
+}
+
+function hasControlEdge(state, actor) {
+  return actor === "player" ? state.control > 0 : state.control < 0;
+}
+
+function escapeTowardGuard(state, actor) {
+  const next = {
+    "Mounted": "Bottom Half Guard",
+    "Under Side Control": "Bottom Half Guard",
+    "Bottom Half Guard": "Bottom Guard"
+  };
+  const relativePosition = actor === "player" ? state.position : mirrorPosition(state.position);
+  setRelativePosition(state, actor, next[relativePosition] || "Bottom Guard", actionLine(actor, "create space with a hip escape", "creates space with a hip escape"));
+}
+
+function submissionAttack(state, actor, submissionName) {
+  const attacker = state[actor];
+  const details = submissionChanceDetails(actor, submissionName);
+  const chance = details.chance;
+  const roll = Math.floor(Math.random() * 100) + 1;
+  const succeeded = roll <= chance;
+  recordFinishAttempt(actor, submissionName, details, roll, succeeded);
+
+  if (succeeded) {
+    state.finished = true;
+    const finishVerb = actor === "player" ? "finish" : "finishes";
+    addLog(state, `${nameOf(actor)} ${finishVerb} the ${submissionName}. Tap!`);
+    state.result = buildResult(actor, `${submissionName} submission`, submissionName);
+  } else {
+    attacker.stamina = Math.max(0, attacker.stamina - 1);
+    const attackVerb = actor === "player" ? "attack" : "attacks";
+    const article = /^[aeiou]/i.test(submissionName) ? "an" : "a";
+    addLog(state, `${nameOf(actor)} ${attackVerb} ${article} ${submissionName}, but ${nameOf(other(actor))} survives.`);
+  }
+}
+
+function setPosition(state, position, message) {
+  trackPosition(position);
+  state.position = position;
+  addLog(state, message);
+}
+
+function trackPosition(position) {
+  if (!state.positionPath) state.positionPath = [];
+  const lastPosition = state.positionPath[state.positionPath.length - 1];
+  if (lastPosition === position) return;
+  state.positionPath.push(position);
+  if (state.positionPath.length > 4) state.positionPath.shift();
+}
+
+function positionPathHtml() {
+  const path = state.positionPath?.length ? state.positionPath : [state.position];
+  return path.map((position, index) => `
+    <span class="${index === path.length - 1 ? "current" : ""}">${position}</span>
+  `).join('<b aria-hidden="true">-&gt;</b>');
+}
+
+function setRelativePosition(state, actor, relativePosition, message) {
+  setPosition(state, actor === "player" ? relativePosition : mirrorPosition(relativePosition), message);
+}
+
+function addControl(state, actor, amount, message) {
+  const adjustedAmount = actor === "player" ? amount + controlSkillBonus(message) : amount;
+  const direction = actor === "player" ? adjustedAmount : -amount;
+  state.control = Math.max(-3, Math.min(3, state.control + direction));
+  addLog(state, message);
+}
+
+function controlSkillBonus(message) {
+  const text = String(message).toLowerCase();
+  if (text.includes("pressure") && hasBonus("pressure")) return 1;
+  if (text.includes("knee") && hasBonus("knee-slice")) return 1;
+  if (text.includes("back") && hasBonus("back-control")) return 1;
+  if (text.includes("frame") && hasBonus("frames")) return 1;
+  if (text.includes("front headlock") && hasBonus("front-headlock")) return 1;
+  return 0;
+}
+
+function drainStamina(state, actor, amount) {
+  state[actor].stamina = Math.max(0, state[actor].stamina - amount);
+}
+
+function spendStamina(actor, amount) {
+  state[actor].stamina = Math.max(0, state[actor].stamina - amount);
+}
+
+function recoverStandingStamina() {
+  if (state.position !== "Standing") return;
+  state.player.stamina = Math.min(getMaxStamina("player"), state.player.stamina + 1);
+  state.opponent.stamina = Math.min(MAX_STAMINA, state.opponent.stamina + 1);
+}
+
+function score(state, actor, points) {
+  state[actor].points += points;
+}
+
+function endByPoints() {
+  state.finished = true;
+  if (state.player.points > state.opponent.points) {
+    addLog(state, `Time. You win ${state.player.points}-${state.opponent.points}.`);
+    state.result = buildResult("player", "points decision");
+  } else if (state.opponent.points > state.player.points) {
+    addLog(state, `Time. ${state.ai.name} wins ${state.opponent.points}-${state.player.points}.`);
+    state.result = buildResult("opponent", "points decision");
+  } else {
+    addLog(state, `Time. Draw at ${state.player.points}-${state.opponent.points}.`);
+    state.result = buildResult("draw", "time-limit draw");
+  }
+}
+
+function buildResult(winner, method, finishName = "") {
+  const playerWon = winner === "player";
+  const opponentWon = winner === "opponent";
+  const xp = playerWon ? 25 + state.player.points * 2 : winner === "draw" ? 8 : 4 + state.player.points;
+  const title = playerWon ? "Victory" : opponentWon ? "Defeat" : "Draw";
+  const detail = playerWon
+    ? `You win by ${method}. ${finishName ? "Clean finish." : "Good mat control."}`
+    : opponentWon
+      ? `${state.ai.name} wins by ${method}. Adjust the game plan and run it back.`
+      : "Time expires with the score tied. Close roll.";
+
+  return {
+    title,
+    detail,
+    score: `${state.player.points}-${state.opponent.points}`,
+    xp
+  };
+}
+
+function submissionSkillBonus(submissionName) {
+  const name = submissionName.toLowerCase();
+  let bonus = 0;
+  if (name.includes("armbar") && hasBonus("armbar")) bonus += 10;
+  if (name.includes("triangle") && hasBonus("triangle")) bonus += 10;
+  if (name.includes("choke") && hasBonus("chokes")) bonus += 8;
+  if (name.includes("guillotine") && hasBonus("front-headlock")) bonus += 8;
+  if (name.includes("rear naked") && hasBonus("rnc")) bonus += 12;
+  return bonus;
+}
+
+function addLog(state, message) {
+  state.log.unshift(message);
+}
+
+function nameOf(actor) {
+  return actor === "player" ? "You" : state.ai.name;
+}
+
+function actionLine(actor, playerPhrase, opponentPhrase) {
+  return actor === "player" ? `You ${playerPhrase}` : `${state.ai.name} ${opponentPhrase}`;
+}
+
+function other(actor) {
+  return actor === "player" ? "opponent" : "player";
+}
+
+function shuffle(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
