@@ -12,6 +12,8 @@ Use this checklist after each refactor or feature change.
 - [ ] Position updates after a move.
 - [ ] XP/belt display works.
 - [ ] Skill tree renders.
+- [ ] Header brand mark renders without a broken image icon.
+- [ ] Pose library previews show generated grappler art for several poses.
 - [ ] New Match button works.
 
 ## Suggested Manual Flow
@@ -23,5 +25,6 @@ Use this checklist after each refactor or feature change.
 5. Confirm the roll log updates.
 6. Confirm stamina changes.
 7. Confirm the mat animation or position changes.
-8. Click `New Match`.
-9. Confirm the match resets cleanly.
+8. Open several pose library buttons and confirm each preview shows grappler art.
+9. Click `New Match`.
+10. Confirm the match resets cleanly.

@@ -82,13 +82,42 @@ button:disabled {
 }
 
 .game-logo {
+  align-items: center;
   aspect-ratio: 1;
-  border: 1px solid rgba(244, 247, 242, 0.18);
+  background:
+    radial-gradient(circle at 28% 24%, rgba(244, 247, 242, 0.42), transparent 22%),
+    linear-gradient(135deg, #f3c76b 0%, #67d391 46%, #1f65c7 100%);
+  border: 1px solid rgba(244, 247, 242, 0.28);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+  color: #08110c;
+  display: inline-grid;
+  flex: 0 0 auto;
+  font-size: 1.35rem;
+  font-weight: 900;
   height: 78px;
-  object-fit: cover;
+  justify-items: center;
+  letter-spacing: -0.08em;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.24);
   width: 78px;
+}
+
+.game-logo::after {
+  border: 2px solid rgba(8, 17, 12, 0.38);
+  border-left: 0;
+  border-right: 0;
+  content: "";
+  height: 22px;
+  position: absolute;
+  top: 28px;
+  transform: rotate(-18deg);
+  width: 58px;
+}
+
+.game-logo span {
+  position: relative;
+  z-index: 1;
 }
 
 h1 sup {

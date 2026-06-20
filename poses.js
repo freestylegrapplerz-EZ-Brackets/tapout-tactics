@@ -1016,6 +1016,8 @@ function poseLabel(pose) {
   return labels[pose] || pose;
 }
 
+const USE_EXTERNAL_POSE_SPRITES = false;
+
 const poseSpriteMap = {
   standing: "standing-neutral.png",
   collarTie: "collar-tie.png",
@@ -1071,12 +1073,13 @@ const poseSpriteMap = {
 };
 
 function poseContentSvg(pose) {
-  if (poseSpriteMap[pose]) return poseSpriteSvg(pose, poseSpriteMap[pose]);
+  if (USE_EXTERNAL_POSE_SPRITES && poseSpriteMap[pose]) return poseSpriteSvg(pose, poseSpriteMap[pose]);
 
   const poseFns = {
     standing: poseStanding,
     collarTie: poseCollarTie,
     snapdown: poseSnapdown,
+    frontHeadlock: poseFrontHeadlock,
     snapdownBottom: poseSnapdownBottom,
     doubleLegEntry: poseDoubleLegEntry,
     doubleLegDrive: poseDoubleLegDrive,
@@ -1116,10 +1119,15 @@ function poseContentSvg(pose) {
     guardRecovery: poseGuardRecovery,
     bridgeEscape: poseBridgeEscape,
     handFight: poseHandFight,
+    armDrag: poseArmDrag,
+    standingArmDrag: poseStandingArmDrag,
     bodyLockPass: poseBodyLockPass,
     legDrag: poseLegDrag,
+    torreandoPass: poseTorreandoPass,
     guillotine: poseGuillotine,
+    standingGuillotine: poseStandingGuillotine,
     hipBump: poseHipBump,
+    scissorSweep: poseScissorSweep,
     sweepTilt: poseSweepTilt
   };
   return (poseFns[pose] || poseFns.standing)();
@@ -1148,7 +1156,9 @@ function playerRankMarkerSvg() {
 function poseStanding() {
   return `
     <ellipse class="scene-shadow" cx="400" cy="340" rx="260" ry="42"/>
-    <image class="pose-sprite standing-neutral-sprite" href="assets/sprites/standing-neutral.png" x="80" y="35" width="640" height="365" preserveAspectRatio="xMidYMid meet"/>
+    ${standingGrappler("player", 300, 184, 1)}
+    ${standingGrappler("opponent", 500, 184, -1)}
+    ${playerRankMarkerSvg()}
   `;
 }
 
@@ -1169,6 +1179,10 @@ function poseSnapdown() {
     ${frontHeadlockGrappler("player", 350, 210)}
     ${kneelingGrappler("opponent", 440, 255)}
   `;
+}
+
+function poseFrontHeadlock() {
+  return poseSnapdown();
 }
 
 function poseSnapdownBottom() {
@@ -1462,6 +1476,23 @@ function poseHandFight() {
   `;
 }
 
+function poseArmDrag() {
+  return `
+    ${guardBottomGrappler("player", 390, 276)}
+    ${tiltingTopGrappler("opponent", 452, 222)}
+    <path class="scene-control" d="M358 220 C394 184 446 184 488 222"/>
+  `;
+}
+
+function poseStandingArmDrag() {
+  return `
+    <ellipse class="scene-shadow" cx="400" cy="330" rx="194" ry="34"/>
+    ${standingGrappler("player", 332, 184, 1)}
+    ${tiltingTopGrappler("opponent", 488, 226)}
+    <path class="scene-control" d="M362 205 C408 176 452 184 492 222"/>
+  `;
+}
+
 function poseBodyLockPass() {
   return `
     ${halfGuardBottom("opponent", 420, 276)}
@@ -1477,6 +1508,14 @@ function poseLegDrag() {
   `;
 }
 
+function poseTorreandoPass() {
+  return `
+    ${openGuardBottom("opponent", 404, 284)}
+    ${standingGrappler("player", 350, 174, 1)}
+    <path class="scene-control" d="M328 218 C382 188 456 190 506 226"/>
+  `;
+}
+
 function poseGuillotine() {
   return `
     ${frontHeadlockGrappler("player", 350, 210)}
@@ -1485,10 +1524,27 @@ function poseGuillotine() {
   `;
 }
 
+function poseStandingGuillotine() {
+  return `
+    <ellipse class="scene-shadow" cx="400" cy="328" rx="190" ry="36"/>
+    ${frontHeadlockGrappler("player", 350, 205)}
+    ${standingGrappler("opponent", 462, 190, -1)}
+    <path class="submission-line" d="M346 184 C386 150 430 160 468 202"/>
+  `;
+}
+
 function poseHipBump() {
   return `
     ${seatedPullGrappler("player", 378, 250)}
     ${tiltingTopGrappler("opponent", 438, 222)}
+  `;
+}
+
+function poseScissorSweep() {
+  return `
+    ${guardBottomGrappler("player", 380, 276)}
+    ${fallingGrappler("opponent", 462, 270)}
+    <path class="scene-control" d="M326 250 C382 220 438 224 500 262"/>
   `;
 }
 
