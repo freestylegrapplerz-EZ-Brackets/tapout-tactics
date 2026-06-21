@@ -254,6 +254,7 @@ function newMatch(forcedOpponent = null) {
   prepareOpponentIntent();
   render();
   if (typeof showMatchIntro === "function") showMatchIntro(opponent, state.venue);
+  if (typeof SFX !== "undefined") setTimeout(() => SFX.slapHands(), 600);
 }
 
 function applyVenueModifiers() {
@@ -371,7 +372,10 @@ function submissionChanceDetails(actor, submissionName) {
   const skillBonus = actor === "player" ? submissionSkillBonus(submissionName) : 0;
   const styleBonus = actor === "player" ? submissionStyleBonus(submissionName) : 0;
   const mindBonus = actor === "player" ? state.mindEffects?.submissionBonus || 0 : 0;
-  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + styleBonus + mindBonus;
+  // Comeback mechanic: trailing by 4+ points = adrenaline bonus on submissions
+  const pointDiff = state[other(actor)].points - state[actor].points;
+  const comebackBonus = actor === "player" && pointDiff >= 4 ? Math.min(16, Math.floor(pointDiff / 2) * 4) : 0;
+  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + styleBonus + mindBonus + comebackBonus;
 
   return {
     chance,
@@ -380,7 +384,8 @@ function submissionChanceDetails(actor, submissionName) {
     chainBonus,
     skillBonus,
     styleBonus,
-    mindBonus
+    mindBonus,
+    comebackBonus
   };
 }
 

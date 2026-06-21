@@ -4,6 +4,7 @@ function renderResult() {
     els.resultOverlay.hidden = true;
     return;
   }
+  const xpBefore = playerXp;
   awardMatchXp();
   const review = finalizeMatchReview();
   const resultClass = state.result.title === "Victory" ? "result-win" :
@@ -16,6 +17,9 @@ function renderResult() {
   els.resultXp.textContent = `+${state.result.xp} belt XP, +${state.result.xp} ${state.style.name} XP`;
   renderMatchReview(review);
   els.resultOverlay.hidden = false;
+  if (typeof triggerCameraFlash === "function") triggerCameraFlash();
+  if (typeof checkAndShowBeltCeremony === "function") setTimeout(() => checkAndShowBeltCeremony(xpBefore, playerXp), 600);
+  if (typeof renderNextOpponentPreview === "function") renderNextOpponentPreview();
 }
 
 function renderMatchReview(review) {

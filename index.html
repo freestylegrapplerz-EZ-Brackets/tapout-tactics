@@ -184,6 +184,15 @@
   <div id="reviewHistory" class="review-history"></div>
 </section>
 
+<div id="beltCeremonyOverlay" class="belt-ceremony-overlay" hidden>
+  <div class="belt-ceremony-panel">
+    <p class="eyebrow">Rank Up</p>
+    <h2 id="beltCeremonyName">Blue Belt</h2>
+    <div id="beltCeremonyGraphic" class="belt-graphic" style="justify-content:center; margin:1rem 0;"></div>
+    <p class="belt-ceremony-xp" id="beltCeremonyXp"></p>
+  </div>
+</div>
+
 <div id="matchIntroOverlay" class="match-intro-overlay" hidden>
   <div class="match-intro-panel">
     <p class="eyebrow" id="matchIntroVenue">Old School Academy</p>
@@ -296,11 +305,19 @@
       <button id="rematchButton" type="button">Rematch</button>
       <button id="nextMatchButton" type="button">Next Match</button>
     </div>
+    <div id="nextOpponentPreview" class="next-opponent-preview" hidden>
+      <div>
+        <strong id="nextOpponentName">—</strong>
+        <small id="nextOpponentStyle">—</small>
+      </div>
+      <button id="fightNextOpponentButton" type="button">Fight Now</button>
+    </div>
   </div>
 </section>
   </main>
 
   <script src="venues.js"></script>
+  <script src="sound.js"></script>
   <script src="techniques.js"></script>
   <script src="skills.js"></script>
   <script src="cards.js"></script>

@@ -412,6 +412,32 @@ function chipsHtml(items, className) {
   return items.map((item) => `<span class="${className}">${escapeHtml(item)}</span>`).join("");
 }
 
+const POSITION_ABBREV = {
+  "Standing": "STAND",
+  "Top Guard": "TOP GD",
+  "Bottom Guard": "BOT GD",
+  "Top Half Guard": "HALF T",
+  "Bottom Half Guard": "HALF B",
+  "Side Control": "SC",
+  "Under Side Control": "USC",
+  "Mount": "MNT",
+  "Mounted": "MTND",
+  "Back Control": "BACK",
+  "Back Taken": "BCK TKN",
+  "Front Headlock": "FHL",
+  "Caught Front Headlock": "C-FHL",
+  "Turtle": "TRTL",
+  "Ashi Garami": "ASHI",
+  "Caught Ashi Garami": "C-ASHI"
+};
+
+function positionChipsHtml(card, currentPosition) {
+  return (card.requires || []).map((pos) => {
+    const isCurrent = pos === currentPosition;
+    return `<span class="card-position-chip${isCurrent ? " chip-current" : ""}">${POSITION_ABBREV[pos] || pos}</span>`;
+  }).join("");
+}
+
 function renderHand() {
   els.cardHand.innerHTML = "";
   state.hand.forEach((card) => {
@@ -451,6 +477,7 @@ function renderHand() {
         </div>
         <strong class="card-title">${escapeHtml(card.name)}</strong>
         <span class="card-technique-type">${escapeHtml(cardTechniqueType(card))}</span>
+        <div class="card-position-chips">${positionChipsHtml(card, state.position)}</div>
         <div class="card-art" aria-hidden="true">${cardArt(card)}</div>
         <div class="card-body">
           <div class="card-kicker">
