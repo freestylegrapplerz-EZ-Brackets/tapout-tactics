@@ -848,13 +848,20 @@ function checkAchievements(review) {
 function flashAchievementToast(def) {
   const toast = document.createElement("div");
   toast.className = "achievement-toast";
-  toast.innerHTML = `<span class="achievement-toast-icon">${def.icon}</span><div><strong>${escapeHtml(def.name)}</strong><span>${escapeHtml(def.desc)}</span></div>`;
+  toast.style.cursor = "pointer";
+  toast.title = "Click to view achievements";
+  toast.innerHTML = `<span class="achievement-toast-icon">${def.icon}</span><div><strong>${escapeHtml(def.name)}</strong><span>${escapeHtml(def.desc)} — <em>tap to view</em></span></div>`;
+  toast.addEventListener("click", () => {
+    if (typeof setActiveScreen === "function") { setActiveScreen("athlete"); }
+    if (typeof els !== "undefined") els.resultOverlay.hidden = true;
+    toast.remove();
+  });
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add("achievement-toast-visible"), 50);
   setTimeout(() => {
     toast.classList.remove("achievement-toast-visible");
     setTimeout(() => toast.remove(), 500);
-  }, 3500);
+  }, 4500);
 }
 
 function loadWinStreak() {
