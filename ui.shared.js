@@ -61,15 +61,20 @@ function render() {
   els.playerPoints.textContent = state.player.points;
   els.opponentPoints.textContent = state.opponent.points;
   els.turnCount.textContent = Math.min(state.turn, MAX_TURNS);
-  els.playerStaminaBar.style.width = `${(state.player.stamina / getMaxStamina("player")) * 100}%`;
-  els.opponentStaminaBar.style.width = `${state.opponent.stamina * 10}%`;
-  els.playerStaminaText.textContent = `${state.player.stamina} stamina`;
-  els.opponentStaminaText.textContent = `${state.opponent.stamina} stamina`;
+  renderStaminaPips("playerStaminaPips", state.player.stamina, getMaxStamina("player"), "player");
+  renderStaminaPips("opponentStaminaPips", state.opponent.stamina, MAX_STAMINA, "opponent");
+  els.playerStaminaText.textContent = `${state.player.stamina} / ${getMaxStamina("player")}`;
+  els.opponentStaminaText.textContent = `${state.opponent.stamina} / ${MAX_STAMINA}`;
   els.positionName.textContent = state.position;
   els.positionPath.innerHTML = positionPathHtml();
   els.opponentName.textContent = state.ai.name;
   els.controlText.textContent = controlLabel();
-  els.log.innerHTML = state.log.slice(0, 7).map((entry) => `<div>${entry}</div>`).join("");
+  renderControlGauge();
+  renderIntentBox();
+  els.log.innerHTML = state.log.slice(0, 7).map((entry) => {
+    const cls = logEntryClass(entry);
+    return `<div${cls ? ` class="${cls}"` : ""}>${escapeHtml(entry)}</div>`;
+  }).join("");
   els.actionBanner.textContent = previewPose
     ? `Previewing ${poseLabel(previewPose)}`
     : state.animating
@@ -83,9 +88,9 @@ function render() {
     : state.animating
       ? techniqueAnimationSvg(state.animation)
       : matSceneSvg(state.position);
-  els.intentText.textContent = intentText(state.intentCard);
   renderProgression();
   renderSkillTree();
+  renderAchievements();
   renderPoseLibraryButtons();
   renderResult();
   renderTurnTrack();
@@ -331,9 +336,95 @@ function handleCardClick(cardId) {
   if (cardId === "adrenaline-burst") {
     showTimingWindow((result) => {
       state.pendingAdrenalineResult = result;
+      if (result === "perfect") state.gotPerfectAdrenaline = true;
       playTurn(cardId);
     });
   } else {
     playTurn(cardId);
   }
+}
+
+// ── Stamina pips ──────────────────────────────────────────────────────────
+
+function renderStaminaPips(elId, stamina, max) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = Array.from({ length: max }, (_, i) =>
+    `<span class="stamina-pip${i >= stamina ? " stamina-pip-empty" : ""}"></span>`
+  ).join("");
+}
+
+// ── Control gauge ─────────────────────────────────────────────────────────
+
+function renderControlGauge() {
+  const el = document.getElementById("controlGauge");
+  if (!el) return;
+  const c = state.control; // -3 to +3
+  el.innerHTML = Array.from({ length: 7 }, (_, i) => {
+    const pos = i - 3;
+    let cls;
+    if (pos === 0) cls = "control-pip-neutral";
+    else if (pos > 0 && pos <= c) cls = "control-pip-player";
+    else if (pos < 0 && pos >= c) cls = "control-pip-opponent";
+    else cls = "control-pip-empty";
+    return `<span class="control-pip ${cls}"></span>`;
+  }).join("");
+}
+
+// ── Color-coded log ───────────────────────────────────────────────────────
+
+function logEntryClass(entry) {
+  const low = String(entry).toLowerCase();
+  if (low.includes("tap!") || (low.includes("finish") && low.includes("wins"))) return "log-finish";
+  if (low.includes("chain bonus") || low.includes("active combo")) return "log-chain";
+  if (low.includes("adrenaline") || low.includes("breath") || low.includes("burst") || low.includes("recover") || low.includes("standup")) return "log-stamina";
+  if (low.includes("scores") || low.includes("wins ") || low.includes("-0") || low.includes(" points")) return "log-score";
+  if (low.includes("control")) return "log-control";
+  if (low.includes("survives") || low.includes("attacks") || low.includes("attack a") || low.includes("attack an")) return "log-attempt";
+  return "";
+}
+
+// ── Intent box urgency ────────────────────────────────────────────────────
+
+function renderIntentBox() {
+  const box = document.querySelector(".intent-box");
+  const text = els.intentText;
+  if (!box || !text) return;
+  text.textContent = intentText(state.intentCard);
+  const type = state.intentCard?.type;
+  const urgencyClass =
+    ["submission"].includes(type) ? "intent-danger" :
+    ["takedown", "pressure", "pass"].includes(type) ? "intent-warning" :
+    ["counter", "escape"].includes(type) ? "intent-safe" : "intent-neutral";
+  box.className = `intent-box ${urgencyClass}`;
+}
+
+// ── Achievements render ───────────────────────────────────────────────────
+
+function renderAchievements() {
+  const container = document.getElementById("achievementsList");
+  if (!container) return;
+  const unlocked = new Set(loadAchievements());
+  container.innerHTML = achievementDefs.map((def) => {
+    const done = unlocked.has(def.id);
+    return `
+      <div class="achievement-card ${done ? "achievement-unlocked" : "achievement-locked"}">
+        <span class="achievement-icon">${def.icon}</span>
+        <strong>${escapeHtml(def.name)}</strong>
+        <span>${escapeHtml(def.desc)}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+// ── Match intro ───────────────────────────────────────────────────────────
+
+function showMatchIntro(opponent, venue) {
+  const overlay = document.getElementById("matchIntroOverlay");
+  if (!overlay) return;
+  document.getElementById("matchIntroOpponentName").textContent = opponent.name;
+  document.getElementById("matchIntroOpponentStyle").textContent = opponent.style;
+  document.getElementById("matchIntroVenue").textContent = venue?.name || "Old School Academy";
+  overlay.hidden = false;
+  setTimeout(() => { overlay.hidden = true; }, 1800);
 }

@@ -798,7 +798,7 @@ const cards = [
       state[actor].stamina = Math.min(getMaxStamina(actor), state[actor].stamina + amount);
       state.pendingAdrenalineResult = null;
       if (result === "miss") {
-        addControl(state, other(actor), 1, actionLine(actor, "mistimed the burst — give up a step", "mistimes the burst"));
+        addLog(state, `${actor === "player" ? "You mistimed" : `${state.ai.name} mistimes`} the burst — small recovery only.`);
       } else {
         const label = result === "perfect" ? "Perfect timing!" : "Good timing!";
         addLog(state, `${label} ${actor === "player" ? "You surge" : `${state.ai.name} surges`} with +${amount} stamina.`);

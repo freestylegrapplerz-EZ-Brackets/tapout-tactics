@@ -106,6 +106,14 @@
   <div id="mindGameButtons" class="mind-game-buttons"></div>
 </section>
 
+<section class="achievements-panel" aria-label="Achievements" data-screen-panel="athlete">
+  <div class="achievements-header">
+    <p class="eyebrow">Progress</p>
+    <h2>Achievements</h2>
+  </div>
+  <div id="achievementsList" class="achievements-list"></div>
+</section>
+
 <section class="venue-panel" aria-label="Choose match venue" data-screen-panel="venues">
   <div class="venue-header">
     <div>
@@ -123,21 +131,22 @@
     <div class="fighter-strip">
       <div class="fighter player">
         <span>You</span>
-        <div class="stamina"><span id="playerStaminaBar"></span></div>
-        <small id="playerStaminaText">10 stamina</small>
+        <div id="playerStaminaPips" class="stamina-pips player-pips" aria-hidden="true"></div>
+        <small id="playerStaminaText">10 / 10</small>
       </div>
 
       <div class="position-panel">
         <p>Position</p>
         <h2 id="positionName">Standing</h2>
         <span id="controlText">Neutral control</span>
+        <div id="controlGauge" class="control-gauge" aria-hidden="true"></div>
         <div id="positionPath" class="position-path" aria-label="Recent position path">Standing</div>
       </div>
 
       <div class="fighter opponent">
         <span id="opponentName">The Wrestler</span>
-        <div class="stamina"><span id="opponentStaminaBar"></span></div>
-        <small id="opponentStaminaText">10 stamina</small>
+        <div id="opponentStaminaPips" class="stamina-pips opponent-pips" aria-hidden="true"></div>
+        <small id="opponentStaminaText">10 / 10</small>
       </div>
     </div>
 
@@ -174,6 +183,18 @@
   </div>
   <div id="reviewHistory" class="review-history"></div>
 </section>
+
+<div id="matchIntroOverlay" class="match-intro-overlay" hidden>
+  <div class="match-intro-panel">
+    <p class="eyebrow" id="matchIntroVenue">Old School Academy</p>
+    <div class="match-intro-vs">
+      <span class="match-intro-fighter">You</span>
+      <span class="match-intro-vs-badge">VS</span>
+      <span class="match-intro-fighter match-intro-opponent" id="matchIntroOpponentName">The Wrestler</span>
+    </div>
+    <small class="match-intro-style" id="matchIntroOpponentStyle">Takedowns and top pressure</small>
+  </div>
+</div>
 
 <div id="timingOverlay" class="timing-overlay" hidden>
   <div class="timing-panel">

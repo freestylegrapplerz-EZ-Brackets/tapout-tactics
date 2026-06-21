@@ -257,7 +257,8 @@ function submissionAttack(state, actor, submissionName) {
     attacker.stamina = Math.max(0, attacker.stamina - 1);
     const attackVerb = actor === "player" ? "attack" : "attacks";
     const article = /^[aeiou]/i.test(submissionName) ? "an" : "a";
-    addLog(state, `${nameOf(actor)} ${attackVerb} ${article} ${submissionName}, but ${nameOf(other(actor))} survives.`);
+    const rollLabel = `[roll ${roll} vs ${chance}% needed]`;
+    addLog(state, `${nameOf(actor)} ${attackVerb} ${article} ${submissionName} ${rollLabel} — ${nameOf(other(actor))} survives.`);
   }
 }
 

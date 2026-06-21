@@ -2170,7 +2170,302 @@ h2 {
   100% { transform: translateX(0); }
 }
 
-/* ── Adrenaline Burst timing bar ─────────────────────────────────────────── */
+/* ── Achievement toast notification ─────────────────────────────────────── */
+
+.achievement-toast {
+  align-items: center;
+  background: linear-gradient(135deg, #1e3328, #0e1c12);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  bottom: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(103, 211, 145, 0.12);
+  display: flex;
+  gap: 0.75rem;
+  left: 50%;
+  max-width: 340px;
+  opacity: 0;
+  padding: 0.85rem 1rem;
+  position: fixed;
+  transform: translateX(-50%) translateY(20px);
+  transition: opacity 400ms ease, transform 400ms ease;
+  width: calc(100% - 2rem);
+  z-index: 20;
+}
+
+.achievement-toast.achievement-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.achievement-toast-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.achievement-toast strong {
+  color: var(--accent);
+  display: block;
+  font-size: 0.88rem;
+}
+
+.achievement-toast span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.76rem;
+  margin-top: 0.15rem;
+}
+
+/* ── Stamina pips ────────────────────────────────────────────────────────── */
+
+.stamina-pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+  margin: 0.55rem 0 0.3rem;
+  min-height: 14px;
+}
+
+.stamina-pip {
+  border-radius: 999px;
+  flex-shrink: 0;
+  height: 10px;
+  transition: background 180ms ease, opacity 180ms ease;
+  width: 10px;
+}
+
+.player-pips .stamina-pip {
+  background: var(--accent);
+}
+
+.opponent-pips .stamina-pip {
+  background: var(--danger);
+}
+
+.stamina-pip-empty {
+  background: rgba(244, 247, 242, 0.1) !important;
+  border: 1px solid rgba(244, 247, 242, 0.18);
+}
+
+/* ── Control gauge ───────────────────────────────────────────────────────── */
+
+.control-gauge {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 0.3rem 0 0.2rem;
+}
+
+.control-pip {
+  border-radius: 999px;
+  flex-shrink: 0;
+  height: 10px;
+  transition: background 200ms ease, box-shadow 200ms ease;
+  width: 10px;
+}
+
+.control-pip-neutral {
+  background: rgba(244, 247, 242, 0.45);
+  height: 12px;
+  width: 12px;
+}
+
+.control-pip-player {
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(103, 211, 145, 0.55);
+}
+
+.control-pip-opponent {
+  background: var(--danger);
+  box-shadow: 0 0 6px rgba(240, 106, 95, 0.55);
+}
+
+.control-pip-empty {
+  background: rgba(244, 247, 242, 0.08);
+  border: 1px solid rgba(244, 247, 242, 0.14);
+}
+
+/* ── Color-coded log entries ─────────────────────────────────────────────── */
+
+.log-finish {
+  color: var(--accent) !important;
+  font-weight: 900;
+}
+
+.log-chain {
+  color: var(--purple) !important;
+}
+
+.log-score {
+  color: var(--gold) !important;
+}
+
+.log-control {
+  color: var(--blue) !important;
+}
+
+.log-stamina {
+  color: rgba(103, 211, 145, 0.78) !important;
+}
+
+.log-attempt {
+  color: var(--danger) !important;
+}
+
+/* ── Intent box urgency colors by card type ──────────────────────────────── */
+
+.intent-box {
+  background: #101a15;
+  border: 1px solid rgba(244, 247, 242, 0.12);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  transition: border-color 300ms ease;
+}
+
+.intent-box.intent-danger { border-color: rgba(240, 106, 95, 0.55); }
+.intent-box.intent-warning { border-color: rgba(243, 199, 107, 0.45); }
+.intent-box.intent-safe { border-color: rgba(103, 211, 145, 0.35); }
+.intent-box.intent-neutral { border-color: rgba(244, 247, 242, 0.12); }
+
+/* ── Match intro overlay ─────────────────────────────────────────────────── */
+
+.match-intro-overlay {
+  align-items: center;
+  background: rgba(4, 8, 6, 0.92);
+  display: grid;
+  inset: 0;
+  place-items: center;
+  position: fixed;
+  z-index: 14;
+  animation: introFadeOut 1.8s ease forwards;
+}
+
+.match-intro-overlay[hidden] {
+  display: none;
+}
+
+@keyframes introFadeOut {
+  0%, 60% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.match-intro-panel {
+  text-align: center;
+}
+
+.match-intro-vs {
+  align-items: center;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 0.75rem 0;
+}
+
+.match-intro-fighter {
+  color: var(--text);
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.match-intro-opponent {
+  color: var(--danger);
+}
+
+.match-intro-vs-badge {
+  background: var(--gold);
+  border-radius: 6px;
+  color: #1a0e00;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.65rem;
+}
+
+.match-intro-style {
+  color: var(--muted);
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Achievements ────────────────────────────────────────────────────────── */
+
+.achievements-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(23, 33, 29, 0.94);
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+
+.achievements-header h2 {
+  font-size: 1rem;
+  margin: 0.2rem 0 0;
+}
+
+.achievements-list {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.achievement-card {
+  background: #101a15;
+  border: 1px solid rgba(244, 247, 242, 0.1);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.65rem;
+}
+
+.achievement-card.achievement-unlocked {
+  background: linear-gradient(160deg, #2a4a35, #1a2e22);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(103, 211, 145, 0.14);
+}
+
+.achievement-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.achievement-card strong {
+  color: var(--text);
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.achievement-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.7rem;
+  line-height: 1.3;
+}
+
+.achievement-card.achievement-locked .achievement-icon,
+.achievement-card.achievement-locked strong,
+.achievement-card.achievement-locked span {
+  opacity: 0.38;
+}
+
+@media (max-width: 900px) {
+  .achievements-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .achievements-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 
 .timing-overlay {
   align-items: center;

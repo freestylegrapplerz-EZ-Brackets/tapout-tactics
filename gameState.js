@@ -15,9 +15,73 @@ const STYLE_PROGRESS_STORAGE_KEY = "tapoutTacticsStyleProgress";
 const STYLE_ID_STORAGE_KEY = "tapoutTacticsStyleId";
 const MATCH_REVIEW_STORAGE_KEY = "tapoutTacticsMatchReviews";
 const VENUE_STORAGE_KEY = "tapoutTacticsVenue";
+const ACHIEVEMENTS_KEY = "tapoutTacticsAchievements";
+const WIN_STREAK_KEY = "tapoutTacticsWinStreak";
 const XP_PER_LEVEL = 50;
 const ANIMATION_MS = 3200;
 const MIN_HAND_TECHNIQUES = 4;
+
+const achievementDefs = [
+  {
+    id: "first-win",
+    name: "First Tap",
+    desc: "Win your first match.",
+    icon: "🥋",
+    check: (s, r) => r?.result?.title === "Victory"
+  },
+  {
+    id: "first-sub",
+    name: "Tap or Snap",
+    desc: "Win by submission.",
+    icon: "💀",
+    check: (s, r) => r?.result?.title === "Victory" && r?.result?.detail?.includes("submission")
+  },
+  {
+    id: "chain-reaction",
+    name: "Chain Reaction",
+    desc: "Land a chain combo in any match.",
+    icon: "⛓️",
+    check: (s, r) => r?.turns?.some((t) => t.chain)
+  },
+  {
+    id: "adrenaline-perfect",
+    name: "Adrenaline Junkie",
+    desc: "Hit Perfect timing on Adrenaline Burst.",
+    icon: "⚡",
+    check: (s, r) => s?.gotPerfectAdrenaline === true
+  },
+  {
+    id: "blue-belt",
+    name: "Blue Belt",
+    desc: "Earn your Blue Belt.",
+    icon: "🔵",
+    check: () => getBeltProgress(playerXp).current.short !== "white"
+  },
+  {
+    id: "iron-chin",
+    name: "Iron Chin",
+    desc: "Survive 3 or more submission attempts in one match.",
+    icon: "🛡️",
+    check: (s, r) => (r?.turns || []).flatMap((t) => t.finishAttempts.filter((a) => a.actor === "opponent")).length >= 3
+  },
+  {
+    id: "clean-win",
+    name: "Technical Wizard",
+    desc: "Win without playing any recovery cards.",
+    icon: "🧠",
+    check: (s, r) => r?.result?.title === "Victory" && !(r?.turns || []).some((t) => t.playerCard.type === "recovery")
+  },
+  {
+    id: "comeback",
+    name: "Heart of a Champion",
+    desc: "Win after trailing by 6 or more points.",
+    icon: "❤️",
+    check: (s, r) => {
+      if (r?.result?.title !== "Victory") return false;
+      return (r?.turns || []).some((t) => t.before.opponentPoints - t.before.playerPoints >= 6);
+    }
+  }
+];
 
 const positionSafetyCardIds = {
   "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull", "rest"],
@@ -177,6 +241,7 @@ function newMatch(forcedOpponent = null) {
     turnFinishAttempts: [],
     matchReview: null,
     pendingAdrenalineResult: null,
+    gotPerfectAdrenaline: false,
     player: { points: 0, stamina: getMaxStamina("player") },
     opponent: { points: 0, stamina: MAX_STAMINA },
     hand: [],
@@ -184,9 +249,29 @@ function newMatch(forcedOpponent = null) {
   };
   state.matchReview = createMatchReview();
   applyMindGameSetup();
+  applyVenueModifiers();
   drawHand();
   prepareOpponentIntent();
   render();
+  if (typeof showMatchIntro === "function") showMatchIntro(opponent, state.venue);
+}
+
+function applyVenueModifiers() {
+  const venueId = state.venue?.id;
+  if (venueId === "local-event") {
+    state.mindEffects.opponentAggressive = true;
+    addLog(state, "The crowd energy gets in their head. Opponent plays more aggressively.");
+  } else if (venueId === "championship") {
+    addControl(state, "player", 1, "High-level composure: both athletes arrive composed. You take first control.");
+    addLog(state, "Championship nerves are gone. You trained for this.");
+  } else if (venueId === "beach") {
+    state.mindEffects.submissionBonus = (state.mindEffects.submissionBonus || 0) + 5;
+    addLog(state, "Exhibition format. Submissions come faster and looser on the sand.");
+  } else if (venueId === "street") {
+    state.player.stamina = Math.max(1, state.player.stamina - 1);
+    state.opponent.stamina = Math.max(1, state.opponent.stamina - 1);
+    addLog(state, "Rough conditions. Both fighters start tired.");
+  }
 }
 
 function applyMindGameSetup() {
@@ -350,6 +435,9 @@ function finalizeMatchReview() {
   state.matchReview.grade = matchReviewGrade(state.matchReview);
   state.matchReview.verdict = matchReviewVerdict(state.matchReview);
   saveMatchReview(state.matchReview);
+  const won = state.result.title === "Victory";
+  updateWinStreak(won);
+  checkAchievements(state.matchReview);
   return state.matchReview;
 }
 
@@ -701,6 +789,54 @@ function loadSelectedStyleId() {
 
 function saveSelectedStyleId() {
   localStorage.setItem(STYLE_ID_STORAGE_KEY, selectedStyleId);
+}
+
+function loadAchievements() {
+  try { return JSON.parse(localStorage.getItem(ACHIEVEMENTS_KEY) || "[]"); } catch { return []; }
+}
+
+function saveAchievements(list) {
+  localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(list));
+}
+
+function checkAchievements(review) {
+  const unlocked = new Set(loadAchievements());
+  let changed = false;
+  achievementDefs.forEach((def) => {
+    if (!unlocked.has(def.id) && def.check(state, review)) {
+      unlocked.add(def.id);
+      changed = true;
+      flashAchievementToast(def);
+    }
+  });
+  if (changed) saveAchievements([...unlocked]);
+}
+
+function flashAchievementToast(def) {
+  const toast = document.createElement("div");
+  toast.className = "achievement-toast";
+  toast.innerHTML = `<span class="achievement-toast-icon">${def.icon}</span><div><strong>${escapeHtml(def.name)}</strong><span>${escapeHtml(def.desc)}</span></div>`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add("achievement-toast-visible"), 50);
+  setTimeout(() => {
+    toast.classList.remove("achievement-toast-visible");
+    setTimeout(() => toast.remove(), 500);
+  }, 3500);
+}
+
+function loadWinStreak() {
+  return Math.max(0, Number(localStorage.getItem(WIN_STREAK_KEY)) || 0);
+}
+
+function saveWinStreak(n) {
+  localStorage.setItem(WIN_STREAK_KEY, String(n));
+}
+
+function updateWinStreak(won) {
+  const current = loadWinStreak();
+  const next = won ? current + 1 : 0;
+  saveWinStreak(next);
+  return next;
 }
 
 function setStyle(styleId) {
