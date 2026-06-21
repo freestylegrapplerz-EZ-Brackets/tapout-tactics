@@ -43,7 +43,7 @@ const defaultStrategyByType = {
   guard: {
     threat: "Reversal Threat 2/3",
     stat: "Creates sweeps, back takes, or guard attacks",
-    strong: "Punishes forward pressure",
+    strong: "Sweeps always land — control boosts your SUBMISSIONS, not sweep success",
     risk: "Weak if posture wins",
     leads: ["Top Position", "Submissions"]
   },

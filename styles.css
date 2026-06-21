@@ -397,6 +397,181 @@ h2 {
   min-height: 42px;
 }
 
+/* ── BJJ Position Guide (Library tab) ───────────────────────────────────── */
+
+.position-guide-header {
+  border-top: 1px solid var(--line);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+}
+
+.position-guide-header h2 {
+  font-size: 1rem;
+  margin: 0.2rem 0 0.3rem;
+}
+
+.position-guide-intro {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin: 0 0 0.75rem;
+}
+
+.position-guide-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.pg-card {
+  background: #101a15;
+  border: 1px solid rgba(244, 247, 242, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pg-card-active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(243, 199, 107, 0.18);
+}
+
+.pg-summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0.65rem 0.8rem;
+  user-select: none;
+}
+
+.pg-summary::-webkit-details-marker { display: none; }
+
+.pg-icon {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.pg-title-block {
+  flex: 1;
+}
+
+.pg-title-block strong {
+  color: var(--text);
+  display: block;
+  font-size: 0.9rem;
+}
+
+.pg-tier {
+  color: var(--muted);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-top: 0.1rem;
+  text-transform: uppercase;
+}
+
+.pg-current-badge {
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 48%, transparent);
+  border-radius: 4px;
+  color: var(--gold);
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.35rem;
+  text-transform: uppercase;
+}
+
+.pg-body {
+  border-top: 1px solid rgba(244, 247, 242, 0.08);
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem 0.8rem;
+}
+
+.pg-desc {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.pg-section {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.pg-label {
+  color: var(--gold);
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pg-label-muted {
+  color: var(--muted);
+}
+
+.pg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+}
+
+.pg-chip {
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.22rem 0.4rem;
+}
+
+.pg-chip-attack {
+  background: rgba(103, 211, 145, 0.1);
+  border: 1px solid rgba(103, 211, 145, 0.22);
+  color: var(--accent);
+}
+
+.pg-chip-sub {
+  background: rgba(240, 106, 95, 0.1);
+  border: 1px solid rgba(240, 106, 95, 0.22);
+  color: var(--danger);
+}
+
+.pg-chip-trans {
+  background: rgba(111, 168, 255, 0.1);
+  border: 1px solid rgba(111, 168, 255, 0.2);
+  color: var(--blue);
+}
+
+.pg-chip-chain {
+  background: rgba(176, 137, 255, 0.1);
+  border: 1px solid rgba(176, 137, 255, 0.22);
+  color: var(--purple);
+}
+
+.pg-chip-missing {
+  background: rgba(244, 247, 242, 0.05);
+  border: 1px solid rgba(244, 247, 242, 0.1);
+  color: rgba(244, 247, 242, 0.38);
+  text-decoration: line-through;
+}
+
+.pg-tip {
+  background: rgba(243, 199, 107, 0.06);
+  border: 1px solid rgba(243, 199, 107, 0.16);
+  border-radius: 6px;
+  color: rgba(243, 199, 107, 0.88);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.45;
+  padding: 0.5rem 0.65rem;
+}
+
 .rank-belt {
   --belt-color: #f8f8f2;
   align-items: center;

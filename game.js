@@ -2,6 +2,10 @@
 els.newMatchButton.addEventListener("click", openPreMatchModal);
 els.rematchButton.addEventListener("click", () => newMatch(pendingOpponent));
 els.nextMatchButton.addEventListener("click", openPreMatchModal);
+document.getElementById("viewProgressButton")?.addEventListener("click", () => {
+  els.resultOverlay.hidden = true;
+  setActiveScreen("athlete");
+});
 els.screenTabs.forEach((button) => {
   button.addEventListener("click", () => setActiveScreen(button.dataset.screenTab));
 });

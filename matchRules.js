@@ -16,8 +16,13 @@ const chainRules = {
   "guard-pull>triangle": { label: "Guard Pull to Triangle", submission: 14 },
   "scissor-sweep>knee-slice": { label: "Sweep to Pass Pressure", control: 1 },
   "single-leg>body-lock-pass": { label: "Single Leg to Body Lock Pass", control: 1 },
-  "butterfly-sweep>ashi-garami-entry": { label: "Butterfly Entry to Ashi Garami", control: 1 },
-  "old-school-sweep>ashi-garami-entry": { label: "Half Guard Entry to Ashi Garami", control: 1 },
+  // Butterfly guard chains — hooks first, then the attack (same bottom position)
+  "butterfly-hooks>butterfly-sweep": { label: "Butterfly Hooks to Sweep", control: 1 },
+  "butterfly-hooks>ashi-garami-entry": { label: "Butterfly Entry to Ashi Garami", submission: 12, control: 1 },
+  // Half guard to pass chains — you landed on top, press forward
+  "old-school-sweep>knee-slice": { label: "Half Guard Sweep to Knee Slice", control: 1 },
+  "butterfly-sweep>knee-slice": { label: "Butterfly Sweep to Knee Slice", control: 1 },
+  // Leg lock chains
   "ashi-garami-entry>straight-ankle-lock": { label: "Ashi Garami to Ankle Lock", submission: 22, control: 1 },
   "ashi-garami-entry>heel-hook": { label: "Ashi Garami to Heel Hook", submission: 18, control: 1 }
 };
