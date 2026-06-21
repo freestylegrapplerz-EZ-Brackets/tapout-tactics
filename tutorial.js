@@ -41,7 +41,7 @@ const TUTORIAL_STEPS = [
   {
     turn: 4,
     cardId: "front-headlock-spin",
-    opponentCardId: "hand-fight",
+    opponentCardId: "protect-neck",
     position: "Front Headlock",
     title: "Step 4 of 6 — Take the Back",
     tip: "Go Behind converts Front Headlock into Back Control — the most dominant position in all of BJJ. It scores 4 points AND sets up the highest-percentage finish in the game.",

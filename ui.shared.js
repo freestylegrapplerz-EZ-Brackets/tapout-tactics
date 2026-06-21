@@ -79,7 +79,9 @@ function render() {
     ? `Previewing ${poseLabel(previewPose)}`
     : state.animating
       ? `Executing ${state.animation.card.name}...`
-      : state.log[0];
+      : state.chainHint?.length
+        ? `⛓ Chain: Play ${state.chainHint.join(" or ")} next for a BONUS!`
+        : state.log[0];
   els.matCanvas.className = previewPose
     ? `mat-canvas pose-preview venue-${selectedVenue().id}`
     : matCanvasClass();
