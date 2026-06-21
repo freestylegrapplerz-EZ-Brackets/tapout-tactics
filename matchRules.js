@@ -313,14 +313,9 @@ function spendStamina(actor, amount) {
 }
 
 function recoverStandingStamina() {
-  // Always recover 1 for everyone each turn (trickle)
+  if (state.position !== "Standing") return;
   state.player.stamina = Math.min(getMaxStamina("player"), state.player.stamina + 1);
   state.opponent.stamina = Math.min(MAX_STAMINA, state.opponent.stamina + 1);
-  // Extra +1 when standing (wrestling reset bonus)
-  if (state.position === "Standing") {
-    state.player.stamina = Math.min(getMaxStamina("player"), state.player.stamina + 1);
-    state.opponent.stamina = Math.min(MAX_STAMINA, state.opponent.stamina + 1);
-  }
 }
 
 function score(state, actor, points) {
