@@ -90,6 +90,7 @@ function render() {
       : matSceneSvg(state.position);
   renderProgression();
   renderSkillTree();
+  renderCareerPath();
   renderAchievements();
   renderPoseLibraryButtons();
   renderResult();
@@ -187,7 +188,10 @@ function renderTurnTrack() {
 // ── Pre-match modal ───────────────────────────────────────────────────────────
 
 function openPreMatchModal() {
-  pendingOpponent = opponents[Math.floor(Math.random() * opponents.length)];
+  const pool = typeof getUnlockedOpponents === "function"
+    ? getUnlockedOpponents().map((d) => opponents.find((o) => o.id === d.id)).filter(Boolean)
+    : opponents;
+  pendingOpponent = pool[Math.floor(Math.random() * pool.length)];
   document.getElementById("preMatchOpponentName").textContent = pendingOpponent.name;
   document.getElementById("preMatchOpponentStyle").textContent = pendingOpponent.style;
   renderPreMatchStyleButtons();
@@ -317,6 +321,12 @@ function showTimingWindow(onResolve) {
     resultEl.hidden = false;
     btn.disabled = true;
 
+    if (typeof SFX !== "undefined") {
+      if (result === "perfect") SFX.adrenalinePerfect();
+      else if (result === "good") SFX.adrenalineGood();
+      else SFX.adrenalineMiss();
+    }
+
     setTimeout(() => {
       overlay.hidden = true;
       onResolve(result);
@@ -427,4 +437,48 @@ function showMatchIntro(opponent, venue) {
   document.getElementById("matchIntroVenue").textContent = venue?.name || "Old School Academy";
   overlay.hidden = false;
   setTimeout(() => { overlay.hidden = true; }, 1800);
+}
+
+// ── Belt ceremony ─────────────────────────────────────────────────────────
+
+function checkAndShowBeltCeremony(previousXp, newXp) {
+  const prev = getBeltProgress(previousXp);
+  const next = getBeltProgress(newXp);
+  if (prev.current.short === next.current.short) return;
+  const overlay = document.getElementById("beltCeremonyOverlay");
+  if (!overlay) return;
+  document.getElementById("beltCeremonyName").textContent = next.current.name;
+  document.getElementById("beltCeremonyGraphic").innerHTML = beltGraphic(next);
+  document.getElementById("beltCeremonyXp").textContent = `${newXp} XP total`;
+  overlay.hidden = false;
+  if (typeof SFX !== "undefined") SFX.beltUp();
+  setTimeout(() => { overlay.hidden = true; }, 4000);
+}
+
+// ── Next opponent preview ─────────────────────────────────────────────────
+
+function renderNextOpponentPreview() {
+  const preview = document.getElementById("nextOpponentPreview");
+  if (!preview || !state.result) return;
+  const next = opponents[Math.floor(Math.random() * opponents.length)];
+  preview._nextOpponent = next;
+  document.getElementById("nextOpponentName").textContent = next.name;
+  document.getElementById("nextOpponentStyle").textContent = next.style;
+  preview.hidden = false;
+  const btn = document.getElementById("fightNextOpponentButton");
+  if (btn) {
+    btn.onclick = () => {
+      els.resultOverlay.hidden = true;
+      newMatch(preview._nextOpponent);
+    };
+  }
+}
+
+// ── Camera flash ──────────────────────────────────────────────────────────
+
+function triggerCameraFlash() {
+  const el = document.createElement("div");
+  el.className = "camera-flash";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 600);
 }

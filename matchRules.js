@@ -41,8 +41,13 @@ function playTurn(playerCardId) {
   state.lastChain = chain;
   state.lastMoveType = playerCard.type;
 
-  addLog(state, `You choose ${playerCard.name}. ${state.ai.name} chooses ${opponentCard.name}.`);
-  if (chain) addLog(state, `Chain bonus: ${chain.label}.`);
+  addLog(state, typeof announceCardChoice === "function"
+    ? announceCardChoice(playerCard.name, opponentCard.name)
+    : `You choose ${playerCard.name}. ${state.ai.name} chooses ${opponentCard.name}.`);
+  if (chain) {
+    addLog(state, typeof announceChain === "function" ? announceChain(chain.label) : `Chain bonus: ${chain.label}.`);
+    if (typeof SFX !== "undefined") SFX.chainCombo();
+  }
 
   spendStamina("player", effectiveCardCost(playerCard, "player"));
   spendStamina("opponent", opponentCard.cost);
@@ -51,6 +56,10 @@ function playTurn(playerCardId) {
   }
 
   resolveCards(playerCard, opponentCard);
+  if (typeof SFX !== "undefined") {
+    if (playerCard.type === "takedown") SFX.takedown();
+    else if (playerCard.type === "counter") SFX.counter();
+  }
 
   if (!state.finished) {
     state.turn += 1;
@@ -250,15 +259,20 @@ function submissionAttack(state, actor, submissionName) {
 
   if (succeeded) {
     state.finished = true;
-    const finishVerb = actor === "player" ? "finish" : "finishes";
-    addLog(state, `${nameOf(actor)} ${finishVerb} the ${submissionName}. Tap!`);
+    const msg = typeof announceFinish === "function"
+      ? announceFinish(nameOf(actor), submissionName)
+      : `${nameOf(actor)} finishes the ${submissionName}. Tap!`;
+    addLog(state, msg);
     state.result = buildResult(actor, `${submissionName} submission`, submissionName);
+    if (typeof SFX !== "undefined") SFX.tapOut();
   } else {
     attacker.stamina = Math.max(0, attacker.stamina - 1);
-    const attackVerb = actor === "player" ? "attack" : "attacks";
     const article = /^[aeiou]/i.test(submissionName) ? "an" : "a";
-    const rollLabel = `[roll ${roll} vs ${chance}% needed]`;
-    addLog(state, `${nameOf(actor)} ${attackVerb} ${article} ${submissionName} ${rollLabel} — ${nameOf(other(actor))} survives.`);
+    const msg = typeof announceSubmissionMiss === "function"
+      ? announceSubmissionMiss(nameOf(actor), submissionName, roll, chance)
+      : `${nameOf(actor)} attacks ${article} ${submissionName} [roll ${roll} vs ${chance}% needed] — ${nameOf(other(actor))} survives.`;
+    addLog(state, msg);
+    if (typeof SFX !== "undefined") SFX.submissionAttempt();
   }
 }
 
@@ -321,6 +335,7 @@ function recoverStandingStamina() {
 
 function score(state, actor, points) {
   state[actor].points += points;
+  if (actor === "player" && points > 0 && typeof SFX !== "undefined") SFX.scorePoints();
 }
 
 function endByPoints() {

@@ -105,29 +105,52 @@ const positionSafetyCardIds = {
 
 const opponents = [
   {
+    id: "wrestler",
     name: "The Wrestler",
     style: "Takedowns and top pressure",
     favoriteTypes: ["setup", "takedown", "pressure", "counter"]
   },
   {
+    id: "triangle-hunter",
     name: "Triangle Hunter",
     style: "Guard attacks and submissions",
     favoriteTypes: ["guard", "submission", "setup", "counter"]
   },
   {
+    id: "pressure-passer",
     name: "Pressure Passer",
     style: "Passes, control, and stamina drain",
     favoriteTypes: ["pass", "pressure", "setup", "escape"]
   },
   {
+    id: "leg-locker",
     name: "The Leg Locker",
     style: "Ashi garami and leg entanglements",
     favoriteTypes: ["guard", "submission", "escape", "setup"]
   },
   {
+    id: "scrambler",
     name: "The Scrambler",
     style: "Explosive transitions and counters",
     favoriteTypes: ["counter", "escape", "takedown", "setup"]
+  },
+  {
+    id: "clinch-king",
+    name: "The Clinch King",
+    style: "Front headlock and clinch control",
+    favoriteTypes: ["setup", "counter", "pressure", "takedown"]
+  },
+  {
+    id: "ground-specialist",
+    name: "Ground Specialist",
+    style: "Balanced passing and top control",
+    favoriteTypes: ["pass", "pressure", "submission", "counter"]
+  },
+  {
+    id: "the-champion",
+    name: "The Champion",
+    style: "Elite all-round — no weak positions",
+    favoriteTypes: ["submission", "pressure", "counter", "pass"]
   }
 ];
 
@@ -254,6 +277,7 @@ function newMatch(forcedOpponent = null) {
   prepareOpponentIntent();
   render();
   if (typeof showMatchIntro === "function") showMatchIntro(opponent, state.venue);
+  if (typeof SFX !== "undefined") setTimeout(() => SFX.slapHands(), 600);
 }
 
 function applyVenueModifiers() {
@@ -371,7 +395,10 @@ function submissionChanceDetails(actor, submissionName) {
   const skillBonus = actor === "player" ? submissionSkillBonus(submissionName) : 0;
   const styleBonus = actor === "player" ? submissionStyleBonus(submissionName) : 0;
   const mindBonus = actor === "player" ? state.mindEffects?.submissionBonus || 0 : 0;
-  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + styleBonus + mindBonus;
+  // Comeback mechanic: trailing by 4+ points = adrenaline bonus on submissions
+  const pointDiff = state[other(actor)].points - state[actor].points;
+  const comebackBonus = actor === "player" && pointDiff >= 4 ? Math.min(16, Math.floor(pointDiff / 2) * 4) : 0;
+  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + styleBonus + mindBonus + comebackBonus;
 
   return {
     chance,
@@ -380,7 +407,8 @@ function submissionChanceDetails(actor, submissionName) {
     chainBonus,
     skillBonus,
     styleBonus,
-    mindBonus
+    mindBonus,
+    comebackBonus
   };
 }
 
@@ -438,6 +466,11 @@ function finalizeMatchReview() {
   const won = state.result.title === "Victory";
   updateWinStreak(won);
   checkAchievements(state.matchReview);
+  if (typeof recordMatchResult === "function") {
+    const stats = recordMatchResult(won);
+    const achievements = typeof loadAchievements === "function" ? new Set(loadAchievements()) : new Set();
+    if (typeof checkAndGrantUnlocks === "function") checkAndGrantUnlocks(stats, achievements);
+  }
   return state.matchReview;
 }
 

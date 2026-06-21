@@ -114,6 +114,36 @@
   <div id="achievementsList" class="achievements-list"></div>
 </section>
 
+<section class="career-path-panel" aria-label="Meta Progression" data-screen-panel="athlete">
+  <div class="career-path-header">
+    <div>
+      <p class="eyebrow">Meta Progression</p>
+      <h2>Career Path</h2>
+    </div>
+    <div id="careerStats" class="career-stats-bar"></div>
+  </div>
+  <div class="career-path-body">
+    <div class="career-col">
+      <h3 class="career-col-title">Next Unlocks</h3>
+      <div id="nextUnlocksList" class="next-unlocks-list"></div>
+    </div>
+    <div class="career-col">
+      <h3 class="career-col-title">Roster Unlocked</h3>
+      <div id="unlockedRoster" class="unlocked-roster"></div>
+    </div>
+  </div>
+  <div class="career-collection">
+    <div class="career-collection-section">
+      <h3 class="career-col-title">Card Style</h3>
+      <div id="cardBackSelector" class="card-back-selector"></div>
+    </div>
+    <div class="career-collection-section">
+      <h3 class="career-col-title">Announcer</h3>
+      <div id="announcerSelector" class="announcer-selector"></div>
+    </div>
+  </div>
+</section>
+
 <section class="venue-panel" aria-label="Choose match venue" data-screen-panel="venues">
   <div class="venue-header">
     <div>
@@ -183,6 +213,15 @@
   </div>
   <div id="reviewHistory" class="review-history"></div>
 </section>
+
+<div id="beltCeremonyOverlay" class="belt-ceremony-overlay" hidden>
+  <div class="belt-ceremony-panel">
+    <p class="eyebrow">Rank Up</p>
+    <h2 id="beltCeremonyName">Blue Belt</h2>
+    <div id="beltCeremonyGraphic" class="belt-graphic" style="justify-content:center; margin:1rem 0;"></div>
+    <p class="belt-ceremony-xp" id="beltCeremonyXp"></p>
+  </div>
+</div>
 
 <div id="matchIntroOverlay" class="match-intro-overlay" hidden>
   <div class="match-intro-panel">
@@ -296,11 +335,20 @@
       <button id="rematchButton" type="button">Rematch</button>
       <button id="nextMatchButton" type="button">Next Match</button>
     </div>
+    <div id="nextOpponentPreview" class="next-opponent-preview" hidden>
+      <div>
+        <strong id="nextOpponentName">—</strong>
+        <small id="nextOpponentStyle">—</small>
+      </div>
+      <button id="fightNextOpponentButton" type="button">Fight Now</button>
+    </div>
   </div>
 </section>
   </main>
 
+  <script src="progression.js"></script>
   <script src="venues.js"></script>
+  <script src="sound.js"></script>
   <script src="techniques.js"></script>
   <script src="skills.js"></script>
   <script src="cards.js"></script>
