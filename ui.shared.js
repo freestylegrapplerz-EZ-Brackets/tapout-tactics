@@ -461,6 +461,10 @@ function showTutorialAfter(step) {
   if (!overlay) return;
   document.getElementById("tutorialAfterTitle").textContent = step.afterTitle;
   document.getElementById("tutorialAfterTip").textContent = step.afterTip;
+  // Safety net: ensure player always has enough stamina for the next tutorial step
+  if (state && state.tutorialMode) {
+    state.player.stamina = Math.max(state.player.stamina, 5);
+  }
   overlay.hidden = false;
 }
 

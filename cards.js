@@ -103,7 +103,7 @@ const cards = [
     id: "armbar",
     name: "Armbar",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Mount", "Bottom Guard"],
     text: "Attack the arm. Stronger with high control or low opponent stamina.",
     play: (state, actor) => submissionAttack(state, actor, "armbar")
@@ -112,7 +112,7 @@ const cards = [
     id: "triangle",
     name: "Triangle",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Bottom Guard"],
     text: "Trap the neck and arm from guard.",
     play: (state, actor) => submissionAttack(state, actor, "triangle")
@@ -121,7 +121,7 @@ const cards = [
     id: "rear-naked-choke",
     name: "Rear Naked Choke",
     type: "submission",
-    cost: 3,
+    cost: 1,
     requires: ["Back Control"],
     text: "The highest percentage finish from the back.",
     play: (state, actor) => submissionAttack(state, actor, "rear naked choke")
@@ -390,7 +390,7 @@ const cards = [
     id: "guillotine",
     name: "Guillotine",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Standing", "Bottom Guard", "Front Headlock"],
     text: "Attack the neck from front headlock, guard, or a scramble.",
     play: (state, actor) => submissionAttack(state, actor, "guillotine")
@@ -399,7 +399,7 @@ const cards = [
     id: "kimura",
     name: "Kimura",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Bottom Guard", "Side Control", "Top Half Guard"],
     text: "Isolate the shoulder. Strong when you have control.",
     play: (state, actor) => submissionAttack(state, actor, "kimura")
@@ -408,7 +408,7 @@ const cards = [
     id: "arm-triangle",
     name: "Arm Triangle",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Mount", "Side Control"],
     text: "Pressure choke from top control.",
     play: (state, actor) => submissionAttack(state, actor, "arm triangle")
@@ -417,7 +417,7 @@ const cards = [
     id: "darce",
     name: "D'Arce Choke",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Front Headlock", "Top Half Guard", "Side Control"],
     text: "Thread the arm through the neck from front headlock pressure.",
     play: (state, actor) => submissionAttack(state, actor, "D'Arce choke")
@@ -426,7 +426,7 @@ const cards = [
     id: "anaconda",
     name: "Anaconda Choke",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Front Headlock"],
     text: "Roll through from front headlock and squeeze.",
     play: (state, actor) => submissionAttack(state, actor, "anaconda choke")
@@ -435,7 +435,7 @@ const cards = [
     id: "straight-ankle-lock",
     name: "Straight Ankle Lock",
     type: "submission",
-    cost: 3,
+    cost: 1,
     requires: ["Ashi Garami"],
     text: "Finish from Ashi Garami by trapping the foot under your armpit.",
     play: (state, actor) => submissionAttack(state, actor, "straight ankle lock")
@@ -444,7 +444,7 @@ const cards = [
     id: "heel-hook",
     name: "Heel Hook",
     type: "submission",
-    cost: 4,
+    cost: 1,
     requires: ["Ashi Garami"],
     text: "High-risk finish from leg entanglement. Expensive, but dangerous when opponent is tired.",
     play: (state, actor) => submissionAttack(state, actor, "heel hook")
@@ -573,7 +573,7 @@ const cards = [
     id: "omoplata",
     name: "Omoplata",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Bottom Guard"],
     text: "Trap the shoulder from guard. Strong when opponents post or drive forward.",
     play: (state, actor) => submissionAttack(state, actor, "omoplata")
@@ -665,7 +665,7 @@ const cards = [
     id: "americana",
     name: "Americana",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Mount", "Side Control"],
     text: "Isolate the shoulder from top control. Common pressure-passer finish.",
     play: (state, actor) => submissionAttack(state, actor, "americana")
@@ -686,7 +686,7 @@ const cards = [
     id: "bow-and-arrow",
     name: "Bow And Arrow Choke",
     type: "submission",
-    cost: 3,
+    cost: 1,
     requires: ["Back Control"],
     text: "Gi choke from back control. A strong Back Hunter finish.",
     play: (state, actor) => submissionAttack(state, actor, "bow and arrow choke")
@@ -695,7 +695,7 @@ const cards = [
     id: "clock-choke",
     name: "Clock Choke",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Back Control", "Front Headlock", "Turtle"],
     text: "Circle around a broken posture or top turtle and attack the neck.",
     play: (state, actor) => submissionAttack(state, actor, "clock choke")
@@ -737,7 +737,7 @@ const cards = [
     id: "toe-hold",
     name: "Toe Hold",
     type: "submission",
-    cost: 3,
+    cost: 1,
     requires: ["Ashi Garami"],
     text: "Rotational foot lock from leg entanglement.",
     play: (state, actor) => submissionAttack(state, actor, "toe hold")
@@ -746,7 +746,7 @@ const cards = [
     id: "kneebar",
     name: "Kneebar",
     type: "submission",
-    cost: 3,
+    cost: 2,
     requires: ["Ashi Garami", "Top Half Guard"],
     text: "Straight-line leg attack. Strong when the knee line is trapped.",
     play: (state, actor) => submissionAttack(state, actor, "kneebar")
