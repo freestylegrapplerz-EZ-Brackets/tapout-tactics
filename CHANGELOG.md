@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-21
+
+### Full Sandbox Code Sync
+
+- Replaced the original 7-file prototype with the full expanded codebase (18 files, +5,226 lines).
+- New JS files: `techniques.js`, `venues.js`, `playableStates.js`, `ui.shared.js`, `ui.match.js`, `ui.venues.js`, `ui.review.js`, `ui.skills.js`, `ui.poseLibrary.js`, `ui.cards.js`.
+- Major updates to: `index.html` (6-screen tabs), `styles.css` (rarity card system, venue themes), `cards.js` (76 cards), `skills.js` (full per-style trees), `gameState.js` (per-style XP, venues), `matchRules.js` (leg lock chains, sprawl to front headlock), `poses.js` (archetype builds, sprite fallbacks), `game.js`.
+- Added `ART_PROGRESS.md` — progress log for the BJJ Art Library (108 pose PNGs + 108 card-art PNGs generated and complete on local machine, pending upload).
+
+---
+
 ## 2026-06-20
 
 ### Sandbox Design Documents Added
