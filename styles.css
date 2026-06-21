@@ -1117,6 +1117,29 @@ h2 {
   transform: translateX(-50%);
   width: max-content;
   z-index: 4;
+  transition: background 300ms ease, border-color 300ms ease;
+}
+
+/* Chain hint makes the banner stand out */
+.action-banner:has-text,
+.mat-canvas .action-banner[data-chain="true"] {
+  background: rgba(83, 37, 135, 0.88);
+  border-color: var(--purple);
+}
+
+/* Hot submission glow */
+.card.card-hot-submission {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 2px var(--danger),
+    0 0 22px rgba(240, 106, 95, 0.42),
+    0 18px 34px rgba(0, 0, 0, 0.34);
+  animation: hotSubmissionPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hotSubmissionPulse {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 0 2px var(--danger), 0 0 18px rgba(240,106,95,0.35), 0 18px 34px rgba(0,0,0,0.34); }
+  50%       { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 0 2px var(--danger), 0 0 36px rgba(240,106,95,0.6),  0 18px 34px rgba(0,0,0,0.34); }
 }
 
 .mat-scene {

@@ -547,7 +547,9 @@ function renderHand() {
     const effectiveCost = effectiveCardCost(card, "player");
     const tutorialCardId = typeof getTutorialCardId === "function" ? getTutorialCardId() : null;
     const isTutorial = typeof isTutorialActive === "function" && isTutorialActive();
-    button.className = `card rarity-${rarity}${isTutorial && card.id === tutorialCardId ? " tutorial-highlight" : ""}${isTutorial && card.id !== tutorialCardId ? " tutorial-dimmed" : ""}`;
+    const goodSubmissionTiming = card.type === "submission" &&
+      (state.control >= 2 || state.opponent.stamina <= 4);
+    button.className = `card rarity-${rarity}${isTutorial && card.id === tutorialCardId ? " tutorial-highlight" : ""}${isTutorial && card.id !== tutorialCardId ? " tutorial-dimmed" : ""}${goodSubmissionTiming ? " card-hot-submission" : ""}`;
     button.type = "button";
     button.dataset.type = card.type;
     button.dataset.rarity = rarity;

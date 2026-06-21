@@ -76,6 +76,16 @@ function playTurn(playerCardId) {
     state.turn += 1;
     state.lastPlayerCardId = playerCard.id;
     recoverStandingStamina();
+    // Store chain hint for next turn's action banner
+    const outgoing = Object.keys(chainRules).filter((key) => key.startsWith(`${playerCard.id}>`));
+    if (outgoing.length) {
+      state.chainHint = outgoing.map((key) => {
+        const nextId = key.split(">")[1];
+        return cards.find((c) => c.id === nextId)?.name || nextId;
+      });
+    } else {
+      state.chainHint = null;
+    }
     if (state.turn > MAX_TURNS) endByPoints();
   }
 
@@ -198,7 +208,9 @@ function applyCounterPositionBonus(counterCard, actor, attackCard) {
 
 function beats(counterCard, attackCard) {
   if (counterCard.id === "sprawl") return attackCard.type === "takedown";
-  if (counterCard.id === "frame") return ["pass", "pressure"].includes(attackCard.type);
+  // Frame blocks PRESSURE (stationary grinding) but NOT active passes.
+  // A committed pass with momentum beats a frame — this is BJJ-accurate.
+  if (counterCard.id === "frame") return attackCard.type === "pressure";
   if (counterCard.id === "protect-neck") return ["submission", "pressure"].includes(attackCard.type);
   return false;
 }

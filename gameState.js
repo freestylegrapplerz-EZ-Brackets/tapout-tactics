@@ -267,6 +267,7 @@ function newMatch(forcedOpponent = null) {
     gotPerfectAdrenaline: false,
     tutorialMode: false,
     tutorialForceResult: null,
+    chainHint: null,
     player: { points: 0, stamina: getMaxStamina("player") },
     opponent: { points: 0, stamina: MAX_STAMINA },
     hand: [],
@@ -547,7 +548,9 @@ function buildCoachNotes(review) {
 }
 
 function matchReviewGrade(review) {
-  let score = review.result?.title === "Victory" ? 40 : review.result?.title === "Draw" ? 24 : 12;
+  // Victory alone guarantees at least a C (≥58).
+  // You need chains + dominant positions to reach B and A.
+  let score = review.result?.title === "Victory" ? 56 : review.result?.title === "Draw" ? 32 : 16;
   score += Math.min(24, review.turns.filter((turn) => turn.chain).length * 12);
   score += Math.min(18, review.turns.filter((turn) => ["Front Headlock", "Side Control", "Mount", "Back Control", "Ashi Garami"].includes(turn.toPosition)).length * 6);
   score += review.turns.some((turn) => turn.finishAttempts.some((attempt) => attempt.actor === "player" && attempt.succeeded)) ? 18 : 0;
