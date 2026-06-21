@@ -444,7 +444,9 @@ function renderHand() {
     const button = document.createElement("button");
     const rarity = cardRarity(card);
     const effectiveCost = effectiveCardCost(card, "player");
-    button.className = `card rarity-${rarity}`;
+    const tutorialCardId = typeof getTutorialCardId === "function" ? getTutorialCardId() : null;
+    const isTutorial = typeof isTutorialActive === "function" && isTutorialActive();
+    button.className = `card rarity-${rarity}${isTutorial && card.id === tutorialCardId ? " tutorial-highlight" : ""}${isTutorial && card.id !== tutorialCardId ? " tutorial-dimmed" : ""}`;
     button.type = "button";
     button.dataset.type = card.type;
     button.dataset.rarity = rarity;

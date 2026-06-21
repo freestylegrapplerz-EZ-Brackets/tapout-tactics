@@ -3788,6 +3788,262 @@ h2 {
   }
 }
 
+/* ── Tutorial system ─────────────────────────────────────────────────────── */
+
+.pre-match-tutorial-cta {
+  background: linear-gradient(135deg, rgba(103, 211, 145, 0.1), rgba(103, 211, 145, 0.04));
+  border: 1px solid rgba(103, 211, 145, 0.3);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem;
+  text-align: center;
+}
+
+.pre-match-tutorial-cta small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.tutorial-cta-btn {
+  background: linear-gradient(135deg, rgba(103, 211, 145, 0.22), rgba(103, 211, 145, 0.08));
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 900;
+  padding: 0.7rem 1rem;
+  width: 100%;
+}
+
+.tutorial-cta-btn:hover {
+  background: linear-gradient(135deg, rgba(103, 211, 145, 0.32), rgba(103, 211, 145, 0.14));
+}
+
+/* Tutorial coach overlay — sits above the card hand */
+.tutorial-coach-overlay {
+  background: rgba(8, 17, 12, 0.88);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  bottom: calc(100% + 0.6rem);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(103, 211, 145, 0.12);
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 8;
+}
+
+.tutorial-coach-overlay[hidden] {
+  display: none;
+}
+
+.tutorial-coach-panel {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+}
+
+.tutorial-coach-header {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.65rem;
+}
+
+.tutorial-coach-icon {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.tutorial-step-label {
+  margin-bottom: 0.1rem;
+}
+
+.tutorial-coach-header strong {
+  color: var(--accent);
+  display: block;
+  font-size: 0.95rem;
+}
+
+.tutorial-coach-tip {
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tutorial-coach-arrow {
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Tutorial after-turn popup */
+.tutorial-after-overlay {
+  align-items: center;
+  background: rgba(4, 8, 6, 0.8);
+  display: grid;
+  inset: 0;
+  place-items: center;
+  position: fixed;
+  z-index: 11;
+}
+
+.tutorial-after-overlay[hidden] {
+  display: none;
+}
+
+.tutorial-after-panel {
+  background: linear-gradient(180deg, #1e3028, #0f1e16);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  display: grid;
+  gap: 0.75rem;
+  max-width: 480px;
+  padding: 1.25rem 1.5rem;
+  width: min(100% - 2rem, 480px);
+}
+
+.tutorial-after-header {
+  align-items: center;
+  display: flex;
+  gap: 0.65rem;
+}
+
+.tutorial-after-header strong {
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.tutorial-continue-btn {
+  background: var(--accent);
+  border-radius: 8px;
+  color: #08110c;
+  font-size: 1rem;
+  font-weight: 900;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Tutorial grade overlay */
+.tutorial-grade-overlay {
+  align-items: center;
+  background: rgba(4, 8, 6, 0.88);
+  display: grid;
+  inset: 0;
+  place-items: center;
+  position: fixed;
+  z-index: 12;
+}
+
+.tutorial-grade-overlay[hidden] {
+  display: none;
+}
+
+.tutorial-grade-panel {
+  background: linear-gradient(180deg, #1e3028, #0f1e16);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  box-shadow: 0 0 80px rgba(243, 199, 107, 0.18), 0 32px 80px rgba(0, 0, 0, 0.5);
+  display: grid;
+  gap: 1rem;
+  max-height: calc(100vh - 2rem);
+  max-width: 560px;
+  overflow: auto;
+  padding: 1.5rem;
+  width: min(100% - 2rem, 560px);
+}
+
+.tutorial-grade-panel h2 {
+  font-size: 2rem;
+  margin: 0.2rem 0;
+}
+
+.tutorial-grade-a {
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(243, 199, 107, 0.6);
+}
+
+.tutorial-grade-intro {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tutorial-grade-breakdown {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.tutorial-grade-item {
+  background: rgba(12, 20, 15, 0.6);
+  border: 1px solid rgba(244, 247, 242, 0.1);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.75rem;
+}
+
+.tutorial-grade-item-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tutorial-grade-item-header strong {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.tutorial-grade-letter {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: 950;
+}
+
+.tutorial-grade-item p {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.tutorial-grade-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* Card highlight/dim in tutorial mode */
+.card.tutorial-highlight {
+  animation: tutorialPulse 1.4s ease-in-out infinite;
+  box-shadow:
+    0 0 0 3px var(--accent),
+    0 0 32px rgba(103, 211, 145, 0.5),
+    inset 0 0 0 1px rgba(103, 211, 145, 0.22);
+  position: relative;
+  z-index: 3;
+}
+
+@keyframes tutorialPulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--accent), 0 0 20px rgba(103, 211, 145, 0.4); }
+  50%       { box-shadow: 0 0 0 3px var(--accent), 0 0 40px rgba(103, 211, 145, 0.7); }
+}
+
+.card.tutorial-dimmed {
+  filter: brightness(0.4) saturate(0.3);
+  pointer-events: none;
+}
+
+/* Make the hand-panel position: relative for the coach overlay to anchor to */
+.hand-panel {
+  position: relative;
+}
+
 /* ── Rotate prompt — shown in portrait on small phones ───────────────────── */
 
 .rotate-prompt {

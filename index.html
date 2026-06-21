@@ -242,6 +242,44 @@
   </div>
 </div>
 
+<div id="tutorialCoachOverlay" class="tutorial-coach-overlay" hidden>
+  <div class="tutorial-coach-panel">
+    <div class="tutorial-coach-header">
+      <span class="tutorial-coach-icon">🥋</span>
+      <div>
+        <p class="tutorial-step-label eyebrow" id="tutorialStepLabel">Step 1 of 6</p>
+        <strong id="tutorialStepTitle">Win the Hand Fight</strong>
+      </div>
+    </div>
+    <p id="tutorialCoachTip" class="tutorial-coach-tip"></p>
+    <div class="tutorial-coach-arrow">▼ Tap the glowing card</div>
+  </div>
+</div>
+
+<div id="tutorialAfterOverlay" class="tutorial-after-overlay" hidden>
+  <div class="tutorial-after-panel">
+    <div class="tutorial-after-header">
+      <span class="tutorial-coach-icon">🥋</span>
+      <strong id="tutorialAfterTitle">Nice work.</strong>
+    </div>
+    <p id="tutorialAfterTip" class="tutorial-coach-tip"></p>
+    <button id="tutorialContinueButton" class="tutorial-continue-btn" type="button">Continue →</button>
+  </div>
+</div>
+
+<div id="tutorialGradeOverlay" class="tutorial-grade-overlay" hidden>
+  <div class="tutorial-grade-panel">
+    <p class="eyebrow">Coach Review — Demo Complete</p>
+    <h2>Grade: <span class="tutorial-grade-a">A</span></h2>
+    <p class="tutorial-grade-intro">You just ran a complete BJJ sequence from start to finish. Here's what you did right:</p>
+    <div id="tutorialGradeBreakdown" class="tutorial-grade-breakdown"></div>
+    <div class="tutorial-grade-actions">
+      <button id="tutorialPlayRealButton" class="fight-button" type="button">Play for Real</button>
+      <button id="tutorialReplayButton" class="secondary-button" type="button">Replay Demo</button>
+    </div>
+  </div>
+</div>
+
 <div id="rotatePrompt" class="rotate-prompt">
   <div class="rotate-prompt-content">
     <div class="rotate-icon">📱</div>
@@ -314,6 +352,13 @@
       <div id="preMatchVenueRow" class="pre-match-venue-row"></div>
     </div>
 
+    <div class="pre-match-tutorial-cta">
+      <button id="startTutorialButton" class="tutorial-cta-btn" type="button">
+        🥋 New to BJJ? Start with the Guided Demo
+      </button>
+      <small>A 6-turn coached match — no experience needed.</small>
+    </div>
+
     <details class="pre-match-howto">
       <summary>How to Play</summary>
       <ul>
@@ -378,6 +423,7 @@
   <script src="progression.js"></script>
   <script src="venues.js"></script>
   <script src="bjjPositions.js"></script>
+  <script src="tutorial.js"></script>
   <script src="sound.js"></script>
   <script src="techniques.js"></script>
   <script src="skills.js"></script>
