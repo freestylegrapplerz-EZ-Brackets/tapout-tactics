@@ -624,21 +624,33 @@ function renderHand() {
       </div>
     `;
     button.addEventListener("click", () => {
-      if (isPhoneLandscape() && !button.dataset.detailShown) {
-        button.dataset.detailShown = "1";
-        showCardDetail(card.id);
-        setTimeout(() => delete button.dataset.detailShown, 300);
-      } else {
-        handleCardClick(card.id);
+      if (isTutorialActive()) {
+        const tutorialId = getTutorialCardId();
+        if (tutorialId && card.id !== tutorialId) {
+          // Wrong card in tutorial — pulse the correct one
+          document.querySelectorAll(".card.tutorial-highlight").forEach((c) => {
+            c.classList.remove("tutorial-highlight");
+            void c.offsetWidth;
+            c.classList.add("tutorial-highlight");
+          });
+          return;
+        }
       }
+      handleCardClick(card.id);
     });
 
-    // Long press (500ms) on any device shows the detail panel
+    // Long press (500ms) shows the detail inspector on any device
     let longPressTimer = null;
+    let didLongPress = false;
     button.addEventListener("pointerdown", () => {
-      longPressTimer = setTimeout(() => { showCardDetail(card.id); }, 500);
+      didLongPress = false;
+      longPressTimer = setTimeout(() => {
+        didLongPress = true;
+        showCardDetail(card.id);
+      }, 500);
     });
     button.addEventListener("pointerup", () => clearTimeout(longPressTimer));
+    button.addEventListener("pointermove", () => clearTimeout(longPressTimer));
     button.addEventListener("pointerleave", () => clearTimeout(longPressTimer));
     els.cardHand.appendChild(button);
   });

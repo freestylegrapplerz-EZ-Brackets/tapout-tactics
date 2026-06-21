@@ -500,15 +500,8 @@ function showTutorialGrade() {
 // Intercept card click in tutorial mode
 function handleCardClick(cardId) {
   if (isTutorialActive()) {
-    const tutorialId = getTutorialCardId();
-    if (tutorialId && cardId !== tutorialId) {
-      // Wrong card — pulse the correct one
-      const cards = document.querySelectorAll(".card.tutorial-highlight");
-      cards.forEach((c) => { c.classList.remove("tutorial-highlight"); void c.offsetWidth; c.classList.add("tutorial-highlight"); });
-      return;
-    }
-    hideTutorialCoach();
     const currentStep = getCurrentTutorialStep();
+    hideTutorialCoach();
     if (cardId === "adrenaline-burst") {
       showTimingWindow((result) => {
         state.pendingAdrenalineResult = result;
@@ -517,7 +510,6 @@ function handleCardClick(cardId) {
       });
     } else {
       playTurn(cardId);
-      // Show after-turn tip after animation
       setTimeout(() => {
         if (state.finished && isTutorialActive()) {
           showTutorialGrade();
