@@ -11,10 +11,31 @@ const BELTS = [
   { name: "Coral Belt", short: "coral", color: "#ed244f", xp: 1500 }
 ];
 const XP_STORAGE_KEY = "tapoutTacticsXp";
-const SKILL_STORAGE_KEY = "tapoutTacticsSkills";
+const STYLE_PROGRESS_STORAGE_KEY = "tapoutTacticsStyleProgress";
 const MATCH_REVIEW_STORAGE_KEY = "tapoutTacticsMatchReviews";
+const VENUE_STORAGE_KEY = "tapoutTacticsVenue";
 const XP_PER_LEVEL = 50;
 const ANIMATION_MS = 4800;
+const MIN_HAND_TECHNIQUES = 3;
+
+const positionSafetyCardIds = {
+  "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull"],
+  "Top Guard": ["wrist-control", "pressure", "knee-slice", "torreando", "x-pass"],
+  "Bottom Guard": ["frame", "wrist-control", "butterfly-hooks", "armbar", "guillotine"],
+  "Top Half Guard": ["pressure", "knee-slice", "leg-drag", "backstep-pass", "shin-pin-pass"],
+  "Bottom Half Guard": ["frame", "hip-escape", "butterfly-hooks", "reguard"],
+  "Side Control": ["pressure", "mount", "americana", "knee-on-belly", "north-south-control"],
+  "Under Side Control": ["frame", "hip-escape", "reguard", "technical-bridge"],
+  "Mount": ["pressure", "armbar", "americana", "arm-triangle"],
+  "Mounted": ["frame", "hip-escape", "bridge", "elbow-escape", "knee-elbow-escape"],
+  "Back Control": ["seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow"],
+  "Back Taken": ["hand-fight", "protect-neck", "frame"],
+  "Front Headlock": ["headlock-pressure", "slide-by", "guillotine", "front-headlock-spin"],
+  "Caught Front Headlock": ["hand-fight", "protect-neck", "frame"],
+  "Turtle": ["hand-fight", "protect-neck", "frame"],
+  "Ashi Garami": ["ashi-control", "straight-ankle-lock", "toe-hold", "kneebar"],
+  "Caught Ashi Garami": ["leg-pummel-escape", "hip-escape", "hand-fight", "frame"]
+};
 
 
 const opponents = [
@@ -41,35 +62,35 @@ const playerStyles = [
     name: "Wrestler",
     summary: "Shots, sprawls, snaps",
     cardTypes: ["setup", "takedown", "counter", "pressure"],
-    keyCards: ["double-leg", "single-leg", "snapdown", "sprawl", "duck-under", "ankle-pick", "collar-tie", "guillotine", "hand-fight", "rest"]
+    keyCards: ["double-leg", "high-crotch", "single-leg", "snapdown", "front-headlock-spin", "mat-return", "cow-catcher", "sprawl", "duck-under", "ankle-pick", "collar-tie", "guillotine", "hand-fight", "rest"]
   },
   {
     id: "guard-player",
     name: "Guard Player",
     summary: "Sweeps and traps",
     cardTypes: ["guard", "submission", "escape", "setup"],
-    keyCards: ["guard-pull", "flower-sweep", "closed-guard-sweep", "hip-bump-sweep", "scissor-sweep", "butterfly-sweep", "triangle", "armbar", "kimura", "reguard", "rest"]
+    keyCards: ["guard-pull", "flower-sweep", "closed-guard-sweep", "tripod-sweep", "hip-bump-sweep", "pendulum-sweep", "scissor-sweep", "butterfly-hooks", "butterfly-sweep", "triangle", "armbar", "omoplata", "kimura", "reguard", "rest"]
   },
   {
     id: "pressure-passer",
     name: "Pressure Passer",
     summary: "Pass, mount, smother",
     cardTypes: ["pass", "pressure", "submission", "setup"],
-    keyCards: ["knee-slice", "body-lock-pass", "torreando", "leg-drag", "backstep-pass", "pressure", "mount", "arm-triangle", "kimura", "wrist-control", "rest"]
+    keyCards: ["knee-slice", "x-pass", "body-lock-pass", "smash-pass", "torreando", "leg-drag", "backstep-pass", "knee-on-belly", "north-south-control", "pressure", "mount", "americana", "arm-triangle", "kimura", "wrist-control", "rest"]
   },
   {
     id: "back-hunter",
     name: "Back Hunter",
     summary: "Angles and chokes",
     cardTypes: ["setup", "takedown", "guard", "submission", "escape"],
-    keyCards: ["arm-drag", "duck-under", "slide-by", "snapdown", "rear-naked-choke", "guillotine", "hand-fight", "wrist-control", "collar-tie", "rest"]
+    keyCards: ["arm-drag", "duck-under", "slide-by", "front-headlock-spin", "snapdown", "seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow", "clock-choke", "guillotine", "hand-fight", "wrist-control", "collar-tie", "rest"]
   },
   {
     id: "leg-locker",
     name: "Leg Locker",
     summary: "Risky leg attacks",
     cardTypes: ["guard", "submission", "escape", "setup"],
-    keyCards: ["guard-pull", "single-leg", "butterfly-sweep", "old-school-sweep", "straight-ankle-lock", "heel-hook", "reguard", "hand-fight", "wrist-control", "rest"]
+    keyCards: ["guard-pull", "single-leg", "butterfly-sweep", "old-school-sweep", "single-leg-x-entry", "ashi-garami-entry", "ashi-control", "straight-ankle-lock", "heel-hook", "toe-hold", "kneebar", "leg-pummel-escape", "reguard", "hand-fight", "wrist-control", "rest"]
   }
 ];
 
@@ -103,8 +124,10 @@ const mindGames = [
 
 let selectedStyleId = "wrestler";
 let selectedMindGameId = "composed-pressure";
+let selectedVenueId = loadSelectedVenueId();
 let playerXp = loadPlayerXp();
-let unlockedSkills = loadUnlockedSkills();
+let styleProgress = loadStyleProgress();
+let activeScreen = "match";
 let previewPose = null;
 
 
@@ -117,6 +140,7 @@ function newMatch() {
   state = {
     ai: opponent,
     style: playerStyles.find((style) => style.id === selectedStyleId),
+    venue: selectedVenue(),
     mindGame: mindGames.find((mindGame) => mindGame.id === selectedMindGameId) || mindGames[0],
     mindEffects: {
       submissionBonus: 0,
@@ -185,6 +209,7 @@ function createMatchReview() {
     playerStyle: state.style.name,
     mindGame: state.mindGame.name,
     startingXp: playerXp,
+    startingStyleXp: styleXpFor(selectedStyleId),
     turns: [],
     finalized: false,
     result: null,
@@ -245,8 +270,9 @@ function submissionChanceDetails(actor, submissionName) {
   const staminaBonus = Math.max(0, 5 - defender.stamina);
   const chainBonus = actor === "player" ? state.lastChain?.submission || 0 : 0;
   const skillBonus = actor === "player" ? submissionSkillBonus(submissionName) : 0;
+  const styleBonus = actor === "player" ? submissionStyleBonus(submissionName) : 0;
   const mindBonus = actor === "player" ? state.mindEffects?.submissionBonus || 0 : 0;
-  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + mindBonus;
+  const chance = 35 + controlBonus * 12 + staminaBonus * 8 + chainBonus + skillBonus + styleBonus + mindBonus;
 
   return {
     chance,
@@ -254,8 +280,22 @@ function submissionChanceDetails(actor, submissionName) {
     staminaBonus,
     chainBonus,
     skillBonus,
+    styleBonus,
     mindBonus
   };
+}
+
+function submissionStyleBonus(submissionName) {
+  const styleId = state.style?.id;
+  const name = submissionName.toLowerCase();
+  const position = state.position;
+
+  if (styleId === "wrestler" && name === "guillotine" && position === "Front Headlock") return 8;
+  if (styleId === "guard-player" && ["armbar", "triangle", "kimura"].includes(name) && position === "Bottom Guard") return 8;
+  if (styleId === "pressure-passer" && ["arm triangle", "kimura"].includes(name) && ["Mount", "Side Control", "Top Half Guard"].includes(position)) return 8;
+  if (styleId === "back-hunter" && name === "rear naked choke") return 10;
+  if (styleId === "leg-locker" && ["straight ankle lock", "heel hook"].includes(name) && position === "Ashi Garami") return 12;
+  return 0;
 }
 
 function recordFinishAttempt(actor, submissionName, details, roll, succeeded) {
@@ -272,6 +312,7 @@ function recordFinishAttempt(actor, submissionName, details, roll, succeeded) {
       fatigue: details.staminaBonus,
       chain: details.chainBonus,
       skill: details.skillBonus,
+      style: details.styleBonus,
       mindGame: details.mindBonus
     }
   });
@@ -288,7 +329,8 @@ function finalizeMatchReview() {
     xp: state.result.xp,
     finalPosition: state.position,
     finalPath: [...(state.positionPath || [])],
-    totalXp: playerXp
+    totalXp: playerXp,
+    totalStyleXp: styleXpFor(selectedStyleId)
   };
   state.matchReview.notes = buildCoachNotes(state.matchReview);
   state.matchReview.grade = matchReviewGrade(state.matchReview);
@@ -311,7 +353,7 @@ function buildCoachNotes(review) {
   const playerFinishes = review.turns.flatMap((turn) => turn.finishAttempts.filter((attempt) => attempt.actor === "player"));
   const missedLowOdds = playerFinishes.filter((attempt) => !attempt.succeeded && attempt.chance < 55);
   const chainTurns = review.turns.filter((turn) => turn.chain);
-  const dominantTurns = review.turns.filter((turn) => ["Front Headlock", "Side Control", "Mount", "Back Control"].includes(turn.toPosition));
+  const dominantTurns = review.turns.filter((turn) => ["Front Headlock", "Side Control", "Mount", "Back Control", "Ashi Garami"].includes(turn.toPosition));
   const recoveryTurns = review.turns.filter((turn) => turn.playerCard.type === "recovery");
   const escapeTurns = review.turns.filter((turn) => turn.playerCard.type === "escape");
   const notes = [];
@@ -348,7 +390,7 @@ function buildCoachNotes(review) {
   if (dominantTurns.length) {
     notes.push({
       title: "Position Ladder",
-      text: `You reached a strong attacking position ${dominantTurns.length} time${dominantTurns.length === 1 ? "" : "s"}. The next design goal is making those moments feel dangerous.`
+      text: `You reached a strong attacking position ${dominantTurns.length} time${dominantTurns.length === 1 ? "" : "s"}. The next design goal is turning those moments into real finish threats.`
     });
   } else {
     notes.push({
@@ -370,7 +412,7 @@ function buildCoachNotes(review) {
 function matchReviewGrade(review) {
   let score = review.result?.title === "Victory" ? 40 : review.result?.title === "Draw" ? 24 : 12;
   score += Math.min(24, review.turns.filter((turn) => turn.chain).length * 12);
-  score += Math.min(18, review.turns.filter((turn) => ["Front Headlock", "Side Control", "Mount", "Back Control"].includes(turn.toPosition)).length * 6);
+  score += Math.min(18, review.turns.filter((turn) => ["Front Headlock", "Side Control", "Mount", "Back Control", "Ashi Garami"].includes(turn.toPosition)).length * 6);
   score += review.turns.some((turn) => turn.finishAttempts.some((attempt) => attempt.actor === "player" && attempt.succeeded)) ? 18 : 0;
 
   if (score >= 88) return "A";
@@ -391,7 +433,7 @@ function matchReviewVerdict(review) {
 function drawHand() {
   const playable = cards.filter((card) => canPlay(card, "player") && cardUnlocked(card));
   const rest = cards.find((card) => card.id === "rest");
-  const playableTechniques = playable.filter((card) => card.id !== "rest");
+  const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest"));
   const affordableTechniques = playableTechniques.filter((card) => state.player.stamina >= effectiveCardCost(card, "player"));
   const styledPlayable = playableTechniques.filter((card) => isStyleCard(card, state.style));
   const poolBase = styledPlayable.length >= 3 ? weightedStylePool(playableTechniques, state.style) : playableTechniques;
@@ -410,6 +452,33 @@ function drawHand() {
       state.hand.push(rest);
     }
   }
+}
+
+function backfillPositionOptions(playableTechniques) {
+  if (playableTechniques.length >= MIN_HAND_TECHNIQUES) return playableTechniques;
+
+  const selected = [...playableTechniques];
+  const selectedIds = new Set(selected.map((card) => card.id));
+  const safetyIds = positionSafetyCardIds[state.position] || [];
+  for (const cardId of safetyIds) {
+    if (selected.length >= MIN_HAND_TECHNIQUES) break;
+    if (selectedIds.has(cardId)) continue;
+    const card = cards.find((candidate) => candidate.id === cardId);
+    if (!card || card.id === "rest" || !canPlay(card, "player") || !cardUnlocked(card)) continue;
+    selected.push(card);
+    selectedIds.add(card.id);
+  }
+
+  if (selected.length >= MIN_HAND_TECHNIQUES) return selected;
+
+  for (const card of cards) {
+    if (selected.length >= MIN_HAND_TECHNIQUES) break;
+    if (card.id === "rest" || selectedIds.has(card.id) || !canPlay(card, "player") || !cardUnlocked(card)) continue;
+    selected.push(card);
+    selectedIds.add(card.id);
+  }
+
+  return selected;
 }
 
 function drawUniqueCards(pool, count) {
@@ -434,25 +503,63 @@ function isStyleCard(card, style) {
 function weightedStylePool(playable, style) {
   const keyCards = playable.filter((card) => style.keyCards.includes(card.id));
   const typeCards = playable.filter((card) => style.cardTypes.includes(card.type));
-  const extraStyleDraw = hasSkill("card-draw") ? [...keyCards, ...typeCards] : [];
+  const extraStyleDraw = hasBonus("card-draw") ? [...keyCards, ...typeCards] : [];
   return [...keyCards, ...keyCards, ...keyCards, ...typeCards, ...extraStyleDraw, ...playable];
 }
 
 function cardUnlocked(card) {
   if (baseUnlockedCards.has(card.id)) return true;
-  return skillTree.some((branch) =>
-    branch.skills.some((skill) => unlockedSkills.includes(skill.id) && skill.unlocks?.includes(card.id))
+  if (styleStarterCardsFor(selectedStyleId).has(card.id)) return true;
+  return activeSkillTree().some((branch) =>
+    branch.skills.some((skill) => skillRank(skill.id) > 0 && skill.unlocks?.includes(card.id))
   );
 }
 
 function hasSkill(skillId) {
-  return unlockedSkills.includes(skillId);
+  return skillRank(skillId) > 0;
 }
 
 function hasBonus(bonus) {
-  return skillTree.some((branch) =>
-    branch.skills.some((skill) => unlockedSkills.includes(skill.id) && skill.bonus === bonus)
+  return activeSkillTree().some((branch) =>
+    branch.skills.some((skill) => skillRank(skill.id) > 0 && skill.bonus === bonus)
   );
+}
+
+function styleStarterCardsFor(styleId = selectedStyleId) {
+  return styleStarterCards[styleId] || new Set();
+}
+
+function activeSkillTree(styleId = selectedStyleId) {
+  return skillTreesByStyle[styleId] || skillTreesByStyle.wrestler || [];
+}
+
+function findSkill(skillId, styleId = selectedStyleId) {
+  for (const branch of activeSkillTree(styleId)) {
+    const skill = branch.skills.find((node) => node.id === skillId);
+    if (skill) return skill;
+  }
+  return null;
+}
+
+function skillMaxRank(skill) {
+  return Math.max(1, Number(skill?.ranks) || 1);
+}
+
+function skillRank(skillId, styleId = selectedStyleId) {
+  const skills = styleProgressFor(styleId).skills;
+  return Math.max(0, Number(skills[skillId]) || 0);
+}
+
+function skillSpentPointsForStyle(styleId = selectedStyleId) {
+  const validSkillIds = new Set(activeSkillTree(styleId).flatMap((branch) => branch.skills.map((skill) => skill.id)));
+  return Object.entries(styleProgressFor(styleId).skills).reduce((total, [skillId, rank]) => {
+    if (!validSkillIds.has(skillId)) return total;
+    return total + Math.max(0, Number(rank) || 0);
+  }, 0);
+}
+
+function skillPrereqsMet(skill, styleId = selectedStyleId) {
+  return (skill.requires || []).every((requiredId) => skillRank(requiredId, styleId) > 0);
 }
 
 function effectiveCardCost(card, actor) {
@@ -460,6 +567,11 @@ function effectiveCardCost(card, actor) {
   let cost = card.cost;
   if (hasBonus("cost-reduction") && ["takedown", "pass", "escape"].includes(card.type)) cost -= 1;
   if (hasBonus("guard-recovery") && card.id === "reguard") cost -= 1;
+  if (state?.style?.id === "wrestler" && card.type === "takedown" && ["collar-tie", "wrist-control", "snapdown"].includes(state.lastPlayerCardId)) cost -= 1;
+  if (state?.style?.id === "pressure-passer" && card.type === "pass" && state.control > 0) cost -= 1;
+  if (state?.style?.id === "guard-player" && card.type === "guard" && state.position === "Bottom Guard") cost -= 1;
+  if (state?.style?.id === "back-hunter" && ["arm-drag", "duck-under", "slide-by"].includes(card.id) && state.control > 0) cost -= 1;
+  if (state?.style?.id === "leg-locker" && card.id === "ashi-garami-entry") cost -= 1;
   return Math.max(0, cost);
 }
 
@@ -476,7 +588,9 @@ function prepareOpponentIntent() {
 function awardMatchXp() {
   if (state.xpAwarded) return;
   playerXp += state.result.xp;
+  styleProgressFor(selectedStyleId).xp += state.result.xp;
   savePlayerXp();
+  saveStyleProgress();
   state.xpAwarded = true;
   renderProgression();
 }
@@ -513,31 +627,129 @@ function savePlayerXp() {
 }
 
 function totalSkillPointsEarned() {
-  return Math.floor(playerXp / XP_PER_LEVEL);
+  return Math.floor(styleXpFor(selectedStyleId) / XP_PER_LEVEL);
 }
 
 function availableSkillPoints() {
-  return Math.max(0, totalSkillPointsEarned() - unlockedSkills.length);
+  return Math.max(0, totalSkillPointsEarned() - skillSpentPointsForStyle(selectedStyleId));
 }
 
 function unlockSkill(skillId) {
-  if (hasSkill(skillId) || availableSkillPoints() < 1) return;
-  unlockedSkills.push(skillId);
-  saveUnlockedSkills();
+  const skill = findSkill(skillId);
+  if (!skill || availableSkillPoints() < 1 || !skillPrereqsMet(skill)) return;
+
+  const currentRank = skillRank(skillId);
+  if (currentRank >= skillMaxRank(skill)) return;
+
+  styleProgressFor(selectedStyleId).skills[skillId] = currentRank + 1;
+  saveStyleProgress();
   drawHand();
   prepareOpponentIntent();
   render();
 }
 
-function loadUnlockedSkills() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(SKILL_STORAGE_KEY) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+function selectedStyle() {
+  return playerStyles.find((style) => style.id === selectedStyleId) || playerStyles[0];
 }
 
-function saveUnlockedSkills() {
-  localStorage.setItem(SKILL_STORAGE_KEY, JSON.stringify(unlockedSkills));
+function setActiveScreen(screen) {
+  activeScreen = screen;
+  render();
+}
+
+function selectedVenue() {
+  return venues.find((venue) => venue.id === selectedVenueId) || venues[0];
+}
+
+function loadSelectedVenueId() {
+  const stored = localStorage.getItem(VENUE_STORAGE_KEY);
+  return venues.some((venue) => venue.id === stored) ? stored : venues[0].id;
+}
+
+function setVenue(venueId) {
+  if (!venues.some((venue) => venue.id === venueId)) return;
+  selectedVenueId = venueId;
+  localStorage.setItem(VENUE_STORAGE_KEY, selectedVenueId);
+  if (state) {
+    state.venue = selectedVenue();
+  }
+  render();
+}
+
+function defaultStyleProgress() {
+  return playerStyles.reduce((progress, style) => {
+    progress[style.id] = { xp: 0, skills: {} };
+    return progress;
+  }, {});
+}
+
+function styleProgressFor(styleId = selectedStyleId) {
+  if (!styleProgress[styleId]) {
+    styleProgress[styleId] = { xp: 0, skills: {} };
+  }
+  if (Array.isArray(styleProgress[styleId].skills)) {
+    styleProgress[styleId].skills = styleProgress[styleId].skills.reduce((skills, skillId) => {
+      skills[skillId] = Math.max(1, Number(skills[skillId]) || 1);
+      return skills;
+    }, {});
+  } else if (!styleProgress[styleId].skills || typeof styleProgress[styleId].skills !== "object") {
+    styleProgress[styleId].skills = {};
+  }
+  if (!Number.isFinite(Number(styleProgress[styleId].xp))) {
+    styleProgress[styleId].xp = 0;
+  }
+  return styleProgress[styleId];
+}
+
+function styleXpFor(styleId = selectedStyleId) {
+  return Number(styleProgressFor(styleId).xp) || 0;
+}
+
+function activeUnlockedSkills() {
+  const validSkillIds = new Set(activeSkillTree(selectedStyleId).flatMap((branch) => branch.skills.map((skill) => skill.id)));
+  return Object.keys(styleProgressFor(selectedStyleId).skills).filter((skillId) => validSkillIds.has(skillId) && skillRank(skillId) > 0);
+}
+
+function loadStyleProgress() {
+  const progress = defaultStyleProgress();
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STYLE_PROGRESS_STORAGE_KEY) || "{}");
+    playerStyles.forEach((style) => {
+      const stored = parsed?.[style.id] || {};
+      const storedSkills = Array.isArray(stored.skills)
+        ? stored.skills.reduce((skills, skillId) => {
+            skills[skillId] = 1;
+            return skills;
+          }, {})
+        : stored.skills && typeof stored.skills === "object"
+          ? stored.skills
+          : {};
+      progress[style.id] = {
+        xp: Number.isFinite(Number(stored.xp)) ? Number(stored.xp) : 0,
+        skills: Object.entries(storedSkills).reduce((skills, [skillId, rank]) => {
+          const parsedRank = Math.max(0, Number(rank) || 0);
+          if (parsedRank > 0) skills[skillId] = parsedRank;
+          return skills;
+        }, {})
+      };
+    });
+  } catch {
+    return progress;
+  }
+  return progress;
+}
+
+function saveStyleProgress() {
+  localStorage.setItem(STYLE_PROGRESS_STORAGE_KEY, JSON.stringify(styleProgress));
+}
+
+function resetSelectedStyleProgress() {
+  const styleName = selectedStyle().name;
+  const confirmed = window.confirm(`Reset ${styleName} style XP and skill unlocks? Your belt rank stays untouched.`);
+  if (!confirmed) return;
+  styleProgress[selectedStyleId] = { xp: 0, skills: {} };
+  saveStyleProgress();
+  drawHand();
+  prepareOpponentIntent();
+  render();
 }

@@ -16,8 +16,10 @@ const chainRules = {
   "guard-pull>triangle": { label: "Guard Pull to Triangle", submission: 14 },
   "scissor-sweep>knee-slice": { label: "Sweep to Pass Pressure", control: 1 },
   "single-leg>body-lock-pass": { label: "Single Leg to Body Lock Pass", control: 1 },
-  "butterfly-sweep>straight-ankle-lock": { label: "Butterfly Entry to Ankle Lock", submission: 14 },
-  "old-school-sweep>heel-hook": { label: "Half Guard to Heel Hook", submission: 16 }
+  "butterfly-sweep>ashi-garami-entry": { label: "Butterfly Entry to Ashi Garami", control: 1 },
+  "old-school-sweep>ashi-garami-entry": { label: "Half Guard Entry to Ashi Garami", control: 1 },
+  "ashi-garami-entry>straight-ankle-lock": { label: "Ashi Garami to Ankle Lock", submission: 22, control: 1 },
+  "ashi-garami-entry>heel-hook": { label: "Ashi Garami to Heel Hook", submission: 18, control: 1 }
 };
 
 function getChainBonus(previousId, currentId) {
@@ -97,6 +99,7 @@ function resolveCards(playerCard, opponentCard) {
   if (playerCounters) {
     addLog(state, `Your ${playerCard.name} shuts down ${opponentCard.name}.`);
     playerCard.play(state, "player");
+    applyCounterPositionBonus(playerCard, "player", opponentCard);
     applyCounterMindGameBonus();
     return;
   }
@@ -104,6 +107,7 @@ function resolveCards(playerCard, opponentCard) {
   if (opponentCounters) {
     addLog(state, `${state.ai.name}'s ${opponentCard.name} shuts down your ${playerCard.name}.`);
     opponentCard.play(state, "opponent");
+    applyCounterPositionBonus(opponentCard, "opponent", playerCard);
     return;
   }
 
@@ -116,14 +120,22 @@ function applyCounterMindGameBonus() {
   addControl(state, "player", state.mindEffects.counterControlBonus, "Your bait works and you win the next grip exchange.");
 }
 
+function applyCounterPositionBonus(counterCard, actor, attackCard) {
+  if (counterCard.id === "sprawl" && attackCard.type === "takedown") {
+    setRelativePosition(state, actor, "Front Headlock", actionLine(actor, "sprawl behind the shot and claim front headlock", "sprawls behind the shot and claims front headlock"));
+  }
+}
+
 function beats(counterCard, attackCard) {
   if (counterCard.id === "sprawl") return attackCard.type === "takedown";
   if (counterCard.id === "frame") return ["pass", "pressure"].includes(attackCard.type);
+  if (counterCard.id === "protect-neck") return ["submission", "pressure"].includes(attackCard.type);
   return false;
 }
 
 function canPlay(card, actor) {
   const position = actor === "player" ? state.position : mirrorPosition(state.position);
+  if (typeof isPositionHidden === "function" && isPositionHidden(position)) return false;
   return card.requires.includes(position);
 }
 
@@ -140,7 +152,10 @@ function mirrorPosition(position) {
     "Back Control": "Back Taken",
     "Back Taken": "Back Control",
     "Front Headlock": "Caught Front Headlock",
-    "Caught Front Headlock": "Front Headlock"
+    "Caught Front Headlock": "Front Headlock",
+    "Ashi Garami": "Caught Ashi Garami",
+    "Caught Ashi Garami": "Ashi Garami",
+    "Turtle": "Turtle"
   };
   return map[position] || position;
 }
@@ -171,7 +186,8 @@ function sweepTo(state, actor, relativePosition, points, playerPhrase, opponentP
 }
 
 function conditionalBackTake(state, actor, playerPhrase, opponentPhrase) {
-  const success = state[actor].stamina >= state[other(actor)].stamina;
+  const styleEdge = actor === "player" && state.style?.id === "back-hunter" ? 1 : 0;
+  const success = state[actor].stamina + styleEdge >= state[other(actor)].stamina;
   if (success) {
     score(state, actor, 4);
     setRelativePosition(state, actor, "Back Control", actionLine(actor, playerPhrase, opponentPhrase));
@@ -188,7 +204,8 @@ function escapeTowardGuard(state, actor) {
   const next = {
     "Mounted": "Bottom Half Guard",
     "Under Side Control": "Bottom Half Guard",
-    "Bottom Half Guard": "Bottom Guard"
+    "Bottom Half Guard": "Bottom Guard",
+    "Caught Ashi Garami": "Bottom Guard"
   };
   const relativePosition = actor === "player" ? state.position : mirrorPosition(state.position);
   setRelativePosition(state, actor, next[relativePosition] || "Bottom Guard", actionLine(actor, "create space with a hip escape", "creates space with a hip escape"));
@@ -254,6 +271,7 @@ function controlSkillBonus(message) {
   if (text.includes("back") && hasBonus("back-control")) return 1;
   if (text.includes("frame") && hasBonus("frames")) return 1;
   if (text.includes("front headlock") && hasBonus("front-headlock")) return 1;
+  if (text.includes("ashi") && hasBonus("ashi")) return 1;
   return 0;
 }
 
@@ -338,4 +356,3 @@ function other(actor) {
 function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
-

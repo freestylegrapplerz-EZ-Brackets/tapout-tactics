@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css?v=tatami-mat-2">
 </head>
 <body>
-  <main class="game-shell">
+  <main id="appShell" class="game-shell screen-match">
     <section class="top-bar">
       <div class="brand-lockup">
         <img class="game-logo" src="assets/tapout-tactics-logo.png" alt="Tapout Tactics logo">
@@ -19,165 +19,207 @@
       <button id="newMatchButton" type="button">New Match</button>
     </section>
 
-    <section class="scoreboard" aria-label="Match status">
-      <article>
+<nav class="screen-tabs" aria-label="Game screens">
+  <button type="button" data-screen-tab="match">Match</button>
+  <button type="button" data-screen-tab="athlete">Athlete</button>
+  <button type="button" data-screen-tab="skills">Skills</button>
+  <button type="button" data-screen-tab="venues">Venues</button>
+  <button type="button" data-screen-tab="library">Library</button>
+  <button type="button" data-screen-tab="review">Review</button>
+</nav>
+
+<section class="scoreboard" aria-label="Match status">
+  <article>
+    <span>You</span>
+    <strong id="playerPoints">0</strong>
+    <small>points</small>
+  </article>
+  <article>
+    <span>Turn</span>
+    <strong id="turnCount">1</strong>
+    <small>of 12</small>
+  </article>
+  <article>
+    <span>Opponent</span>
+    <strong id="opponentPoints">0</strong>
+    <small>points</small>
+  </article>
+</section>
+
+<section class="belt-panel" aria-label="Belt progression" data-screen-panel="athlete skills">
+  <div class="belt-rank">
+    <p class="eyebrow">Belt Progress</p>
+    <h2 id="beltName">White Belt</h2>
+  </div>
+  <div id="beltGraphic" class="belt-graphic" aria-hidden="true"></div>
+  <div class="xp-wrap">
+    <div class="xp-info">
+      <span id="xpText">0 XP</span>
+      <span id="nextBeltText">Next: Blue Belt</span>
+    </div>
+    <div class="xp-bar"><span id="xpBar"></span></div>
+  </div>
+</section>
+
+<section class="skill-tree-panel" aria-label="Permanent skill tree" data-screen-panel="skills">
+  <div class="skill-tree-header">
+    <div>
+      <p class="eyebrow">Athlete Build</p>
+      <h2>Skill Tree</h2>
+      <small id="styleProgressText">Wrestler mastery: 0 XP</small>
+    </div>
+    <div class="skill-actions">
+      <strong id="skillPointText">0 Skill Points</strong>
+      <button id="resetStyleProgressButton" class="secondary-button" type="button">Reset Style Test</button>
+    </div>
+  </div>
+  <div id="skillTree" class="skill-tree"></div>
+</section>
+
+<section class="pose-library-panel" aria-label="Pose library viewer" data-screen-panel="library">
+  <div class="pose-library-header">
+    <div>
+      <p class="eyebrow">Pose Library</p>
+      <h2>Preview Core BJJ Poses</h2>
+    </div>
+    <button id="exitPosePreviewButton" type="button" hidden>Back To Match</button>
+  </div>
+  <div id="poseLibraryButtons" class="pose-library-buttons"></div>
+</section>
+
+<section class="style-select" aria-label="Choose your grappling style" data-screen-panel="athlete">
+  <div>
+    <p class="eyebrow">Game Plan</p>
+    <h2>Choose Your Style</h2>
+  </div>
+  <div id="styleButtons" class="style-buttons"></div>
+</section>
+
+<section class="mind-game-panel" aria-label="Choose your pre-match mind game" data-screen-panel="athlete">
+  <div>
+    <p class="eyebrow">Mental Game</p>
+    <h2>Choose Your Read</h2>
+    <small id="mindGameStatus">Read: composed pressure</small>
+  </div>
+  <div id="mindGameButtons" class="mind-game-buttons"></div>
+</section>
+
+<section class="venue-panel" aria-label="Choose match venue" data-screen-panel="venues">
+  <div class="venue-header">
+    <div>
+      <p class="eyebrow">Arena Select</p>
+      <h2>Choose Your Venue</h2>
+      <small id="venueStatus">Venue: Old School Academy</small>
+    </div>
+    <button id="venueToMatchButton" class="secondary-button" type="button">Back To Match</button>
+  </div>
+  <div id="venueButtons" class="venue-buttons"></div>
+</section>
+
+<section class="match-layout" data-screen-panel="match">
+  <div class="arena-card">
+    <div class="fighter-strip">
+      <div class="fighter player">
         <span>You</span>
-        <strong id="playerPoints">0</strong>
-        <small>points</small>
-      </article>
-      <article>
-        <span>Turn</span>
-        <strong id="turnCount">1</strong>
-        <small>of 12</small>
-      </article>
-      <article>
-        <span>Opponent</span>
-        <strong id="opponentPoints">0</strong>
-        <small>points</small>
-      </article>
-    </section>
-
-    <section class="belt-panel" aria-label="Belt progression">
-      <div class="belt-rank">
-        <p class="eyebrow">Belt Progress</p>
-        <h2 id="beltName">White Belt</h2>
+        <div class="stamina"><span id="playerStaminaBar"></span></div>
+        <small id="playerStaminaText">10 stamina</small>
       </div>
-      <div id="beltGraphic" class="belt-graphic" aria-hidden="true"></div>
-      <div class="xp-wrap">
-        <div class="xp-info">
-          <span id="xpText">0 XP</span>
-          <span id="nextBeltText">Next: Blue Belt</span>
-        </div>
-        <div class="xp-bar"><span id="xpBar"></span></div>
-      </div>
-    </section>
 
-    <section class="skill-tree-panel" aria-label="Permanent skill tree">
-      <div class="skill-tree-header">
+      <div class="position-panel">
+        <p>Position</p>
+        <h2 id="positionName">Standing</h2>
+        <span id="controlText">Neutral control</span>
+        <div id="positionPath" class="position-path" aria-label="Recent position path">Standing</div>
+      </div>
+
+      <div class="fighter opponent">
+        <span id="opponentName">The Wrestler</span>
+        <div class="stamina"><span id="opponentStaminaBar"></span></div>
+        <small id="opponentStaminaText">10 stamina</small>
+      </div>
+    </div>
+
+    <div id="matCanvas" class="mat-canvas position-standing">
+      <div class="mat-ring"></div>
+      <div id="matScene" class="mat-scene" aria-hidden="true"></div>
+      <div id="actionBanner" class="action-banner">Slap hands. Pick your first move.</div>
+    </div>
+  </div>
+
+  <section class="feed" aria-live="polite">
+    <div class="intent-box">
+      <p class="eyebrow">Opponent Intent</p>
+      <strong id="intentText">Reading their stance...</strong>
+    </div>
+    <h2>Roll Log</h2>
+    <div id="log"></div>
+  </section>
+</section>
+
+<section class="hand-panel" data-screen-panel="match">
+  <div class="hand-header">
+    <h2>Your Hand</h2>
+    <p>Pick one move each turn.</p>
+  </div>
+  <div id="cardHand" class="card-hand"></div>
+</section>
+
+<section class="review-screen-panel" data-screen-panel="review">
+  <div class="review-empty-card">
+    <p class="eyebrow">Coach Review</p>
+    <h2>Finish a match to generate a breakdown.</h2>
+    <p>Match reviews still appear after the round ends. This screen is here so review history can become its own clean workspace next.</p>
+  </div>
+</section>
+
+<section id="resultOverlay" class="result-overlay" hidden>
+  <div class="result-panel">
+    <p class="eyebrow">Match Result</p>
+    <h2 id="resultTitle">Victory</h2>
+    <p id="resultDetails"></p>
+    <div class="result-stats">
+      <span id="resultScore">0-0</span>
+      <span id="resultStyle">Style: Wrestler</span>
+      <span id="resultXp">+0 Belt XP</span>
+    </div>
+    <section class="match-review" aria-label="Match review">
+      <div class="match-review-header">
         <div>
-          <p class="eyebrow">Athlete Build</p>
-          <h2>Skill Tree</h2>
+          <p class="eyebrow">Coach Review</p>
+          <h3 id="reviewVerdict">Build cleaner chains</h3>
         </div>
-        <strong id="skillPointText">0 Skill Points</strong>
+        <span id="reviewGrade">B</span>
       </div>
-      <div id="skillTree" class="skill-tree"></div>
+      <div id="reviewSummary" class="review-summary"></div>
+      <div id="reviewNotes" class="review-notes"></div>
+      <details class="review-timeline" open>
+        <summary>Turn Timeline</summary>
+        <div id="reviewTimeline"></div>
+      </details>
     </section>
-
-    <section class="pose-library-panel" aria-label="Pose library viewer">
-      <div class="pose-library-header">
-        <div>
-          <p class="eyebrow">Pose Library</p>
-          <h2>Preview Core BJJ Poses</h2>
-        </div>
-        <button id="exitPosePreviewButton" type="button" hidden>Back To Match</button>
-      </div>
-      <div id="poseLibraryButtons" class="pose-library-buttons"></div>
-    </section>
-
-    <section class="style-select" aria-label="Choose your grappling style">
-      <div>
-        <p class="eyebrow">Game Plan</p>
-        <h2>Choose Your Style</h2>
-      </div>
-      <div id="styleButtons" class="style-buttons"></div>
-    </section>
-
-    <section class="mind-game-panel" aria-label="Choose your pre-match mind game">
-      <div>
-        <p class="eyebrow">Mental Game</p>
-        <h2>Choose Your Read</h2>
-        <small id="mindGameStatus">Read: composed pressure</small>
-      </div>
-      <div id="mindGameButtons" class="mind-game-buttons"></div>
-    </section>
-
-    <section class="match-layout">
-      <div class="arena-card">
-        <div class="fighter-strip">
-          <div class="fighter player">
-            <span>You</span>
-            <div class="stamina"><span id="playerStaminaBar"></span></div>
-            <small id="playerStaminaText">10 stamina</small>
-          </div>
-
-          <div class="position-panel">
-            <p>Position</p>
-            <h2 id="positionName">Standing</h2>
-            <span id="controlText">Neutral control</span>
-            <div id="positionPath" class="position-path" aria-label="Recent position path">Standing</div>
-          </div>
-
-          <div class="fighter opponent">
-            <span id="opponentName">The Wrestler</span>
-            <div class="stamina"><span id="opponentStaminaBar"></span></div>
-            <small id="opponentStaminaText">10 stamina</small>
-          </div>
-        </div>
-
-        <div id="matCanvas" class="mat-canvas position-standing">
-          <div class="mat-ring"></div>
-          <div id="matScene" class="mat-scene" aria-hidden="true"></div>
-          <div id="actionBanner" class="action-banner">Slap hands. Pick your first move.</div>
-        </div>
-      </div>
-
-      <section class="feed" aria-live="polite">
-        <div class="intent-box">
-          <p class="eyebrow">Opponent Intent</p>
-          <strong id="intentText">Reading their stance...</strong>
-        </div>
-        <h2>Roll Log</h2>
-        <div id="log"></div>
-      </section>
-    </section>
-
-    <section>
-      <div class="hand-header">
-        <h2>Your Hand</h2>
-        <p>Pick one move each turn.</p>
-      </div>
-      <div id="cardHand" class="card-hand"></div>
-    </section>
-
-    <section id="resultOverlay" class="result-overlay" hidden>
-      <div class="result-panel">
-        <p class="eyebrow">Match Result</p>
-        <h2 id="resultTitle">Victory</h2>
-        <p id="resultDetails"></p>
-        <div class="result-stats">
-          <span id="resultScore">0-0</span>
-          <span id="resultStyle">Style: Wrestler</span>
-          <span id="resultXp">+0 Belt XP</span>
-        </div>
-        <section class="match-review" aria-label="Match review">
-          <div class="match-review-header">
-            <div>
-              <p class="eyebrow">Coach Review</p>
-              <h3 id="reviewVerdict">Build cleaner chains</h3>
-            </div>
-            <span id="reviewGrade">B</span>
-          </div>
-          <div id="reviewSummary" class="review-summary"></div>
-          <div id="reviewNotes" class="review-notes"></div>
-          <details class="review-timeline" open>
-            <summary>Turn Timeline</summary>
-            <div id="reviewTimeline"></div>
-          </details>
-        </section>
-        <div class="result-actions">
-          <button id="rematchButton" type="button">Rematch</button>
-          <button id="nextMatchButton" type="button">Next Match</button>
-        </div>
-      </div>
-    </section>
+    <div class="result-actions">
+      <button id="rematchButton" type="button">Rematch</button>
+      <button id="nextMatchButton" type="button">Next Match</button>
+    </div>
+  </div>
+</section>
   </main>
 
+  <script src="venues.js"></script>
+  <script src="techniques.js"></script>
   <script src="skills.js"></script>
   <script src="cards.js"></script>
   <script src="poses.js"></script>
+  <script src="playableStates.js"></script>
   <script src="gameState.js"></script>
   <script src="matchRules.js"></script>
-  <script src="ui.js"></script>
+  <script src="ui.shared.js"></script>
+  <script src="ui.match.js"></script>
+  <script src="ui.venues.js"></script>
+  <script src="ui.review.js"></script>
+  <script src="ui.skills.js"></script>
+  <script src="ui.poseLibrary.js"></script>
+  <script src="ui.cards.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ const cards = [
     type: "counter",
     cost: 1,
     requires: ["Standing"],
-    text: "Counters takedowns. If they shoot, you end in Top Half Guard.",
+    text: "Counters takedowns. If they shoot, you stuff it into Front Headlock.",
     play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "stay heavy with a sprawl", "stays heavy with a sprawl"))
   },
   {
@@ -54,7 +54,7 @@ const cards = [
     name: "Hip Escape",
     type: "escape",
     cost: 1,
-    requires: ["Bottom Half Guard", "Under Side Control", "Mounted"],
+    requires: ["Bottom Half Guard", "Under Side Control", "Mounted", "Caught Ashi Garami"],
     text: "Recover one step toward guard.",
     play: (state, actor) => escapeTowardGuard(state, actor)
   },
@@ -63,7 +63,7 @@ const cards = [
     name: "Bridge",
     type: "escape",
     cost: 2,
-    requires: ["Mounted"],
+    requires: ["Under Side Control", "Mounted"],
     text: "Explode out of Mount into Bottom Half Guard.",
     play: (state, actor) => setRelativePosition(state, actor, "Bottom Half Guard", actionLine(actor, "bridge and turn", "bridges and turns"))
   },
@@ -84,7 +84,7 @@ const cards = [
     name: "Frame",
     type: "counter",
     cost: 1,
-    requires: ["Bottom Guard", "Bottom Half Guard", "Under Side Control", "Mounted"],
+    requires: ["Bottom Guard", "Bottom Half Guard", "Under Side Control", "Mounted", "Caught Front Headlock", "Back Taken", "Turtle", "Caught Ashi Garami"],
     text: "Blocks passing pressure and reduces opponent control.",
     play: (state, actor) => addControl(state, other(actor), -1, actionLine(actor, "frame and slow the attack", "frames and slows the attack"))
   },
@@ -158,7 +158,7 @@ const cards = [
     name: "Wrist Control",
     type: "setup",
     cost: 1,
-    requires: ["Standing", "Bottom Guard", "Top Guard"],
+    requires: ["Standing", "Bottom Guard", "Top Guard", "Top Half Guard"],
     text: "Win the hand fight. Gain control and make your next attack safer.",
     play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "win wrist control", "wins wrist control"))
   },
@@ -289,9 +289,9 @@ const cards = [
     id: "body-lock-pass",
     name: "Body Lock Pass",
     type: "pass",
-    cost: 2,
+    cost: 3,
     requires: ["Top Guard", "Top Half Guard"],
-    text: "Lock the hips, gain control, and grind toward Side Control.",
+    text: "Expensive pressure pass. Lock the hips, gain control, and grind to Side Control.",
     play: (state, actor) => {
       addControl(state, actor, 1, actionLine(actor, "lock the hips", "locks the hips"));
       passTo(state, actor, "Side Control", 3, "finish the body lock pass", "finishes the body lock pass");
@@ -321,8 +321,8 @@ const cards = [
     type: "escape",
     cost: 2,
     requires: ["Mounted", "Under Side Control"],
-    text: "Bridge to turtle and reset to standing.",
-    play: (state, actor) => setRelativePosition(state, actor, "Standing", actionLine(actor, "technical bridge back to the feet", "technical bridges back to the feet"))
+    text: "Bridge to Turtle. Safer than staying pinned, but not fully escaped yet.",
+    play: (state, actor) => setRelativePosition(state, actor, "Turtle", actionLine(actor, "technical bridge to turtle", "technical bridges to turtle"))
   },
   {
     id: "hip-bump-sweep",
@@ -359,6 +359,18 @@ const cards = [
     requires: ["Bottom Half Guard"],
     text: "Come up from half guard and sweep to Top Half Guard.",
     play: (state, actor) => sweepTo(state, actor, "Top Half Guard", 2, "come up on an old school sweep", "comes up on an old school sweep")
+  },
+  {
+    id: "ashi-garami-entry",
+    name: "Ashi Garami Entry",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard", "Bottom Half Guard"],
+    text: "Trap one leg and enter Ashi Garami. Sets up ankle locks and heel hooks.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "enter ashi garami", "enters ashi garami"));
+      setRelativePosition(state, actor, "Ashi Garami", actionLine(actor, "trap the leg in ashi garami", "traps the leg in ashi garami"));
+    }
   },
   {
     id: "guillotine",
@@ -410,8 +422,8 @@ const cards = [
     name: "Straight Ankle Lock",
     type: "submission",
     cost: 3,
-    requires: ["Bottom Guard", "Bottom Half Guard"],
-    text: "Enter the legs and attack the ankle.",
+    requires: ["Ashi Garami"],
+    text: "Finish from Ashi Garami by trapping the foot under your armpit.",
     play: (state, actor) => submissionAttack(state, actor, "straight ankle lock")
   },
   {
@@ -419,8 +431,8 @@ const cards = [
     name: "Heel Hook",
     type: "submission",
     cost: 4,
-    requires: ["Bottom Guard", "Bottom Half Guard"],
-    text: "High-risk leg attack. Expensive, but dangerous when opponent is tired.",
+    requires: ["Ashi Garami"],
+    text: "High-risk finish from leg entanglement. Expensive, but dangerous when opponent is tired.",
     play: (state, actor) => submissionAttack(state, actor, "heel hook")
   },
   {
@@ -428,8 +440,8 @@ const cards = [
     name: "Hand Fight",
     type: "escape",
     cost: 1,
-    requires: ["Caught Front Headlock", "Back Taken"],
-    text: "Peel hands and square up. Escape back to Standing.",
+    requires: ["Caught Front Headlock", "Back Taken", "Turtle", "Caught Ashi Garami"],
+    text: "Peel grips, square up, or clear the trapped leg. Escape back to Standing.",
     play: (state, actor) => setRelativePosition(state, actor, "Standing", actionLine(actor, "peel the hands and square up", "peels the hands and squares up"))
   },
   {
@@ -437,7 +449,7 @@ const cards = [
     name: "Protect Neck",
     type: "counter",
     cost: 1,
-    requires: ["Caught Front Headlock", "Back Taken"],
+    requires: ["Caught Front Headlock", "Back Taken", "Turtle"],
     text: "Hide the neck and slow the finish. Reduce opponent control.",
     play: (state, actor) => addControl(state, other(actor), -1, actionLine(actor, "protect the neck and hand fight", "protects the neck and hand fights"))
   },
@@ -454,11 +466,292 @@ const cards = [
     }
   },
   {
+    id: "high-crotch",
+    name: "High Crotch",
+    type: "takedown",
+    cost: 2,
+    requires: ["Standing"],
+    text: "Attack the leg from a level change. Scores 2 and lands in Top Half Guard.",
+    play: (state, actor) => takedownTo(state, actor, "Top Half Guard", 2, "climb into a high crotch finish", "climbs into a high crotch finish")
+  },
+  {
+    id: "mat-return",
+    name: "Mat Return",
+    type: "takedown",
+    cost: 2,
+    requires: ["Standing", "Back Control"],
+    text: "Return a fleeing opponent to the mat. Scores 2 and keeps top pressure.",
+    play: (state, actor) => takedownTo(state, actor, "Top Guard", 2, "drag the hips down with a mat return", "drags the hips down with a mat return")
+  },
+  {
+    id: "front-headlock-spin",
+    name: "Go Behind",
+    type: "setup",
+    cost: 2,
+    requires: ["Front Headlock"],
+    text: "Spin behind from front headlock. Take the back if stamina is equal or better.",
+    play: (state, actor) => conditionalBackTake(state, actor, "spin behind from front headlock", "spins behind from front headlock")
+  },
+  {
+    id: "cow-catcher",
+    name: "Cow Catcher",
+    type: "takedown",
+    cost: 3,
+    requires: ["Front Headlock"],
+    text: "Turn front headlock pressure into Side Control. Scores 2.",
+    play: (state, actor) => takedownTo(state, actor, "Side Control", 2, "run the cow catcher to side control", "runs the cow catcher to side control")
+  },
+  {
+    id: "firemans-carry",
+    name: "Fireman's Carry",
+    type: "takedown",
+    cost: 3,
+    requires: ["Standing"],
+    text: "Explosive throw from wrist control or inside tie. Scores 2 to Side Control.",
+    play: (state, actor) => takedownTo(state, actor, "Side Control", 2, "hit a fireman's carry", "hits a fireman's carry")
+  },
+  {
+    id: "suplex",
+    name: "Suplex",
+    type: "takedown",
+    cost: 4,
+    requires: ["Standing", "Back Control"],
+    text: "Legendary big throw. Expensive, but lands straight in Side Control.",
+    play: (state, actor) => takedownTo(state, actor, "Side Control", 2, "launch a suplex", "launches a suplex")
+  },
+  {
+    id: "tripod-sweep",
+    name: "Tripod Sweep",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard"],
+    text: "Kick the base and sweep to Top Guard. Scores 2.",
+    play: (state, actor) => sweepTo(state, actor, "Top Guard", 2, "knock the base out with a tripod sweep", "knocks the base out with a tripod sweep")
+  },
+  {
+    id: "pendulum-sweep",
+    name: "Pendulum Sweep",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard"],
+    text: "Angle out and swing the leg through. Scores 2 and lands in Mount.",
+    play: (state, actor) => sweepTo(state, actor, "Mount", 2, "swing through a pendulum sweep", "swings through a pendulum sweep")
+  },
+  {
+    id: "lumberjack-sweep",
+    name: "Lumberjack Sweep",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard"],
+    text: "Attack both legs as they stand. Scores 2 and comes up to Top Guard.",
+    play: (state, actor) => sweepTo(state, actor, "Top Guard", 2, "chop the base with a lumberjack sweep", "chops the base with a lumberjack sweep")
+  },
+  {
+    id: "butterfly-hooks",
+    name: "Butterfly Hooks",
+    type: "setup",
+    cost: 1,
+    requires: ["Bottom Guard", "Bottom Half Guard"],
+    text: "Build seated guard elevation. Gain control and set up sweeps or Ashi Garami.",
+    play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "build butterfly hooks", "builds butterfly hooks"))
+  },
+  {
+    id: "omoplata",
+    name: "Omoplata",
+    type: "submission",
+    cost: 3,
+    requires: ["Bottom Guard"],
+    text: "Trap the shoulder from guard. Strong when opponents post or drive forward.",
+    play: (state, actor) => submissionAttack(state, actor, "omoplata")
+  },
+  {
+    id: "omoplata-sweep",
+    name: "Omoplata Sweep",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard"],
+    text: "Use the shoulder trap to come on top. Scores 2 and lands in Top Guard.",
+    play: (state, actor) => sweepTo(state, actor, "Top Guard", 2, "roll through an omoplata sweep", "rolls through an omoplata sweep")
+  },
+  {
+    id: "x-pass",
+    name: "X-Pass",
+    type: "pass",
+    cost: 2,
+    requires: ["Top Guard"],
+    text: "Step around open guard before hooks settle. Scores 3 to Side Control.",
+    play: (state, actor) => passTo(state, actor, "Side Control", 3, "step around with an X-pass", "steps around with an X-pass")
+  },
+  {
+    id: "shin-pin-pass",
+    name: "Shin Pin Pass",
+    type: "pass",
+    cost: 2,
+    requires: ["Top Guard", "Top Half Guard"],
+    text: "Pin the shin and flatten the hips. Scores 3 to Side Control.",
+    play: (state, actor) => passTo(state, actor, "Side Control", 3, "pin the shin and pass", "pins the shin and passes")
+  },
+  {
+    id: "over-under-pass",
+    name: "Over Under Pass",
+    type: "pass",
+    cost: 3,
+    requires: ["Top Guard", "Top Half Guard"],
+    text: "Heavy pressure pass. Gain control and score 3 to Side Control.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "lock over-under pressure", "locks over-under pressure"));
+      passTo(state, actor, "Side Control", 3, "finish the over-under pass", "finishes the over-under pass");
+    }
+  },
+  {
+    id: "smash-pass",
+    name: "Smash Pass",
+    type: "pass",
+    cost: 3,
+    requires: ["Top Guard", "Top Half Guard"],
+    text: "Crush the knees across and pass. Scores 3, gains control, and drains stamina.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "smash the knees across", "smashes the knees across"));
+      drainStamina(state, other(actor), 1);
+      passTo(state, actor, "Side Control", 3, "settle the smash pass", "settles the smash pass");
+    }
+  },
+  {
+    id: "knee-on-belly",
+    name: "Knee On Belly",
+    type: "pressure",
+    cost: 2,
+    requires: ["Side Control"],
+    text: "Score 2 and make the bottom player carry your weight. Stays in Side Control.",
+    play: (state, actor) => {
+      score(state, actor, 2);
+      addControl(state, actor, 1, actionLine(actor, "drive knee-on-belly pressure", "drives knee-on-belly pressure"));
+      drainStamina(state, other(actor), 1);
+    }
+  },
+  {
+    id: "north-south-control",
+    name: "North South Control",
+    type: "pressure",
+    cost: 1,
+    requires: ["Side Control"],
+    text: "Switch angles from Side Control. Gain control and threaten chokes or Kimuras.",
+    play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "switch to north-south control", "switches to north-south control"))
+  },
+  {
+    id: "americana",
+    name: "Americana",
+    type: "submission",
+    cost: 3,
+    requires: ["Mount", "Side Control"],
+    text: "Isolate the shoulder from top control. Common pressure-passer finish.",
+    play: (state, actor) => submissionAttack(state, actor, "americana")
+  },
+  {
+    id: "body-triangle",
+    name: "Body Triangle",
+    type: "pressure",
+    cost: 2,
+    requires: ["Back Control"],
+    text: "Lock the hips from the back. Gain control and drain 1 stamina.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "lock a body triangle", "locks a body triangle"));
+      drainStamina(state, other(actor), 1);
+    }
+  },
+  {
+    id: "bow-and-arrow",
+    name: "Bow And Arrow Choke",
+    type: "submission",
+    cost: 3,
+    requires: ["Back Control"],
+    text: "Gi choke from back control. A strong Back Hunter finish.",
+    play: (state, actor) => submissionAttack(state, actor, "bow and arrow choke")
+  },
+  {
+    id: "clock-choke",
+    name: "Clock Choke",
+    type: "submission",
+    cost: 3,
+    requires: ["Back Control", "Front Headlock"],
+    text: "Circle around a broken posture and attack the neck.",
+    play: (state, actor) => submissionAttack(state, actor, "clock choke")
+  },
+  {
+    id: "crucifix-control",
+    name: "Crucifix Control",
+    type: "pressure",
+    cost: 2,
+    requires: ["Back Control", "Front Headlock"],
+    text: "Trap an arm while attacking the back. Gain control and open chokes.",
+    play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "trap the arm in crucifix control", "traps the arm in crucifix control"))
+  },
+  {
+    id: "single-leg-x-entry",
+    name: "Single Leg X Entry",
+    type: "guard",
+    cost: 2,
+    requires: ["Bottom Guard", "Bottom Half Guard"],
+    text: "Enter leg entanglement from guard and threaten Ashi Garami.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "thread into single leg X", "threads into single leg X"));
+      setRelativePosition(state, actor, "Ashi Garami", actionLine(actor, "connect to ashi garami", "connects to ashi garami"));
+    }
+  },
+  {
+    id: "ashi-control",
+    name: "Ashi Control",
+    type: "pressure",
+    cost: 1,
+    requires: ["Ashi Garami"],
+    text: "Control the knee line before finishing. Gain control and drain 1 stamina.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "tighten ashi control", "tightens ashi control"));
+      drainStamina(state, other(actor), 1);
+    }
+  },
+  {
+    id: "toe-hold",
+    name: "Toe Hold",
+    type: "submission",
+    cost: 3,
+    requires: ["Ashi Garami"],
+    text: "Rotational foot lock from leg entanglement.",
+    play: (state, actor) => submissionAttack(state, actor, "toe hold")
+  },
+  {
+    id: "kneebar",
+    name: "Kneebar",
+    type: "submission",
+    cost: 3,
+    requires: ["Ashi Garami", "Top Half Guard"],
+    text: "Straight-line leg attack. Strong when the knee line is trapped.",
+    play: (state, actor) => submissionAttack(state, actor, "kneebar")
+  },
+  {
+    id: "leg-pummel-escape",
+    name: "Leg Pummel Escape",
+    type: "escape",
+    cost: 1,
+    requires: ["Caught Ashi Garami"],
+    text: "Clear the knee line and recover Bottom Guard.",
+    play: (state, actor) => setRelativePosition(state, actor, "Bottom Guard", actionLine(actor, "pummel the leg free", "pummels the leg free"))
+  },
+  {
+    id: "knee-elbow-escape",
+    name: "Knee Elbow Escape",
+    type: "escape",
+    cost: 2,
+    requires: ["Mounted"],
+    text: "Build a frame and recover Bottom Guard from Mount.",
+    play: (state, actor) => setRelativePosition(state, actor, "Bottom Guard", actionLine(actor, "connect knee and elbow to recover guard", "connects knee and elbow to recover guard"))
+  },
+  {
     id: "rest",
     name: "Breathe",
     type: "recovery",
     cost: 0,
-    requires: ["Standing", "Top Guard", "Bottom Guard", "Top Half Guard", "Bottom Half Guard", "Side Control", "Under Side Control", "Mount", "Mounted", "Back Control", "Back Taken", "Front Headlock", "Caught Front Headlock"],
+    requires: ["Standing", "Top Guard", "Bottom Guard", "Top Half Guard", "Bottom Half Guard", "Side Control", "Under Side Control", "Mount", "Mounted", "Back Control", "Back Taken", "Front Headlock", "Caught Front Headlock", "Turtle", "Ashi Garami", "Caught Ashi Garami"],
     text: "Recover 2 stamina, but give up a little control.",
     play: (state, actor) => {
       const recoveryAmount = actor === "player" && hasBonus("recovery") ? 3 : 2;
@@ -467,4 +760,3 @@ const cards = [
     }
   }
 ];
-
