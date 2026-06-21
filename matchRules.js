@@ -138,9 +138,15 @@ function chooseOpponentCard() {
 function resolveCards(playerCard, opponentCard) {
   const playerCounters = playerCard.type === "counter" && beats(playerCard, opponentCard);
   const opponentCounters = opponentCard.type === "counter" && beats(opponentCard, playerCard);
+  // Escape priority: if player escapes while opponent tries to advance position,
+  // the escape wins — you cannot pass someone who is actively hip escaping.
+  const playerEscapesPass = playerCard.type === "escape" && ["pass", "pressure"].includes(opponentCard.type);
 
   if (playerCounters) {
-    addLog(state, `Your ${playerCard.name} shuts down ${opponentCard.name}.`);
+    const counterMsg = typeof announceCardChoice === "function"
+      ? `Your ${playerCard.name} shuts down ${opponentCard.name}.`
+      : `Your ${playerCard.name} shuts down ${opponentCard.name}.`;
+    addLog(state, counterMsg);
     playerCard.play(state, "player");
     applyCounterPositionBonus(playerCard, "player", opponentCard);
     applyCounterMindGameBonus();
@@ -151,6 +157,13 @@ function resolveCards(playerCard, opponentCard) {
     addLog(state, `${state.ai.name}'s ${opponentCard.name} shuts down your ${playerCard.name}.`);
     opponentCard.play(state, "opponent");
     applyCounterPositionBonus(opponentCard, "opponent", playerCard);
+    return;
+  }
+
+  if (playerEscapesPass) {
+    addLog(state, `You escape before ${state.ai.name}'s ${opponentCard.name} can land.`);
+    playerCard.play(state, "player");
+    // Opponent's pass is blocked but still costs stamina (already spent before this point)
     return;
   }
 
@@ -244,14 +257,30 @@ function hasControlEdge(state, actor) {
 }
 
 function escapeTowardGuard(state, actor) {
-  const next = {
-    "Mounted": "Bottom Half Guard",
+  const stepMap = {
+    "Mounted":            "Bottom Half Guard",
     "Under Side Control": "Bottom Half Guard",
-    "Bottom Half Guard": "Bottom Guard",
+    "Bottom Half Guard":  "Bottom Guard",
     "Caught Ashi Garami": "Bottom Guard"
   };
   const relativePosition = actor === "player" ? state.position : mirrorPosition(state.position);
-  setRelativePosition(state, actor, next[relativePosition] || "Bottom Guard", actionLine(actor, "create space with a hip escape", "creates space with a hip escape"));
+  let target = stepMap[relativePosition] || "Bottom Guard";
+
+  // High control bonus: +2 or +3 control gives an extra escape step
+  const actorControl = actor === "player" ? state.control : -state.control;
+  if (actor === "player" && actorControl >= 2) {
+    const bonusStep = {
+      "Bottom Half Guard": "Bottom Guard",
+      "Bottom Guard":      "Bottom Guard"
+    };
+    const bonusTarget = bonusStep[target];
+    if (bonusTarget && bonusTarget !== target) {
+      target = bonusTarget;
+      addLog(state, `Your control advantage (+${actorControl}) powers through — extra escape step!`);
+    }
+  }
+
+  setRelativePosition(state, actor, target, actionLine(actor, "create space with a hip escape", "creates space with a hip escape"));
 }
 
 function submissionAttack(state, actor, submissionName) {

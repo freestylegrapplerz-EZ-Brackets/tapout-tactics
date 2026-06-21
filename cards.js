@@ -55,7 +55,7 @@ const cards = [
     type: "escape",
     cost: 1,
     requires: ["Bottom Half Guard", "Under Side Control", "Mounted", "Caught Ashi Garami"],
-    text: "Recover one step toward guard.",
+    text: "Recover one step toward guard. Blocks opponent's simultaneous pass. +2 control = skip straight to Bottom Guard.",
     play: (state, actor) => escapeTowardGuard(state, actor)
   },
   {
@@ -64,8 +64,13 @@ const cards = [
     type: "escape",
     cost: 2,
     requires: ["Under Side Control", "Mounted"],
-    text: "Explode out of Mount into Bottom Half Guard.",
-    play: (state, actor) => setRelativePosition(state, actor, "Bottom Half Guard", actionLine(actor, "bridge and turn", "bridges and turns"))
+    text: "Explode out of Mount. High control (+2) carries you all the way to Bottom Guard.",
+    play: (state, actor) => {
+      const actorControl = actor === "player" ? state.control : -state.control;
+      const target = (actor === "player" && actorControl >= 2) ? "Bottom Guard" : "Bottom Half Guard";
+      if (actor === "player" && actorControl >= 2) addLog(state, `Your control advantage powers the bridge all the way to guard!`);
+      setRelativePosition(state, actor, target, actionLine(actor, "bridge and turn", "bridges and turns"));
+    }
   },
   {
     id: "closed-guard-sweep",
