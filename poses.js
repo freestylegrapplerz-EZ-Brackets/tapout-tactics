@@ -19,6 +19,7 @@ const poseLibraryList = [
   { pose: "sideControlTop", label: "Side Control" },
   { pose: "kneeOnBelly", label: "Knee On Belly" },
   { pose: "mountTop", label: "Mount" },
+  { pose: "goBehind", label: "Go Behind" },
   { pose: "backControlTop", label: "Back Control" },
   { pose: "turtle", label: "Turtle" },
   { pose: "armbar", label: "Armbar" },
@@ -865,7 +866,10 @@ const positionPoseMap = {
   "Back Control": "backControlTop",
   "Back Taken": "backControlBottom",
   "Front Headlock": "frontHeadlock",
-  "Caught Front Headlock": "snapdownBottom"
+  "Caught Front Headlock": "snapdownBottom",
+  "Turtle": "turtle",
+  "Ashi Garami": "ashiGarami",
+  "Caught Ashi Garami": "ashiGarami"
 };
 
 function matSceneSvg(position) {
@@ -903,6 +907,7 @@ function techniquePoseSequence(card, fromPosition, toPosition) {
     "body-lock-pass": ["halfGuardTop", "bodyLockPass", "legClear", "sideControlTop"],
     "torreando": ["closedGuardTop", "openGuardTop", "torreandoPass", "sideControlTop"],
     "leg-drag": ["openGuardTop", "legDrag", "sideControlTop", "sideControlTop"],
+    "front-headlock-spin": [fromPose, "frontHeadlock", "goBehind", toPose],
     "mount": ["sideControlTop", "kneeOnBelly", "mountTop", "mountTop"],
     "armbar": ["mountTop", "armbarSetup", "armbarLegOver", "armbar"],
     "triangle": ["closedGuardBottom", "triangleSetup", "triangle", "triangle"],
@@ -912,6 +917,7 @@ function techniquePoseSequence(card, fromPosition, toPosition) {
     "closed-guard-sweep": ["closedGuardBottom", "sweepTilt", "mountTop", "mountTop"],
     "scissor-sweep": ["closedGuardBottom", "scissorSweep", "closedGuardTop", "closedGuardTop"],
     "old-school-sweep": ["halfGuardBottom", "sweepTilt", "halfGuardTop", "halfGuardTop"],
+    "ashi-garami-entry": [fromPose, "butterflyGuard", "ashiGarami", "ashiGarami"],
     "guillotine": [fromPose, "frontHeadlock", guillotinePose, toPose],
     "darce": [fromPose, "snapdown", "guillotine", toPose],
     "anaconda": [fromPose, "snapdown", "guillotine", toPose],
@@ -921,6 +927,7 @@ function techniquePoseSequence(card, fromPosition, toPosition) {
     "hip-escape": [fromPose, "elbowEscape", "guardRecovery", toPose],
     "reguard": [fromPose, "frameEscape", "guardRecovery", toPose],
     "bridge": [fromPose, "bridgeEscape", "halfGuardBottom", toPose],
+    "technical-bridge": [fromPose, "bridgeEscape", "turtle", toPose],
     "hand-fight": [fromPose, "handFight", "standing", toPose]
   };
 
@@ -1042,6 +1049,7 @@ const poseSpriteMap = {
   kneeOnBelly: "knee-on-belly.png",
   mountTop: "mount.png",
   mountBottom: "mount.png",
+  goBehind: "go-behind.png",
   backControlTop: "back-control.png",
   backControlBottom: "back-control.png",
   rncSetup: "rear-naked-choke.png",
@@ -1498,4 +1506,3 @@ function poseSweepTilt() {
     ${tiltingTopGrappler("opponent", 438, 226)}
   `;
 }
-

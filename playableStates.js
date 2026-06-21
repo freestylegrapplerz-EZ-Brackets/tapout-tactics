@@ -1,0 +1,207 @@
+// Machine-readable position readiness map.
+// Source of truth: PLAYABLE_STATE_CHECKLIST.md
+// Not wired into the hand generator yet.
+
+const playableStates = [
+  {
+    id: "standing",
+    displayName: "Standing",
+    status: "ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Hand Fighting", "Collar Tie", "Arm Drag", "Level Change"],
+    defensiveBranches: ["Grip Break", "Pummel", "Reset"],
+    transitionBranches: ["Front Headlock", "Single Leg", "Takedown Entry", "Guard Pull"],
+    missingBranches: [],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Core entry state. Good for wrestler chains, hand fighting, takedowns, and guard pulls."
+  },
+  {
+    id: "front_headlock",
+    displayName: "Front Headlock",
+    status: "ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Guillotine", "Anaconda", "D'Arce", "Go Behind"],
+    defensiveBranches: ["Posture Up", "Hand Fight", "Sprawl"],
+    transitionBranches: ["Turtle", "Back Control", "Standing Reset"],
+    missingBranches: [],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Strong, playable hub for snapdown, guillotine, go-behind, and back-take chains."
+  },
+  {
+    id: "turtle",
+    displayName: "Turtle",
+    status: "ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Go Behind", "Back Take", "Sit-Out", "Granby Roll"],
+    defensiveBranches: ["Shell Up", "Hand Fight", "Base Recovery"],
+    transitionBranches: ["Back Control", "Standing", "Escape"],
+    missingBranches: ["More escape branches", "More counter branches"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Usable now because it already supports back-control / escape flow, but it still benefits from more branching."
+  },
+  {
+    id: "back_control",
+    displayName: "Back Control",
+    status: "ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Rear Naked Choke", "Bow and Arrow", "Seatbelt Pressure"],
+    defensiveBranches: ["Hook Retention", "Neck Hide", "Body Triangle"],
+    transitionBranches: ["Mount", "Turtle", "Side Control"],
+    missingBranches: [],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Stable end-state for back-hunter chains; already supports offense and defense."
+  },
+  {
+    id: "closed_guard",
+    displayName: "Closed Guard",
+    status: "ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Triangle", "Armbar", "Hip Bump Sweep", "Scissor Sweep"],
+    defensiveBranches: ["Clamp Guard", "Posture Break", "Reset Grip"],
+    transitionBranches: ["Posture Break", "Open Guard", "Sweep", "Submission"],
+    missingBranches: [],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "This is the approved closed-guard chain, not generic open guard."
+  },
+  {
+    id: "open_guard",
+    displayName: "Open Guard",
+    status: "hidden",
+    approvedArt: false,
+    offerSafe: false,
+    aiSafe: false,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["De La Riva", "Spider Guard", "Lasso", "Sweep Entry"],
+    defensiveBranches: ["Retain Distance", "Recover Hooks", "Frame"],
+    transitionBranches: ["Closed Guard", "Half Guard", "Single Leg X"],
+    missingBranches: ["Approved art", "Branch depth", "Counter coverage"],
+    allowedAsPlayerPosition: false,
+    allowedAsAIPosition: false,
+    notes: "Too broad and too shallow right now; keep out of the main offer pool until it has more branch depth."
+  },
+  {
+    id: "half_guard_top",
+    displayName: "Half Guard Top",
+    status: "fallback_only",
+    approvedArt: false,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["Knee Slice", "Crossface Pressure", "Backstep", "Body Lock Pass"],
+    defensiveBranches: ["Base Out", "Post", "Balance"],
+    transitionBranches: ["Side Control", "Mount", "Pass Reset"],
+    missingBranches: ["Approved art", "More escape/counter support", "More finishing branches"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Playable now, but it still needs stronger visual and gameplay support to feel robust."
+  },
+  {
+    id: "half_guard_bottom",
+    displayName: "Half Guard Bottom",
+    status: "fallback_only",
+    approvedArt: false,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["Old School Sweep", "John Wayne Sweep", "Underhook Sweep", "Knee Shield Recovery"],
+    defensiveBranches: ["Frame", "Wedge", "Recover Guard"],
+    transitionBranches: ["Guard", "Turtle", "Back Take"],
+    missingBranches: ["Approved art", "More sweep branches", "More bottom attack lanes"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Usable, but should rely on fallback logic until the card pool deepens."
+  },
+  {
+    id: "side_control",
+    displayName: "Side Control",
+    status: "fallback_only",
+    approvedArt: false,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["Knee On Belly", "Americana", "Pressure Pin", "Mount Transition"],
+    defensiveBranches: ["Crossface", "Chest Pressure", "North-South Switch"],
+    transitionBranches: ["Mount", "Back Control", "Submission", "Reset"],
+    missingBranches: ["Approved art", "More finishing branches", "Escape chain coverage"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Important position, but it still needs more visual support and more follow-up branches before release polish."
+  },
+  {
+    id: "mount",
+    displayName: "Mount",
+    status: "near_ready",
+    approvedArt: true,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: false,
+    offensiveBranches: ["Armbar From Mount", "Americana", "High Mount Pressure", "Gift Wrap"],
+    defensiveBranches: ["Heavy Hips", "Base", "Posture Control"],
+    transitionBranches: ["Back Control", "Side Control", "S-Mount", "Disengage"],
+    missingBranches: ["Arm Triangle branch", "Americana branch", "High Mount branch", "Mount To Back branch", "Mount Escape branches"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "The Mount → Armbar From Mount chain improves coverage a lot, but Mount still needs more branching before it becomes fully offer-safe."
+  },
+  {
+    id: "ashi_garami",
+    displayName: "Ashi Garami",
+    status: "fallback_only",
+    approvedArt: false,
+    offerSafe: true,
+    aiSafe: true,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["Straight Ankle Lock", "Kneebar", "Heel Hook Entry", "Toe Hold"],
+    defensiveBranches: ["Hide Heel", "Re-guard", "Wedge Frame"],
+    transitionBranches: ["Single Leg X", "Outside Ashi", "Standing Reset"],
+    missingBranches: ["Approved art", "More counter coverage", "More transitions"],
+    allowedAsPlayerPosition: true,
+    allowedAsAIPosition: true,
+    notes: "Works as a meaningful leg-lock node, but should still lean on conservative fallback logic."
+  },
+  {
+    id: "single_leg_x",
+    displayName: "Single Leg X",
+    status: "hidden",
+    approvedArt: false,
+    offerSafe: false,
+    aiSafe: false,
+    requiresPlaceholderArt: true,
+    offensiveBranches: ["Ashi Garami Entry", "Sweep Entry", "Leg Entanglement"],
+    defensiveBranches: ["Recover Guard", "Kick Free", "Re-Shin"],
+    transitionBranches: ["Ashi Garami", "Open Guard", "Stand Up"],
+    missingBranches: ["Approved art", "Branch depth", "Counter coverage"],
+    allowedAsPlayerPosition: false,
+    allowedAsAIPosition: false,
+    notes: "Not ready for the main offer system yet; it needs more support and cleaner branching."
+  }
+];
+
+const playableStateById = Object.fromEntries(
+  playableStates.map((state) => [state.id, state])
+);
+
+if (typeof window !== "undefined") {
+  window.playableStates = playableStates;
+  window.playableStateById = playableStateById;
+}
