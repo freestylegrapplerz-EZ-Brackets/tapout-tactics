@@ -43,10 +43,16 @@ const cards = [
     type: "pressure",
     cost: 1,
     requires: ["Top Guard", "Top Half Guard", "Side Control", "Mount"],
-    text: "Gain control and drain 1 opponent stamina.",
+    text: "Gain control and drain 1 stamina. From Mount at +3 control: they expose their back — take it.",
     play: (state, actor) => {
       addControl(state, actor, 1, actionLine(actor, "apply shoulder pressure", "applies shoulder pressure"));
       drainStamina(state, other(actor), 1);
+      const actorControl = actor === "player" ? state.control : -state.control;
+      const relPos = actor === "player" ? state.position : mirrorPosition(state.position);
+      if (relPos === "Mount" && actorControl >= 3) {
+        addLog(state, actionLine(actor, "feel them panic — cut to the back", "feels the panic and cuts to the back"));
+        setRelativePosition(state, actor, "Back Control", actionLine(actor, "transition to back control", "transitions to back control"));
+      }
     }
   },
   {
@@ -287,8 +293,11 @@ const cards = [
     type: "pass",
     cost: 2,
     requires: ["Top Guard", "Top Half Guard"],
-    text: "Drag the legs across and threaten the back.",
-    play: (state, actor) => passTo(state, actor, "Side Control", 3, "drag the legs across", "drags the legs across")
+    text: "Drag the legs across and expose the back. Scores 3 and transitions to Back Control.",
+    play: (state, actor) => {
+      score(state, actor, 3);
+      setRelativePosition(state, actor, "Back Control", actionLine(actor, "drag the legs and expose the back", "drags the legs and exposes the back"));
+    }
   },
   {
     id: "body-lock-pass",
@@ -493,8 +502,8 @@ const cards = [
     name: "Go Behind",
     type: "setup",
     cost: 2,
-    requires: ["Front Headlock"],
-    text: "Spin behind from front headlock. Take the back if stamina is equal or better.",
+    requires: ["Front Headlock", "Turtle"],
+    text: "Spin behind from front headlock or top turtle. Take the back if stamina is equal or better.",
     play: (state, actor) => conditionalBackTake(state, actor, "spin behind from front headlock", "spins behind from front headlock")
   },
   {
@@ -602,10 +611,11 @@ const cards = [
     type: "pass",
     cost: 3,
     requires: ["Top Guard", "Top Half Guard"],
-    text: "Heavy pressure pass. Gain control and score 3 to Side Control.",
+    text: "Heavy chest-to-chest pressure pass. Gain control, score 3, and settle directly into Mount.",
     play: (state, actor) => {
       addControl(state, actor, 1, actionLine(actor, "lock over-under pressure", "locks over-under pressure"));
-      passTo(state, actor, "Side Control", 3, "finish the over-under pass", "finishes the over-under pass");
+      score(state, actor, 3);
+      setRelativePosition(state, actor, "Mount", actionLine(actor, "drive into mount", "drives into mount"));
     }
   },
   {
@@ -614,11 +624,12 @@ const cards = [
     type: "pass",
     cost: 3,
     requires: ["Top Guard", "Top Half Guard"],
-    text: "Crush the knees across and pass. Scores 3, gains control, and drains stamina.",
+    text: "Crush the knees across and mount. Scores 3, gains control, drains stamina, and lands in Mount.",
     play: (state, actor) => {
       addControl(state, actor, 1, actionLine(actor, "smash the knees across", "smashes the knees across"));
       drainStamina(state, other(actor), 1);
-      passTo(state, actor, "Side Control", 3, "settle the smash pass", "settles the smash pass");
+      score(state, actor, 3);
+      setRelativePosition(state, actor, "Mount", actionLine(actor, "settle into mount", "settles into mount"));
     }
   },
   {
@@ -640,8 +651,15 @@ const cards = [
     type: "pressure",
     cost: 1,
     requires: ["Side Control"],
-    text: "Switch angles from Side Control. Gain control and threaten chokes or Kimuras.",
-    play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "switch to north-south control", "switches to north-south control"))
+    text: "Switch angles to expose the back. At +2 control, transitions to Back Control.",
+    play: (state, actor) => {
+      addControl(state, actor, 1, actionLine(actor, "switch to north-south control", "switches to north-south control"));
+      const actorControl = actor === "player" ? state.control : -state.control;
+      if (actorControl >= 2) {
+        addLog(state, actionLine(actor, "sense the back exposure and move", "senses the back exposure and moves"));
+        setRelativePosition(state, actor, "Back Control", actionLine(actor, "transition to back control", "transitions to back control"));
+      }
+    }
   },
   {
     id: "americana",
@@ -678,8 +696,8 @@ const cards = [
     name: "Clock Choke",
     type: "submission",
     cost: 3,
-    requires: ["Back Control", "Front Headlock"],
-    text: "Circle around a broken posture and attack the neck.",
+    requires: ["Back Control", "Front Headlock", "Turtle"],
+    text: "Circle around a broken posture or top turtle and attack the neck.",
     play: (state, actor) => submissionAttack(state, actor, "clock choke")
   },
   {
@@ -687,8 +705,8 @@ const cards = [
     name: "Crucifix Control",
     type: "pressure",
     cost: 2,
-    requires: ["Back Control", "Front Headlock"],
-    text: "Trap an arm while attacking the back. Gain control and open chokes.",
+    requires: ["Back Control", "Front Headlock", "Turtle"],
+    text: "Trap an arm while attacking the back or top turtle. Gain control and open chokes.",
     play: (state, actor) => addControl(state, actor, 1, actionLine(actor, "trap the arm in crucifix control", "traps the arm in crucifix control"))
   },
   {
