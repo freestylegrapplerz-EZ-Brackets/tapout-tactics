@@ -1585,6 +1585,7 @@ h2 {
 }
 
 .feed h2,
+.feed-header h2,
 .hand-header h2 {
   font-size: 1rem;
 }
@@ -3796,5 +3797,387 @@ h2 {
   .fighter,
   .position-panel {
     min-height: 86px;
+  }
+}
+
+/* ── Mobile phone layout (≤ 600px) ──────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  .game-shell {
+    gap: 0.55rem;
+    padding: 0.5rem;
+  }
+
+  /* Top bar — compact */
+  .top-bar {
+    align-items: center;
+    display: flex;
+    gap: 0.6rem;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .game-logo {
+    height: 44px;
+    width: 44px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  h1 sup {
+    font-size: 0.3em;
+  }
+
+  #newMatchButton {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.7rem;
+    white-space: nowrap;
+  }
+
+  /* Screen tabs — scrollable row */
+  .screen-tabs {
+    display: flex;
+    gap: 0.3rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.4rem;
+    scrollbar-width: none;
+  }
+
+  .screen-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .screen-tabs button {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    min-height: 38px;
+    padding: 0.4rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  /* Scoreboard — more compact */
+  .scoreboard {
+    gap: 0.4rem;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .scoreboard strong {
+    font-size: 1.6rem;
+  }
+
+  .scoreboard span,
+  .scoreboard small {
+    font-size: 0.72rem;
+  }
+
+  /* Turn track — smaller pips */
+  .turn-track {
+    padding: 0.35rem;
+    gap: 4px;
+  }
+
+  .turn-pip {
+    height: 6px;
+    width: 6px;
+  }
+
+  .turn-pip-current {
+    width: 14px;
+  }
+
+  /* Fighter strip — more compact */
+  .fighter,
+  .position-panel {
+    min-height: 76px;
+    padding: 0.6rem;
+  }
+
+  .fighter span {
+    font-size: 0.85rem;
+  }
+
+  .stamina-pips {
+    gap: 2px;
+    margin: 0.3rem 0 0.15rem;
+  }
+
+  .stamina-pip {
+    height: 8px;
+    width: 8px;
+  }
+
+  .position-panel h2 {
+    font-size: 1.2rem;
+  }
+
+  .position-path {
+    font-size: 0.6rem;
+    gap: 0.2rem;
+    margin-top: 0.2rem;
+  }
+
+  .control-gauge {
+    gap: 3px;
+    margin: 0.2rem 0 0.1rem;
+  }
+
+  .control-pip {
+    height: 8px;
+    width: 8px;
+  }
+
+  .control-pip-neutral {
+    height: 10px;
+    width: 10px;
+  }
+
+  /* Mat canvas — much smaller on phone */
+  .arena-card {
+    padding: 0.5rem;
+  }
+
+  .mat-canvas {
+    aspect-ratio: unset;
+    min-height: 160px;
+  }
+
+  /* Hide decorative ring on tiny screen */
+  .mat-ring {
+    display: none;
+  }
+
+  .mat-canvas::after {
+    font-size: 24px;
+    inset: 28% 33% 30%;
+  }
+
+  .action-banner {
+    bottom: 0.4rem;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  /* Feed — compact, log collapsible */
+  .match-layout {
+    gap: 0.55rem;
+  }
+
+  .feed {
+    min-height: 0;
+    padding: 0.7rem;
+  }
+
+  .feed-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .feed-header h2 {
+    font-size: 0.88rem;
+    margin: 0;
+  }
+
+  .log-toggle-btn {
+    font-size: 0.68rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .intent-box {
+    margin-bottom: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  .intent-box strong {
+    font-size: 0.88rem;
+  }
+
+  #log {
+    max-height: 100px;
+    font-size: 0.78rem;
+  }
+
+  #log.log-hidden {
+    display: none;
+  }
+
+  /* Hand header */
+  .hand-header {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .hand-header h2 {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .hand-header p {
+    font-size: 0.72rem;
+  }
+
+  /* ── COMPACT MOBILE CARDS ─────────────────────────────────────────────── */
+
+  .card-hand {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .card {
+    min-height: 240px;
+  }
+
+  .card-frame {
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
+
+  .card-topline {
+    min-height: 38px;
+  }
+
+  .rarity-gem {
+    height: 24px;
+    width: 24px;
+  }
+
+  .card .rarity-lockup span:last-child {
+    font-size: 0.62rem;
+  }
+
+  .card-stamina {
+    height: 46px;
+    width: 46px;
+  }
+
+  .card-stamina strong {
+    font-size: 1.55rem;
+  }
+
+  .card-stamina small {
+    font-size: 0.55rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  /* Hide the detailed info sections — show only core play info */
+  .card-technique-type,
+  .card-position-chips,
+  .card-info,
+  .card-leads,
+  .card blockquote,
+  .card-footer,
+  .card .threat-label {
+    display: none;
+  }
+
+  .card-art {
+    min-height: 72px;
+  }
+
+  .card-art svg {
+    height: 64px;
+    width: 120px;
+  }
+
+  .card-body {
+    gap: 0.3rem;
+    padding: 0.1rem 0.1rem 0.1rem;
+  }
+
+  .card .card-body span {
+    font-size: 0.66rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .card p {
+    font-size: 0.75rem;
+    line-height: 1.28;
+  }
+
+  .card-kicker {
+    gap: 0.25rem;
+  }
+
+  .card .intent-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.32rem;
+  }
+
+  .active-combo {
+    font-size: 0.66rem;
+    line-height: 1.2;
+    padding: 0.3rem 0.4rem;
+  }
+
+  .card-flavor {
+    font-size: 0.75rem;
+    line-height: 1.28;
+  }
+
+  /* Result overlay — full width on mobile */
+  .result-panel {
+    padding: 1rem;
+  }
+
+  .result-panel h2 {
+    font-size: 1.6rem;
+  }
+
+  .result-stats,
+  .result-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .result-actions {
+    display: grid;
+  }
+
+  /* Belt panel compact */
+  .belt-panel {
+    gap: 0.6rem;
+    padding: 0.65rem;
+  }
+
+  /* Pre-match modal compact */
+  .pre-match-panel {
+    padding: 1rem;
+  }
+
+  .pre-match-header h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Match intro compact */
+  .match-intro-vs {
+    gap: 0.75rem;
+  }
+
+  /* Timing overlay compact */
+  .timing-panel {
+    padding: 1rem 1.25rem;
+  }
+
+  .timing-bar-track {
+    height: 28px;
+  }
+
+  .timing-click-btn {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
   }
 }
