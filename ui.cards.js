@@ -264,6 +264,107 @@ const cardStrategyNotes = {
   }
 };
 
+const POSITION_HUMAN_LABELS = {
+  "Standing":             "Both fighters on their feet",
+  "Front Headlock":       "You control their head (front headlock)",
+  "Caught Front Headlock":"They control your head",
+  "Bottom Guard":         "You're on your back, guard position",
+  "Top Guard":            "You're on top, passing their guard",
+  "Bottom Half Guard":    "You're on your back, half guard",
+  "Top Half Guard":       "You're on top, half guard",
+  "Side Control":         "You're beside them, chest to chest on top",
+  "Under Side Control":   "They're beside you on top",
+  "Mount":                "You're sitting on their chest",
+  "Mounted":              "They're sitting on your chest",
+  "Back Control":         "You're on their back with hooks",
+  "Back Taken":           "They're on your back",
+  "Turtle":               "Defensive all-fours position",
+  "Ashi Garami":          "You have their leg trapped",
+  "Caught Ashi Garami":   "They have your leg trapped"
+};
+
+function isPhoneLandscape() {
+  return window.matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+}
+
+function showCardDetail(cardId) {
+  const card = cards.find((c) => c.id === cardId);
+  if (!card) return;
+  const modal = document.getElementById("cardDetailModal");
+  if (!modal) return;
+
+  const rarity = cardRarity(card);
+  const effectiveCost = effectiveCardCost(card, "player");
+  const strategy = cardStrategy(card);
+  const intent = cardIntent(card);
+  const chain = getChainBonus(state.lastPlayerCardId, card.id);
+  const chainHints = outgoingChainHints(card.id);
+  const disabled = state.finished || state.animating || state.player.stamina < effectiveCost;
+
+  const positionLines = (card.requires || [])
+    .map((pos) => POSITION_HUMAN_LABELS[pos] || pos)
+    .join(" · ");
+
+  const chainActiveHtml = chain
+    ? `<div class="card-detail-chain-active">🔗 Active Chain Bonus: ${escapeHtml(chain.label)}${chain.submission ? ` — +${chain.submission}% finish chance` : ""}${chain.control ? ` +${chain.control} control` : ""}</div>`
+    : "";
+
+  const chainHintsHtml = chainHints.length
+    ? `<div class="card-detail-section">
+        <span class="card-detail-label">Chains into next turn</span>
+        ${chainHints.map((h) => `<p>${escapeHtml(h)}</p>`).join("")}
+       </div>`
+    : "";
+
+  document.getElementById("cardDetailContent").innerHTML = `
+    <div class="card-detail-header">
+      <div class="card-detail-art" style="--card-color: var(--card-color-${card.type}, var(--accent))">${cardArt(card)}</div>
+      <div>
+        <strong class="card-detail-name">${escapeHtml(card.name)}</strong>
+        <div class="card-detail-meta">
+          <span class="card-detail-cost">${effectiveCost} STA</span>
+          <span class="intent-badge intent-${intent.className}">${intent.label}</span>
+          <span style="color:var(--muted);font-size:0.72rem">${rarityLabels[rarity] || "Common"}</span>
+        </div>
+      </div>
+    </div>
+    ${chainActiveHtml}
+    <div class="card-detail-section">
+      <span class="card-detail-label">What this card does</span>
+      <p>${escapeHtml(strategy.flavor || card.text)}</p>
+      <em>${escapeHtml(strategy.strong)}</em>
+    </div>
+    <div class="card-detail-section">
+      <span class="card-detail-label">Play when you are in</span>
+      <div class="card-detail-position-chips">
+        ${(card.requires || []).map((pos) => `<span class="card-detail-position-chip">${escapeHtml(POSITION_HUMAN_LABELS[pos] || pos)}</span>`).join("")}
+      </div>
+    </div>
+    <div class="card-detail-section">
+      <span class="card-detail-label">Effect</span>
+      <p>${escapeHtml(strategy.stat)}</p>
+      ${strategy.risk ? `<small>Risk: ${escapeHtml(strategy.risk)}</small>` : ""}
+    </div>
+    ${chainHintsHtml}
+  `;
+
+  const playBtn = document.getElementById("cardDetailPlayButton");
+  if (playBtn) {
+    playBtn.disabled = disabled;
+    playBtn.textContent = disabled ? "Not enough stamina" : "Play This Card";
+    playBtn.onclick = () => {
+      modal.hidden = true;
+      handleCardClick(cardId);
+    };
+  }
+
+  const backdrop = document.getElementById("cardDetailBackdrop");
+  if (backdrop) backdrop.onclick = () => { modal.hidden = true; };
+  document.getElementById("cardDetailClose").onclick = () => { modal.hidden = true; };
+
+  modal.hidden = false;
+}
+
 function cardIntent(card) {
   return intentMetaByType[card.type] || { label: "Move", className: "setup" };
 }
@@ -522,7 +623,23 @@ function renderHand() {
         </div>
       </div>
     `;
-    button.addEventListener("click", () => handleCardClick(card.id));
+    button.addEventListener("click", () => {
+      if (isPhoneLandscape() && !button.dataset.detailShown) {
+        button.dataset.detailShown = "1";
+        showCardDetail(card.id);
+        setTimeout(() => delete button.dataset.detailShown, 300);
+      } else {
+        handleCardClick(card.id);
+      }
+    });
+
+    // Long press (500ms) on any device shows the detail panel
+    let longPressTimer = null;
+    button.addEventListener("pointerdown", () => {
+      longPressTimer = setTimeout(() => { showCardDetail(card.id); }, 500);
+    });
+    button.addEventListener("pointerup", () => clearTimeout(longPressTimer));
+    button.addEventListener("pointerleave", () => clearTimeout(longPressTimer));
     els.cardHand.appendChild(button);
   });
 }
