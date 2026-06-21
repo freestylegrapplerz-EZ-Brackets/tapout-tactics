@@ -431,6 +431,128 @@ function renderAchievements() {
   }).join("");
 }
 
+// ── Tutorial system ───────────────────────────────────────────────────────
+
+function showTutorialCoach() {
+  if (!isTutorialActive()) return;
+  const step = getCurrentTutorialStep();
+  if (!step) return;
+  const overlay = document.getElementById("tutorialCoachOverlay");
+  if (!overlay) return;
+  document.getElementById("tutorialStepLabel").textContent = `Step ${step.turn} of ${TUTORIAL_STEPS.length}`;
+  document.getElementById("tutorialStepTitle").textContent = step.title.replace(/^Step \d+ of \d+ — /, "");
+  document.getElementById("tutorialCoachTip").textContent = step.tip;
+  overlay.hidden = false;
+
+  // Set tutorial force result for this step
+  if (step.forceResult && state) state.tutorialForceResult = step.forceResult;
+}
+
+function hideTutorialCoach() {
+  const overlay = document.getElementById("tutorialCoachOverlay");
+  if (overlay) overlay.hidden = true;
+}
+
+function showTutorialAfter(step) {
+  if (!step) return;
+  const overlay = document.getElementById("tutorialAfterOverlay");
+  if (!overlay) return;
+  document.getElementById("tutorialAfterTitle").textContent = step.afterTitle;
+  document.getElementById("tutorialAfterTip").textContent = step.afterTip;
+  overlay.hidden = false;
+}
+
+function hideTutorialAfter() {
+  const overlay = document.getElementById("tutorialAfterOverlay");
+  if (overlay) overlay.hidden = true;
+}
+
+function showTutorialGrade() {
+  const overlay = document.getElementById("tutorialGradeOverlay");
+  if (!overlay) return;
+  const breakdown = document.getElementById("tutorialGradeBreakdown");
+  if (breakdown && typeof TUTORIAL_GRADE_BREAKDOWN !== "undefined") {
+    breakdown.innerHTML = TUTORIAL_GRADE_BREAKDOWN.map((item) => `
+      <div class="tutorial-grade-item">
+        <div class="tutorial-grade-item-header">
+          <strong>${escapeHtml(item.category)}</strong>
+          <span class="tutorial-grade-letter">${escapeHtml(item.grade)}</span>
+        </div>
+        <p>${escapeHtml(item.detail)}</p>
+      </div>
+    `).join("");
+  }
+  overlay.hidden = false;
+
+  // Wire play-real and replay buttons
+  document.getElementById("tutorialPlayRealButton")?.addEventListener("click", () => {
+    overlay.hidden = true;
+    if (typeof endTutorialMode === "function") endTutorialMode();
+    openPreMatchModal();
+  }, { once: true });
+
+  document.getElementById("tutorialReplayButton")?.addEventListener("click", () => {
+    overlay.hidden = true;
+    if (typeof startTutorial === "function") startTutorial();
+  }, { once: true });
+}
+
+// Intercept card click in tutorial mode
+function handleCardClick(cardId) {
+  if (isTutorialActive()) {
+    const tutorialId = getTutorialCardId();
+    if (tutorialId && cardId !== tutorialId) {
+      // Wrong card — pulse the correct one
+      const cards = document.querySelectorAll(".card.tutorial-highlight");
+      cards.forEach((c) => { c.classList.remove("tutorial-highlight"); void c.offsetWidth; c.classList.add("tutorial-highlight"); });
+      return;
+    }
+    hideTutorialCoach();
+    const currentStep = getCurrentTutorialStep();
+    if (cardId === "adrenaline-burst") {
+      showTimingWindow((result) => {
+        state.pendingAdrenalineResult = result;
+        if (result === "perfect") state.gotPerfectAdrenaline = true;
+        completeTutorialTurn(currentStep, cardId);
+      });
+    } else {
+      playTurn(cardId);
+      // Show after-turn tip after animation
+      setTimeout(() => {
+        if (state.finished && isTutorialActive()) {
+          showTutorialGrade();
+          if (typeof endTutorialMode === "function") endTutorialMode();
+        } else if (currentStep) {
+          showTutorialAfter(currentStep);
+        }
+      }, ANIMATION_MS + 100);
+    }
+    return;
+  }
+
+  if (cardId === "adrenaline-burst") {
+    showTimingWindow((result) => {
+      state.pendingAdrenalineResult = result;
+      if (result === "perfect") state.gotPerfectAdrenaline = true;
+      playTurn(cardId);
+    });
+  } else {
+    playTurn(cardId);
+  }
+}
+
+function completeTutorialTurn(step, cardId) {
+  playTurn(cardId);
+  setTimeout(() => {
+    if (state.finished && isTutorialActive()) {
+      showTutorialGrade();
+      if (typeof endTutorialMode === "function") endTutorialMode();
+    } else if (step) {
+      showTutorialAfter(step);
+    }
+  }, ANIMATION_MS + 100);
+}
+
 // ── Match intro ───────────────────────────────────────────────────────────
 
 function showMatchIntro(opponent, venue) {

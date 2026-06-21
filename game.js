@@ -24,4 +24,11 @@ els.exitPosePreviewButton.addEventListener("click", () => {
   activeScreen = "match";
   render();
 });
+document.getElementById("tutorialContinueButton")?.addEventListener("click", () => {
+  hideTutorialAfter();
+  if (isTutorialActive()) showTutorialCoach();
+});
+document.getElementById("startTutorialButton")?.addEventListener("click", () => {
+  if (typeof startTutorial === "function") startTutorial();
+});
 openPreMatchModal();

@@ -265,6 +265,8 @@ function newMatch(forcedOpponent = null) {
     matchReview: null,
     pendingAdrenalineResult: null,
     gotPerfectAdrenaline: false,
+    tutorialMode: false,
+    tutorialForceResult: null,
     player: { points: 0, stamina: getMaxStamina("player") },
     opponent: { points: 0, stamina: MAX_STAMINA },
     hand: [],
@@ -566,6 +568,22 @@ function matchReviewVerdict(review) {
 }
 
 function drawHand() {
+  // In tutorial mode, always ensure the scripted card is in the hand
+  if (state.tutorialMode && typeof getTutorialCardId === "function") {
+    const tutId = getTutorialCardId();
+    const tutCard = tutId ? cards.find((c) => c.id === tutId) : null;
+    const rest = cards.find((card) => card.id === "rest");
+    const adrenalineBurst = cards.find((card) => card.id === "adrenaline-burst");
+    if (tutCard) {
+      const others = cards.filter((c) =>
+        c.id !== tutId && c.id !== "rest" && c.id !== "adrenaline-burst" &&
+        canPlay(c, "player") && cardUnlocked(c)
+      );
+      const fill = drawUniqueCards(others, 3);
+      state.hand = [tutCard, ...fill].slice(0, 4);
+      return;
+    }
+  }
   const playable = cards.filter((card) => canPlay(card, "player") && cardUnlocked(card));
   const rest = cards.find((card) => card.id === "rest");
   const adrenalineBurst = cards.find((card) => card.id === "adrenaline-burst");
@@ -884,6 +902,19 @@ function setStyle(styleId) {
   selectedStyleId = styleId;
   saveSelectedStyleId();
   render();
+}
+
+function startTutorial() {
+  if (typeof closePreMatchModal === "function") closePreMatchModal();
+  const tutorialOpponent = opponents.find((o) => o.id === "wrestler") || opponents[0];
+  newMatch(tutorialOpponent);
+  state.tutorialMode = true;
+  state.tutorialForceResult = null;
+  // Make sure the tutorial has enough stamina room
+  state.player.stamina = 10;
+  state.opponent.stamina = 10;
+  render();
+  if (typeof showTutorialCoach === "function") showTutorialCoach();
 }
 
 function setMindGame(mindGameId) {

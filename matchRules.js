@@ -103,6 +103,14 @@ function playTurn(playerCardId) {
 }
 
 function chooseOpponentCard() {
+  // In tutorial mode, use the scripted opponent card for this turn
+  if (state.tutorialMode && typeof TUTORIAL_STEPS !== "undefined") {
+    const step = TUTORIAL_STEPS.find((s) => s.turn === state.turn);
+    if (step?.opponentCardId) {
+      const scripted = cards.find((c) => c.id === step.opponentCardId);
+      if (scripted && state.opponent.stamina >= scripted.cost) return scripted;
+    }
+  }
   const playable = cards.filter((card) => canPlay(card, "opponent") && state.opponent.stamina >= card.cost);
   if (!playable.length) return cards.find((card) => card.id === "rest") || cards[0];
 
@@ -248,8 +256,11 @@ function sweepTo(state, actor, relativePosition, points, playerPhrase, opponentP
 }
 
 function conditionalBackTake(state, actor, playerPhrase, opponentPhrase) {
+  // Tutorial mode: always succeed for player
   const styleEdge = actor === "player" && state.style?.id === "back-hunter" ? 1 : 0;
-  const success = state[actor].stamina + styleEdge >= state[other(actor)].stamina;
+  const forceTutorial = state.tutorialMode && actor === "player" && state.tutorialForceResult === "backtake";
+  if (forceTutorial) state.tutorialForceResult = null;
+  const success = forceTutorial || (state[actor].stamina + styleEdge >= state[other(actor)].stamina);
   if (success) {
     score(state, actor, 4);
     setRelativePosition(state, actor, "Back Control", actionLine(actor, playerPhrase, opponentPhrase));
@@ -294,7 +305,10 @@ function submissionAttack(state, actor, submissionName) {
   const details = submissionChanceDetails(actor, submissionName);
   const chance = details.chance;
   const roll = Math.floor(Math.random() * 100) + 1;
-  const succeeded = roll <= chance;
+  const succeeded = state.tutorialForceResult === "finish" ? true
+    : state.tutorialForceResult === "miss" ? false
+    : (roll <= chance);
+  if (state.tutorialForceResult) state.tutorialForceResult = null;
   recordFinishAttempt(actor, submissionName, details, roll, succeeded);
 
   if (succeeded) {
