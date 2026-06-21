@@ -193,10 +193,14 @@
     </div>
 
     <div id="matCanvas" class="mat-canvas position-standing">
-      <div class="mat-ring"></div>
-      <div id="matScene" class="mat-scene" aria-hidden="true"></div>
-      <div id="actionBanner" class="action-banner">Slap hands. Pick your first move.</div>
-    </div>
+        <div class="mat-ring"></div>
+        <div id="matScene" class="mat-scene" aria-hidden="true"></div>
+        <div id="actionBanner" class="action-banner">Slap hands. Pick your first move.</div>
+        <div id="intentBoxLandscape" class="intent-box intent-box-landscape" aria-live="polite">
+          <p class="eyebrow">Opponent Intent</p>
+          <strong id="intentTextLandscape">Reading their stance...</strong>
+        </div>
+      </div>
   </div>
 
   <section class="feed" aria-live="polite">
@@ -235,6 +239,15 @@
     <h2 id="beltCeremonyName">Blue Belt</h2>
     <div id="beltCeremonyGraphic" class="belt-graphic" style="justify-content:center; margin:1rem 0;"></div>
     <p class="belt-ceremony-xp" id="beltCeremonyXp"></p>
+  </div>
+</div>
+
+<div id="rotatePrompt" class="rotate-prompt">
+  <div class="rotate-prompt-content">
+    <div class="rotate-icon">📱</div>
+    <h2>Rotate to Play</h2>
+    <p>Tapout Tactics plays in landscape mode.</p>
+    <p>Turn your phone sideways.</p>
   </div>
 </div>
 

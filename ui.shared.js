@@ -397,16 +397,20 @@ function logEntryClass(entry) {
 // ── Intent box urgency ────────────────────────────────────────────────────
 
 function renderIntentBox() {
-  const box = document.querySelector(".intent-box");
+  const box = document.querySelector(".intent-box:not(.intent-box-landscape)");
+  const landscapeBox = document.querySelector(".intent-box-landscape");
   const text = els.intentText;
-  if (!box || !text) return;
-  text.textContent = intentText(state.intentCard);
+  const msg = intentText(state.intentCard);
+  if (text) text.textContent = msg;
+  const lText = document.getElementById("intentTextLandscape");
+  if (lText) lText.textContent = msg;
   const type = state.intentCard?.type;
   const urgencyClass =
     ["submission"].includes(type) ? "intent-danger" :
     ["takedown", "pressure", "pass"].includes(type) ? "intent-warning" :
     ["counter", "escape"].includes(type) ? "intent-safe" : "intent-neutral";
-  box.className = `intent-box ${urgencyClass}`;
+  if (box) box.className = `intent-box ${urgencyClass}`;
+  if (landscapeBox) landscapeBox.className = `intent-box intent-box-landscape ${urgencyClass}`;
 }
 
 // ── Achievements render ───────────────────────────────────────────────────
