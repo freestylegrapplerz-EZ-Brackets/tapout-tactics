@@ -1,7 +1,7 @@
 // Split from the original prototype script. Keep load order in index.html.
 
 const MAX_STAMINA = 10;
-const MAX_TURNS = 12;
+const MAX_TURNS = 15;
 const BELTS = [
   { name: "White Belt", short: "white", color: "#f7f7f2", xp: 0 },
   { name: "Blue Belt", short: "blue", color: "#3151df", xp: 100 },
@@ -12,11 +12,12 @@ const BELTS = [
 ];
 const XP_STORAGE_KEY = "tapoutTacticsXp";
 const STYLE_PROGRESS_STORAGE_KEY = "tapoutTacticsStyleProgress";
+const STYLE_ID_STORAGE_KEY = "tapoutTacticsStyleId";
 const MATCH_REVIEW_STORAGE_KEY = "tapoutTacticsMatchReviews";
 const VENUE_STORAGE_KEY = "tapoutTacticsVenue";
 const XP_PER_LEVEL = 50;
-const ANIMATION_MS = 4800;
-const MIN_HAND_TECHNIQUES = 3;
+const ANIMATION_MS = 3200;
+const MIN_HAND_TECHNIQUES = 4;
 
 const positionSafetyCardIds = {
   "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull"],
@@ -53,6 +54,16 @@ const opponents = [
     name: "Pressure Passer",
     style: "Passes, control, and stamina drain",
     favoriteTypes: ["pass", "pressure", "setup", "escape"]
+  },
+  {
+    name: "The Leg Locker",
+    style: "Ashi garami and leg entanglements",
+    favoriteTypes: ["guard", "submission", "escape", "setup"]
+  },
+  {
+    name: "The Scrambler",
+    style: "Explosive transitions and counters",
+    favoriteTypes: ["counter", "escape", "takedown", "setup"]
   }
 ];
 
@@ -122,21 +133,23 @@ const mindGames = [
 ];
 
 
-let selectedStyleId = "wrestler";
+let selectedStyleId = loadSelectedStyleId();
 let selectedMindGameId = "composed-pressure";
 let selectedVenueId = loadSelectedVenueId();
 let playerXp = loadPlayerXp();
 let styleProgress = loadStyleProgress();
 let activeScreen = "match";
 let previewPose = null;
+let pendingOpponent = null;
 
 
 let state;
 
 
-function newMatch() {
+function newMatch(forcedOpponent = null) {
   previewPose = null;
-  const opponent = opponents[Math.floor(Math.random() * opponents.length)];
+  const opponent = forcedOpponent || pendingOpponent || opponents[Math.floor(Math.random() * opponents.length)];
+  pendingOpponent = opponent;
   state = {
     ai: opponent,
     style: playerStyles.find((style) => style.id === selectedStyleId),
@@ -436,8 +449,8 @@ function drawHand() {
   const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest"));
   const affordableTechniques = playableTechniques.filter((card) => state.player.stamina >= effectiveCardCost(card, "player"));
   const styledPlayable = playableTechniques.filter((card) => isStyleCard(card, state.style));
-  const poolBase = styledPlayable.length >= 3 ? weightedStylePool(playableTechniques, state.style) : playableTechniques;
-  state.hand = drawUniqueCards(poolBase, 3);
+  const poolBase = styledPlayable.length >= 4 ? weightedStylePool(playableTechniques, state.style) : playableTechniques;
+  state.hand = drawUniqueCards(poolBase, 4);
 
   if (state.hand.length < 3 && rest && !state.hand.some((card) => card.id === "rest")) {
     state.hand.push(rest);
@@ -664,6 +677,28 @@ function selectedVenue() {
 function loadSelectedVenueId() {
   const stored = localStorage.getItem(VENUE_STORAGE_KEY);
   return venues.some((venue) => venue.id === stored) ? stored : venues[0].id;
+}
+
+function loadSelectedStyleId() {
+  const stored = localStorage.getItem(STYLE_ID_STORAGE_KEY);
+  return playerStyles.some((style) => style.id === stored) ? stored : "wrestler";
+}
+
+function saveSelectedStyleId() {
+  localStorage.setItem(STYLE_ID_STORAGE_KEY, selectedStyleId);
+}
+
+function setStyle(styleId) {
+  if (!playerStyles.some((style) => style.id === styleId)) return;
+  selectedStyleId = styleId;
+  saveSelectedStyleId();
+  render();
+}
+
+function setMindGame(mindGameId) {
+  if (!mindGames.some((mg) => mg.id === mindGameId)) return;
+  selectedMindGameId = mindGameId;
+  render();
 }
 
 function setVenue(venueId) {

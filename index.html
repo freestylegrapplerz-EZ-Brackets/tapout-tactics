@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tapout Tactics Prototype</title>
+  <title>Tapout Tactics</title>
   <link rel="stylesheet" href="styles.css?v=tatami-mat-2">
 </head>
 <body>
@@ -12,7 +12,7 @@
       <div class="brand-lockup">
         <img class="game-logo" src="assets/tapout-tactics-logo.png" alt="Tapout Tactics logo">
         <div>
-          <p class="eyebrow">Prototype 0.1</p>
+          <p class="eyebrow">v0.2</p>
           <h1>Tapout Tactics <sup>TM</sup></h1>
         </div>
       </div>
@@ -37,7 +37,7 @@
   <article>
     <span>Turn</span>
     <strong id="turnCount">1</strong>
-    <small>of 12</small>
+    <small>of 15</small>
   </article>
   <article>
     <span>Opponent</span>
@@ -45,6 +45,8 @@
     <small>points</small>
   </article>
 </section>
+
+<div id="turnTrack" class="turn-track" aria-label="Turn progress" aria-hidden="true"></div>
 
 <section class="belt-panel" aria-label="Belt progression" data-screen-panel="athlete skills">
   <div class="belt-rank">
@@ -165,10 +167,60 @@
 </section>
 
 <section class="review-screen-panel" data-screen-panel="review">
-  <div class="review-empty-card">
+  <div class="review-screen-header">
     <p class="eyebrow">Coach Review</p>
-    <h2>Finish a match to generate a breakdown.</h2>
-    <p>Match reviews still appear after the round ends. This screen is here so review history can become its own clean workspace next.</p>
+    <h2>Match History</h2>
+    <small>Your last 5 match breakdowns.</small>
+  </div>
+  <div id="reviewHistory" class="review-history"></div>
+</section>
+
+<section id="preMatchModal" class="pre-match-overlay" hidden>
+  <div class="pre-match-panel">
+    <header class="pre-match-header">
+      <div>
+        <p class="eyebrow">Match Setup</p>
+        <h2>Ready to Roll?</h2>
+      </div>
+      <div class="pre-match-vs">
+        <p class="eyebrow">Your Opponent</p>
+        <strong id="preMatchOpponentName">—</strong>
+        <small id="preMatchOpponentStyle">—</small>
+      </div>
+    </header>
+
+    <div class="pre-match-section">
+      <p class="eyebrow">Your Style</p>
+      <div id="preMatchStyleButtons" class="pre-match-style-grid"></div>
+    </div>
+
+    <div class="pre-match-section">
+      <p class="eyebrow">Pre-Match Read</p>
+      <div id="preMatchMindButtons" class="pre-match-mind-grid"></div>
+    </div>
+
+    <div class="pre-match-section">
+      <p class="eyebrow">Venue</p>
+      <div id="preMatchVenueRow" class="pre-match-venue-row"></div>
+    </div>
+
+    <details class="pre-match-howto">
+      <summary>How to Play</summary>
+      <ul>
+        <li>You and your opponent each play 1 card per turn (15 turns total).</li>
+        <li>Cards require a <strong>position</strong> — play cards that match where the match is happening.</li>
+        <li>Cards cost <strong>Stamina</strong>. Stamina trickles back each turn — manage it wisely.</li>
+        <li>Build <strong>Chains</strong>: play a setup card followed by its payoff card for combo bonuses.</li>
+        <li><strong>Control</strong> improves your submission odds. Earn it through pressure, lose it to counters.</li>
+        <li>Win by submission finish or by leading on <strong>points</strong> when time expires.</li>
+        <li>XP from wins unlocks skills and belt ranks on the Athlete/Skills tabs.</li>
+      </ul>
+    </details>
+
+    <div class="pre-match-actions">
+      <button id="preMatchCancelButton" class="secondary-button" type="button">Cancel</button>
+      <button id="preMatchFightButton" class="fight-button" type="button">Fight!</button>
+    </div>
   </div>
 </section>
 

@@ -11,10 +11,7 @@ function renderStyleButtons() {
       <small>${style.summary}</small>
       <span>${progress.xp} XP / ${skillSpentPointsForStyle(style.id)} points spent</span>
     `;
-    button.addEventListener("click", () => {
-      selectedStyleId = style.id;
-      newMatch();
-    });
+    button.addEventListener("click", () => setStyle(style.id));
     els.styleButtons.appendChild(button);
   });
 }
@@ -28,10 +25,7 @@ function renderMindGameButtons() {
     button.className = `mind-game-button${mindGame.id === selectedMindGameId ? " active" : ""}`;
     button.type = "button";
     button.innerHTML = `<strong>${mindGame.name}</strong><small>${mindGame.summary}</small>`;
-    button.addEventListener("click", () => {
-      selectedMindGameId = mindGame.id;
-      newMatch();
-    });
+    button.addEventListener("click", () => setMindGame(mindGame.id));
     els.mindGameButtons.appendChild(button);
   });
 }

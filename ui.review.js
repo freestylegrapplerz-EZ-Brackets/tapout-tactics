@@ -6,6 +6,9 @@ function renderResult() {
   }
   awardMatchXp();
   const review = finalizeMatchReview();
+  const resultClass = state.result.title === "Victory" ? "result-win" :
+    state.result.title === "Defeat" ? "result-loss" : "result-draw";
+  els.resultOverlay.className = `result-overlay ${resultClass}`;
   els.resultTitle.textContent = state.result.title;
   els.resultDetails.textContent = state.result.detail;
   els.resultScore.textContent = `Score ${state.result.score}`;
@@ -64,4 +67,66 @@ function turnReviewHtml(turn) {
 
 function chanceText(chance) {
   return chance >= 100 ? "100%+" : `${chance}%`;
+}
+
+// ── Review tab history ────────────────────────────────────────────────────────
+
+function renderReviewHistory() {
+  const container = document.getElementById("reviewHistory");
+  if (!container) return;
+
+  let reviews = [];
+  try {
+    reviews = JSON.parse(localStorage.getItem(MATCH_REVIEW_STORAGE_KEY) || "[]");
+  } catch { reviews = []; }
+
+  if (!reviews.length) {
+    container.innerHTML = `
+      <div class="review-empty-card">
+        <p class="eyebrow">No matches yet</p>
+        <h2>Finish a match to generate a breakdown.</h2>
+        <p>Your last 5 match reviews will appear here after each match ends.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = reviews.map((review) => {
+    const result = review.result || {};
+    const won = result.title === "Victory";
+    const lost = result.title === "Defeat";
+    const date = review.createdAt ? new Date(review.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+    return `
+      <article class="review-history-card ${won ? "review-history-win" : lost ? "review-history-loss" : "review-history-draw"}">
+        <div class="review-history-header">
+          <div>
+            <strong class="review-history-title">${escapeHtml(result.title || "Unknown")}</strong>
+            <span>vs ${escapeHtml(review.opponent || "Unknown")} · ${escapeHtml(review.playerStyle || "—")}</span>
+            ${date ? `<small>${date}</small>` : ""}
+          </div>
+          <span class="review-history-grade">${escapeHtml(review.grade || "—")}</span>
+        </div>
+        <div class="review-history-meta">
+          <span>Score: ${escapeHtml(result.score || "—")}</span>
+          <span>Mind: ${escapeHtml(review.mindGame || "—")}</span>
+          <span>${escapeHtml(result.detail || "")}</span>
+        </div>
+        <div class="review-history-verdict">${escapeHtml(review.verdict || "")}</div>
+        ${review.notes?.length ? `
+          <div class="review-history-notes">
+            ${review.notes.map((note) => `
+              <div class="review-history-note">
+                <strong>${escapeHtml(note.title)}</strong>
+                <p>${escapeHtml(note.text)}</p>
+              </div>
+            `).join("")}
+          </div>
+        ` : ""}
+        <details class="review-history-timeline">
+          <summary>${review.turns?.length || 0} turns</summary>
+          <div>${(review.turns || []).map(turnReviewHtml).join("")}</div>
+        </details>
+      </article>
+    `;
+  }).join("");
 }

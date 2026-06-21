@@ -84,12 +84,41 @@ function playTurn(playerCardId) {
 
 function chooseOpponentCard() {
   const playable = cards.filter((card) => canPlay(card, "opponent") && state.opponent.stamina >= card.cost);
+  if (!playable.length) return cards.find((card) => card.id === "rest") || cards[0];
+
+  const opponentRelPos = mirrorPosition(state.position);
+  const topPositions = ["Mount", "Back Control", "Side Control", "Front Headlock", "Ashi Garami"];
+
+  // Exhausted: rest or cheapest option
+  if (state.opponent.stamina <= 1) {
+    const rest = playable.find((card) => card.id === "rest");
+    if (rest) return rest;
+    const cheap = playable.filter((card) => card.cost <= 1);
+    if (cheap.length) return shuffle(cheap)[0];
+  }
+
+  // Dominant position: hunt the finish
+  if (topPositions.includes(opponentRelPos)) {
+    const finishers = playable.filter((card) => ["submission", "pressure"].includes(card.type));
+    if (finishers.length >= 2) return shuffle(finishers)[0];
+  }
+
+  // Player is fatigued: attack hard
+  if (state.player.stamina <= 3) {
+    const aggressive = playable.filter((card) => ["submission", "pressure", "pass", "takedown"].includes(card.type));
+    if (aggressive.length >= 2) return shuffle(aggressive)[0];
+  }
+
+  // Mind game modifier: opponent is aggressive
   if (state.mindEffects?.opponentAggressive) {
     const aggressive = playable.filter((card) => ["takedown", "pass", "submission", "pressure"].includes(card.type));
     if (aggressive.length) return shuffle(aggressive)[0];
   }
+
+  // Default: style-weighted with 2x key-type bias
   const styled = playable.filter((card) => state.ai.favoriteTypes.includes(card.type));
-  return shuffle(styled.length ? styled : playable)[0] || cards.find((card) => card.id === "rest");
+  const pool = styled.length ? [...styled, ...styled, ...playable] : playable;
+  return shuffle(pool)[0] || cards.find((card) => card.id === "rest");
 }
 
 function resolveCards(playerCard, opponentCard) {
@@ -284,9 +313,14 @@ function spendStamina(actor, amount) {
 }
 
 function recoverStandingStamina() {
-  if (state.position !== "Standing") return;
+  // Always recover 1 for everyone each turn (trickle)
   state.player.stamina = Math.min(getMaxStamina("player"), state.player.stamina + 1);
   state.opponent.stamina = Math.min(MAX_STAMINA, state.opponent.stamina + 1);
+  // Extra +1 when standing (wrestling reset bonus)
+  if (state.position === "Standing") {
+    state.player.stamina = Math.min(getMaxStamina("player"), state.player.stamina + 1);
+    state.opponent.stamina = Math.min(MAX_STAMINA, state.opponent.stamina + 1);
+  }
 }
 
 function score(state, actor, points) {

@@ -88,6 +88,8 @@ function render() {
   renderSkillTree();
   renderPoseLibraryButtons();
   renderResult();
+  renderTurnTrack();
+  renderReviewHistory();
   renderHand();
 }
 
@@ -163,3 +165,100 @@ function isFallbackOnly(positionId) {
 function isPositionAiSafe(positionId) {
   return !!getPlayableState(positionId)?.aiSafe;
 }
+
+// ── Turn track ────────────────────────────────────────────────────────────────
+
+function renderTurnTrack() {
+  const el = document.getElementById("turnTrack");
+  if (!el) return;
+  el.innerHTML = Array.from({ length: MAX_TURNS }, (_, i) => {
+    const turnNum = i + 1;
+    const isDone = turnNum < state.turn;
+    const isCurrent = turnNum === Math.min(state.turn, MAX_TURNS) && !state.finished;
+    return `<span class="turn-pip${isDone ? " turn-pip-done" : isCurrent ? " turn-pip-current" : ""}"></span>`;
+  }).join("");
+}
+
+// ── Pre-match modal ───────────────────────────────────────────────────────────
+
+function openPreMatchModal() {
+  pendingOpponent = opponents[Math.floor(Math.random() * opponents.length)];
+  document.getElementById("preMatchOpponentName").textContent = pendingOpponent.name;
+  document.getElementById("preMatchOpponentStyle").textContent = pendingOpponent.style;
+  renderPreMatchStyleButtons();
+  renderPreMatchMindButtons();
+  renderPreMatchVenueRow();
+  document.getElementById("preMatchModal").hidden = false;
+}
+
+function closePreMatchModal() {
+  document.getElementById("preMatchModal").hidden = true;
+}
+
+function renderPreMatchStyleButtons() {
+  const container = document.getElementById("preMatchStyleButtons");
+  if (!container) return;
+  container.innerHTML = "";
+  playerStyles.forEach((style) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `pre-match-style-btn${style.id === selectedStyleId ? " active" : ""}`;
+    btn.innerHTML = `<strong>${escapeHtml(style.name)}</strong><small>${escapeHtml(style.summary)}</small>`;
+    btn.addEventListener("click", () => {
+      selectedStyleId = style.id;
+      saveSelectedStyleId();
+      renderPreMatchStyleButtons();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderPreMatchMindButtons() {
+  const container = document.getElementById("preMatchMindButtons");
+  if (!container) return;
+  container.innerHTML = "";
+  mindGames.forEach((mg) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `pre-match-mind-btn${mg.id === selectedMindGameId ? " active" : ""}`;
+    btn.innerHTML = `<strong>${escapeHtml(mg.name)}</strong><small>${escapeHtml(mg.summary)}</small>`;
+    btn.addEventListener("click", () => {
+      selectedMindGameId = mg.id;
+      renderPreMatchMindButtons();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderPreMatchVenueRow() {
+  const container = document.getElementById("preMatchVenueRow");
+  if (!container) return;
+  container.innerHTML = "";
+  venues.forEach((venue) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `pre-match-venue-btn venue-card-${venue.id}${venue.id === selectedVenueId ? " active" : ""}`;
+    btn.innerHTML = `
+      <span class="pre-match-venue-preview"></span>
+      <strong>${escapeHtml(venue.name)}</strong>
+      <small>${escapeHtml(venue.tier)}</small>
+    `;
+    btn.addEventListener("click", () => {
+      setVenue(venue.id);
+      renderPreMatchVenueRow();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// Wire up pre-match modal buttons (called once after DOM is ready via game.js)
+(function wirePreMatchModal() {
+  const fightBtn = document.getElementById("preMatchFightButton");
+  const cancelBtn = document.getElementById("preMatchCancelButton");
+  if (fightBtn) fightBtn.addEventListener("click", () => { closePreMatchModal(); newMatch(pendingOpponent); });
+  if (cancelBtn) cancelBtn.addEventListener("click", () => {
+    closePreMatchModal();
+    // If no match has been started yet, start one automatically
+    if (!state) newMatch();
+  });
+})();
