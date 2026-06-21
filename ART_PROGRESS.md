@@ -1,6 +1,59 @@
 # BJJ Art Library Progress
 
-Last updated: 2026-06-20T21:48:12.8875802-04:00
+Last updated: 2026-06-21
+
+## Game Sprite Status (assets/sprites/)
+
+37 unique PNG filenames are referenced in `poseSpriteMap` in `poses.js`.
+
+### Approved and ready to drop in (17 / 37)
+
+| Filename | Style |
+|---|---|
+| `standing-neutral.png` | ✓ Canonical |
+| `collar-tie.png` | ✓ Canonical |
+| `snapdown.png` | ✓ Canonical |
+| `front-headlock.png` | ✓ Canonical |
+| `hand-fight.png` | ✓ Canonical |
+| `closed-guard.png` | ✓ Canonical |
+| `hip-bump-sweep.png` | ✓ Canonical |
+| `knee-on-belly.png` | ✓ Canonical |
+| `mount.png` | ✓ Canonical |
+| `side-control.png` | ⚠ Black gi (re-generate recommended) |
+| `back-control.png` | ✓ Canonical |
+| `go-behind.png` | ✓ Canonical (two versions: turtle & mount) |
+| `turtle.png` | ✓ Canonical |
+| `armbar.png` | ✓ Canonical |
+| `rear-naked-choke.png` | ✓ Canonical |
+| `triangle.png` | ✓ Canonical |
+| `bridge-escape.png` | ✓ Canonical |
+
+### Still needed (20 / 37)
+
+| Filename | Pose |
+|---|---|
+| `sprawl.png` | Sprawl defense |
+| `double-leg-entry.png` | Double leg entry |
+| `single-leg-entry.png` | Single leg entry |
+| `open-guard.png` | Open guard (top vs bottom) |
+| `butterfly-guard.png` | Butterfly guard |
+| `half-guard.png` | Half guard |
+| `knee-slice-pass.png` | Knee slice pass |
+| `torreando-pass.png` | Torreando pass |
+| `kimura.png` | Kimura finish |
+| `guard-recovery.png` | Guard recovery / frame |
+| `elbow-escape.png` | Elbow-knee escape from mount |
+| `arm-drag.png` | Arm drag (ground) |
+| `standing-arm-drag.png` | Standing arm drag |
+| `body-lock-pass.png` | Body lock pass |
+| `leg-drag.png` | Leg drag pass |
+| `guillotine.png` | Guillotine (ground) |
+| `standing-guillotine.png` | Standing guillotine |
+| `ashi-garami.png` | Ashi garami entry |
+| `leg-lock-finish.png` | Leg lock finish (heel hook/kneebar) |
+| `scissor-sweep.png` | Scissor sweep |
+
+---
 
 ## Completed Assets
 
