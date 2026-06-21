@@ -105,29 +105,52 @@ const positionSafetyCardIds = {
 
 const opponents = [
   {
+    id: "wrestler",
     name: "The Wrestler",
     style: "Takedowns and top pressure",
     favoriteTypes: ["setup", "takedown", "pressure", "counter"]
   },
   {
+    id: "triangle-hunter",
     name: "Triangle Hunter",
     style: "Guard attacks and submissions",
     favoriteTypes: ["guard", "submission", "setup", "counter"]
   },
   {
+    id: "pressure-passer",
     name: "Pressure Passer",
     style: "Passes, control, and stamina drain",
     favoriteTypes: ["pass", "pressure", "setup", "escape"]
   },
   {
+    id: "leg-locker",
     name: "The Leg Locker",
     style: "Ashi garami and leg entanglements",
     favoriteTypes: ["guard", "submission", "escape", "setup"]
   },
   {
+    id: "scrambler",
     name: "The Scrambler",
     style: "Explosive transitions and counters",
     favoriteTypes: ["counter", "escape", "takedown", "setup"]
+  },
+  {
+    id: "clinch-king",
+    name: "The Clinch King",
+    style: "Front headlock and clinch control",
+    favoriteTypes: ["setup", "counter", "pressure", "takedown"]
+  },
+  {
+    id: "ground-specialist",
+    name: "Ground Specialist",
+    style: "Balanced passing and top control",
+    favoriteTypes: ["pass", "pressure", "submission", "counter"]
+  },
+  {
+    id: "the-champion",
+    name: "The Champion",
+    style: "Elite all-round — no weak positions",
+    favoriteTypes: ["submission", "pressure", "counter", "pass"]
   }
 ];
 
@@ -443,6 +466,11 @@ function finalizeMatchReview() {
   const won = state.result.title === "Victory";
   updateWinStreak(won);
   checkAchievements(state.matchReview);
+  if (typeof recordMatchResult === "function") {
+    const stats = recordMatchResult(won);
+    const achievements = typeof loadAchievements === "function" ? new Set(loadAchievements()) : new Set();
+    if (typeof checkAndGrantUnlocks === "function") checkAndGrantUnlocks(stats, achievements);
+  }
   return state.matchReview;
 }
 

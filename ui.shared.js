@@ -90,6 +90,7 @@ function render() {
       : matSceneSvg(state.position);
   renderProgression();
   renderSkillTree();
+  renderCareerPath();
   renderAchievements();
   renderPoseLibraryButtons();
   renderResult();
@@ -187,7 +188,10 @@ function renderTurnTrack() {
 // ── Pre-match modal ───────────────────────────────────────────────────────────
 
 function openPreMatchModal() {
-  pendingOpponent = opponents[Math.floor(Math.random() * opponents.length)];
+  const pool = typeof getUnlockedOpponents === "function"
+    ? getUnlockedOpponents().map((d) => opponents.find((o) => o.id === d.id)).filter(Boolean)
+    : opponents;
+  pendingOpponent = pool[Math.floor(Math.random() * pool.length)];
   document.getElementById("preMatchOpponentName").textContent = pendingOpponent.name;
   document.getElementById("preMatchOpponentStyle").textContent = pendingOpponent.style;
   renderPreMatchStyleButtons();
