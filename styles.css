@@ -2170,6 +2170,132 @@ h2 {
   100% { transform: translateX(0); }
 }
 
+/* ── Adrenaline Burst timing bar ─────────────────────────────────────────── */
+
+.timing-overlay {
+  align-items: center;
+  background: rgba(4, 8, 6, 0.88);
+  display: grid;
+  inset: 0;
+  padding: 1rem;
+  place-items: center;
+  position: fixed;
+  z-index: 15;
+}
+
+.timing-overlay[hidden] {
+  display: none;
+}
+
+.timing-panel {
+  background: linear-gradient(180deg, #1a2a22, #0e1710);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  box-shadow:
+    0 0 60px rgba(243, 199, 107, 0.22),
+    0 32px 80px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  width: min(100%, 500px);
+}
+
+.timing-panel h3 {
+  color: var(--gold);
+  font-size: 1.3rem;
+  margin: 0.3rem 0 1rem;
+}
+
+.timing-hints {
+  display: grid;
+  font-size: 0.76rem;
+  font-weight: 800;
+  gap: 0.2rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.timing-hint-perfect { color: var(--accent); }
+.timing-hint-good    { color: var(--gold); }
+.timing-hint-miss    { color: var(--muted); }
+
+.timing-bar-track {
+  background: rgba(12, 18, 15, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  height: 36px;
+  margin: 0 0 1.25rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.timing-bar-miss-zone,
+.timing-bar-good-zone,
+.timing-bar-perfect-zone {
+  bottom: 0;
+  position: absolute;
+  top: 0;
+}
+
+.timing-bar-miss-zone {
+  background: rgba(240, 106, 95, 0.12);
+}
+
+.timing-bar-good-zone {
+  background: rgba(243, 199, 107, 0.22);
+}
+
+.timing-bar-perfect-zone {
+  background: rgba(103, 211, 145, 0.32);
+  border: 1px solid rgba(103, 211, 145, 0.4);
+}
+
+.timing-zone-left      { left: 0;   width: 15%; }
+.timing-bar-good-zone  { left: 15%; width: 20%; }
+.timing-bar-perfect-zone { left: 35%; width: 30%; }
+.timing-zone-right     { left: 65%; width: 20%; }
+.timing-zone-rightmost { left: 85%; width: 15%; }
+
+.timing-indicator {
+  background: var(--gold);
+  border-radius: 999px;
+  bottom: 4px;
+  box-shadow: 0 0 10px var(--gold), 0 0 24px rgba(243, 199, 107, 0.5);
+  position: absolute;
+  top: 4px;
+  width: 14px;
+  will-change: left;
+}
+
+.timing-click-btn {
+  background: linear-gradient(135deg, #f3c76b, #d4a040);
+  border-radius: 8px;
+  color: #1a0e00;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  min-width: 160px;
+  padding: 0.85rem 2rem;
+  text-transform: uppercase;
+}
+
+.timing-click-btn:hover {
+  background: linear-gradient(135deg, #ffd88a, #e8b550);
+  transform: translateY(-1px);
+}
+
+.timing-result {
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin: 0.75rem 0 0;
+  text-transform: uppercase;
+}
+
+.timing-result-perfect { color: var(--accent); }
+.timing-result-good    { color: var(--gold); }
+.timing-result-miss    { color: var(--muted); }
+
 /* ── Turn track ──────────────────────────────────────────────────────────── */
 
 .turn-track {

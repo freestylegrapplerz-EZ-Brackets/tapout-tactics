@@ -20,22 +20,22 @@ const ANIMATION_MS = 3200;
 const MIN_HAND_TECHNIQUES = 4;
 
 const positionSafetyCardIds = {
-  "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull"],
-  "Top Guard": ["wrist-control", "pressure", "knee-slice", "torreando", "x-pass"],
-  "Bottom Guard": ["frame", "wrist-control", "butterfly-hooks", "armbar", "guillotine"],
-  "Top Half Guard": ["pressure", "knee-slice", "leg-drag", "backstep-pass", "shin-pin-pass"],
-  "Bottom Half Guard": ["frame", "hip-escape", "butterfly-hooks", "reguard"],
-  "Side Control": ["pressure", "mount", "americana", "knee-on-belly", "north-south-control"],
-  "Under Side Control": ["frame", "hip-escape", "reguard", "technical-bridge"],
-  "Mount": ["pressure", "armbar", "americana", "arm-triangle"],
-  "Mounted": ["frame", "hip-escape", "bridge", "elbow-escape", "knee-elbow-escape"],
-  "Back Control": ["seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow"],
-  "Back Taken": ["hand-fight", "protect-neck", "frame"],
-  "Front Headlock": ["headlock-pressure", "slide-by", "guillotine", "front-headlock-spin"],
-  "Caught Front Headlock": ["hand-fight", "protect-neck", "frame"],
-  "Turtle": ["hand-fight", "protect-neck", "frame"],
-  "Ashi Garami": ["ashi-control", "straight-ankle-lock", "toe-hold", "kneebar"],
-  "Caught Ashi Garami": ["leg-pummel-escape", "hip-escape", "hand-fight", "frame"]
+  "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull", "rest"],
+  "Top Guard": ["wrist-control", "pressure", "knee-slice", "torreando", "x-pass", "breathe-and-hold"],
+  "Bottom Guard": ["frame", "wrist-control", "butterfly-hooks", "armbar", "guillotine", "rest"],
+  "Top Half Guard": ["pressure", "knee-slice", "leg-drag", "backstep-pass", "shin-pin-pass", "breathe-and-hold"],
+  "Bottom Half Guard": ["frame", "hip-escape", "butterfly-hooks", "reguard", "technical-standup"],
+  "Side Control": ["pressure", "mount", "americana", "knee-on-belly", "north-south-control", "breathe-and-hold"],
+  "Under Side Control": ["frame", "hip-escape", "reguard", "technical-bridge", "technical-standup"],
+  "Mount": ["pressure", "armbar", "americana", "arm-triangle", "breathe-and-hold"],
+  "Mounted": ["frame", "hip-escape", "bridge", "elbow-escape", "knee-elbow-escape", "technical-standup"],
+  "Back Control": ["seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow", "breathe-and-hold"],
+  "Back Taken": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Front Headlock": ["headlock-pressure", "slide-by", "guillotine", "front-headlock-spin", "breathe-and-hold"],
+  "Caught Front Headlock": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Turtle": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Ashi Garami": ["ashi-control", "straight-ankle-lock", "toe-hold", "kneebar", "breathe-and-hold"],
+  "Caught Ashi Garami": ["leg-pummel-escape", "hip-escape", "hand-fight", "frame", "technical-standup"]
 };
 
 
@@ -176,6 +176,7 @@ function newMatch(forcedOpponent = null) {
     lastChain: null,
     turnFinishAttempts: [],
     matchReview: null,
+    pendingAdrenalineResult: null,
     player: { points: 0, stamina: getMaxStamina("player") },
     opponent: { points: 0, stamina: MAX_STAMINA },
     hand: [],
@@ -446,16 +447,19 @@ function matchReviewVerdict(review) {
 function drawHand() {
   const playable = cards.filter((card) => canPlay(card, "player") && cardUnlocked(card));
   const rest = cards.find((card) => card.id === "rest");
-  const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest"));
+  const adrenalineBurst = cards.find((card) => card.id === "adrenaline-burst");
+  const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest" && card.id !== "adrenaline-burst"));
   const affordableTechniques = playableTechniques.filter((card) => state.player.stamina >= effectiveCardCost(card, "player"));
   const styledPlayable = playableTechniques.filter((card) => isStyleCard(card, state.style));
   const poolBase = styledPlayable.length >= 4 ? weightedStylePool(playableTechniques, state.style) : playableTechniques;
   state.hand = drawUniqueCards(poolBase, 4);
 
+  // Inject Breathe as a fallback slot if hand is short
   if (state.hand.length < 3 && rest && !state.hand.some((card) => card.id === "rest")) {
     state.hand.push(rest);
   }
 
+  // Replace an unaffordable card with Breathe if needed
   if ((!affordableTechniques.length || !state.hand.some((card) => state.player.stamina >= effectiveCardCost(card, "player"))) && rest) {
     state.hand = state.hand.filter((card) => card.id !== "rest");
     if (state.hand.length >= 3) {
@@ -465,6 +469,16 @@ function drawHand() {
       state.hand.push(rest);
     }
   }
+
+  // Inject Adrenaline Burst as a 5th slot when player is nearly empty (≤ 3 stamina)
+  // It does not count as a normal hand slot — it replaces the last card slot instead
+  if (adrenalineBurst && state.player.stamina <= 3 && !state.hand.some((card) => card.id === "adrenaline-burst")) {
+    if (state.hand.length >= 4) {
+      state.hand[3] = adrenalineBurst;
+    } else {
+      state.hand.push(adrenalineBurst);
+    }
+  }
 }
 
 function backfillPositionOptions(playableTechniques) {
@@ -472,10 +486,11 @@ function backfillPositionOptions(playableTechniques) {
 
   const selected = [...playableTechniques];
   const selectedIds = new Set(selected.map((card) => card.id));
+  const recoveryIds = new Set(["rest", "adrenaline-burst", "breathe-and-hold", "technical-standup"]);
   const safetyIds = positionSafetyCardIds[state.position] || [];
   for (const cardId of safetyIds) {
     if (selected.length >= MIN_HAND_TECHNIQUES) break;
-    if (selectedIds.has(cardId)) continue;
+    if (selectedIds.has(cardId) || recoveryIds.has(cardId)) continue;
     const card = cards.find((candidate) => candidate.id === cardId);
     if (!card || card.id === "rest" || !canPlay(card, "player") || !cardUnlocked(card)) continue;
     selected.push(card);
@@ -486,7 +501,7 @@ function backfillPositionOptions(playableTechniques) {
 
   for (const card of cards) {
     if (selected.length >= MIN_HAND_TECHNIQUES) break;
-    if (card.id === "rest" || selectedIds.has(card.id) || !canPlay(card, "player") || !cardUnlocked(card)) continue;
+    if (card.id === "rest" || recoveryIds.has(card.id) || selectedIds.has(card.id) || !canPlay(card, "player") || !cardUnlocked(card)) continue;
     selected.push(card);
     selectedIds.add(card.id);
   }

@@ -175,6 +175,28 @@
   <div id="reviewHistory" class="review-history"></div>
 </section>
 
+<div id="timingOverlay" class="timing-overlay" hidden>
+  <div class="timing-panel">
+    <p class="eyebrow">Adrenaline Burst</p>
+    <h3>Click when the bar enters the zone!</h3>
+    <div class="timing-hints">
+      <span class="timing-hint-perfect">Perfect zone: +5 stamina</span>
+      <span class="timing-hint-good">Good zone: +3 stamina</span>
+      <span class="timing-hint-miss">Miss: +2 stamina, −1 control</span>
+    </div>
+    <div class="timing-bar-track" id="timingBarTrack">
+      <div class="timing-bar-miss-zone timing-zone-left"></div>
+      <div class="timing-bar-good-zone"></div>
+      <div class="timing-bar-perfect-zone"></div>
+      <div class="timing-bar-good-zone timing-zone-right"></div>
+      <div class="timing-bar-miss-zone timing-zone-rightmost"></div>
+      <div class="timing-indicator" id="timingIndicator"></div>
+    </div>
+    <button id="timingClickButton" class="timing-click-btn" type="button">BURST!</button>
+    <p id="timingResult" class="timing-result" hidden></p>
+  </div>
+</div>
+
 <section id="preMatchModal" class="pre-match-overlay" hidden>
   <div class="pre-match-panel">
     <header class="pre-match-header">

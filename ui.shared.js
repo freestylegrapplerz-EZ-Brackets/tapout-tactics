@@ -262,3 +262,78 @@ function renderPreMatchVenueRow() {
     if (!state) newMatch();
   });
 })();
+
+// ── Adrenaline Burst timing bar ───────────────────────────────────────────
+
+let _timingRafId = null;
+let _timingPos = 0;       // 0..1, tracks indicator position
+let _timingResolved = false;
+
+function showTimingWindow(onResolve) {
+  const overlay = document.getElementById("timingOverlay");
+  const track   = document.getElementById("timingBarTrack");
+  const indicator = document.getElementById("timingIndicator");
+  const btn     = document.getElementById("timingClickButton");
+  const resultEl = document.getElementById("timingResult");
+  if (!overlay || !indicator || !btn) { onResolve("good"); return; }
+
+  _timingResolved = false;
+  resultEl.hidden = true;
+  btn.disabled = false;
+  overlay.hidden = false;
+
+  const PERIOD_MS = 1600;
+  const start = performance.now();
+
+  function tick(now) {
+    const elapsed = (now - start) % (PERIOD_MS * 2);
+    const t = elapsed / PERIOD_MS;
+    _timingPos = t <= 1 ? t : 2 - t;                  // ping-pong 0→1→0
+    const trackW = track.offsetWidth;
+    const indW   = indicator.offsetWidth || 14;
+    indicator.style.left = `${Math.round(_timingPos * (trackW - indW))}px`;
+    if (!_timingResolved) _timingRafId = requestAnimationFrame(tick);
+  }
+  _timingRafId = requestAnimationFrame(tick);
+
+  // Auto-resolve after 6 s to prevent orphaned overlays
+  const autoTimeout = setTimeout(() => resolve("miss"), 6000);
+
+  function resolve(result) {
+    if (_timingResolved) return;
+    _timingResolved = true;
+    clearTimeout(autoTimeout);
+    cancelAnimationFrame(_timingRafId);
+
+    const labels = { perfect: "Perfect! +5", good: "Good! +3", miss: "Miss... +2" };
+    const classes = { perfect: "timing-result-perfect", good: "timing-result-good", miss: "timing-result-miss" };
+    resultEl.textContent = labels[result];
+    resultEl.className = `timing-result ${classes[result]}`;
+    resultEl.hidden = false;
+    btn.disabled = true;
+
+    setTimeout(() => {
+      overlay.hidden = true;
+      onResolve(result);
+    }, 700);
+  }
+
+  btn.onclick = () => {
+    // pos: 0.35–0.65 = perfect, 0.15–0.85 = good, else miss
+    const pos = _timingPos;
+    if (pos >= 0.35 && pos <= 0.65) resolve("perfect");
+    else if (pos >= 0.15 && pos <= 0.85) resolve("good");
+    else resolve("miss");
+  };
+}
+
+function handleCardClick(cardId) {
+  if (cardId === "adrenaline-burst") {
+    showTimingWindow((result) => {
+      state.pendingAdrenalineResult = result;
+      playTurn(cardId);
+    });
+  } else {
+    playTurn(cardId);
+  }
+}
