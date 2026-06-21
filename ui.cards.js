@@ -70,9 +70,9 @@ const defaultStrategyByType = {
   },
   recovery: {
     threat: "Reset 1/3",
-    stat: "+2 stamina",
-    strong: "Sets up a bigger next turn",
-    risk: "Gives up a little control",
+    stat: "+3 stamina (Breathe) or +2 with control gain (Breathe and Hold)",
+    strong: "Sets up a bigger next turn without draining your economy",
+    risk: "Breathe gives opponent +1 control",
     leads: ["More Stamina"]
   }
 };
