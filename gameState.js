@@ -15,27 +15,91 @@ const STYLE_PROGRESS_STORAGE_KEY = "tapoutTacticsStyleProgress";
 const STYLE_ID_STORAGE_KEY = "tapoutTacticsStyleId";
 const MATCH_REVIEW_STORAGE_KEY = "tapoutTacticsMatchReviews";
 const VENUE_STORAGE_KEY = "tapoutTacticsVenue";
+const ACHIEVEMENTS_KEY = "tapoutTacticsAchievements";
+const WIN_STREAK_KEY = "tapoutTacticsWinStreak";
 const XP_PER_LEVEL = 50;
 const ANIMATION_MS = 3200;
 const MIN_HAND_TECHNIQUES = 4;
 
+const achievementDefs = [
+  {
+    id: "first-win",
+    name: "First Tap",
+    desc: "Win your first match.",
+    icon: "🥋",
+    check: (s, r) => r?.result?.title === "Victory"
+  },
+  {
+    id: "first-sub",
+    name: "Tap or Snap",
+    desc: "Win by submission.",
+    icon: "💀",
+    check: (s, r) => r?.result?.title === "Victory" && r?.result?.detail?.includes("submission")
+  },
+  {
+    id: "chain-reaction",
+    name: "Chain Reaction",
+    desc: "Land a chain combo in any match.",
+    icon: "⛓️",
+    check: (s, r) => r?.turns?.some((t) => t.chain)
+  },
+  {
+    id: "adrenaline-perfect",
+    name: "Adrenaline Junkie",
+    desc: "Hit Perfect timing on Adrenaline Burst.",
+    icon: "⚡",
+    check: (s, r) => s?.gotPerfectAdrenaline === true
+  },
+  {
+    id: "blue-belt",
+    name: "Blue Belt",
+    desc: "Earn your Blue Belt.",
+    icon: "🔵",
+    check: () => getBeltProgress(playerXp).current.short !== "white"
+  },
+  {
+    id: "iron-chin",
+    name: "Iron Chin",
+    desc: "Survive 3 or more submission attempts in one match.",
+    icon: "🛡️",
+    check: (s, r) => (r?.turns || []).flatMap((t) => t.finishAttempts.filter((a) => a.actor === "opponent")).length >= 3
+  },
+  {
+    id: "clean-win",
+    name: "Technical Wizard",
+    desc: "Win without playing any recovery cards.",
+    icon: "🧠",
+    check: (s, r) => r?.result?.title === "Victory" && !(r?.turns || []).some((t) => t.playerCard.type === "recovery")
+  },
+  {
+    id: "comeback",
+    name: "Heart of a Champion",
+    desc: "Win after trailing by 6 or more points.",
+    icon: "❤️",
+    check: (s, r) => {
+      if (r?.result?.title !== "Victory") return false;
+      return (r?.turns || []).some((t) => t.before.opponentPoints - t.before.playerPoints >= 6);
+    }
+  }
+];
+
 const positionSafetyCardIds = {
-  "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull"],
-  "Top Guard": ["wrist-control", "pressure", "knee-slice", "torreando", "x-pass"],
-  "Bottom Guard": ["frame", "wrist-control", "butterfly-hooks", "armbar", "guillotine"],
-  "Top Half Guard": ["pressure", "knee-slice", "leg-drag", "backstep-pass", "shin-pin-pass"],
-  "Bottom Half Guard": ["frame", "hip-escape", "butterfly-hooks", "reguard"],
-  "Side Control": ["pressure", "mount", "americana", "knee-on-belly", "north-south-control"],
-  "Under Side Control": ["frame", "hip-escape", "reguard", "technical-bridge"],
-  "Mount": ["pressure", "armbar", "americana", "arm-triangle"],
-  "Mounted": ["frame", "hip-escape", "bridge", "elbow-escape", "knee-elbow-escape"],
-  "Back Control": ["seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow"],
-  "Back Taken": ["hand-fight", "protect-neck", "frame"],
-  "Front Headlock": ["headlock-pressure", "slide-by", "guillotine", "front-headlock-spin"],
-  "Caught Front Headlock": ["hand-fight", "protect-neck", "frame"],
-  "Turtle": ["hand-fight", "protect-neck", "frame"],
-  "Ashi Garami": ["ashi-control", "straight-ankle-lock", "toe-hold", "kneebar"],
-  "Caught Ashi Garami": ["leg-pummel-escape", "hip-escape", "hand-fight", "frame"]
+  "Standing": ["wrist-control", "collar-tie", "sprawl", "guard-pull", "rest"],
+  "Top Guard": ["wrist-control", "pressure", "knee-slice", "torreando", "x-pass", "breathe-and-hold"],
+  "Bottom Guard": ["frame", "wrist-control", "butterfly-hooks", "armbar", "guillotine", "rest"],
+  "Top Half Guard": ["pressure", "knee-slice", "leg-drag", "backstep-pass", "shin-pin-pass", "breathe-and-hold"],
+  "Bottom Half Guard": ["frame", "hip-escape", "butterfly-hooks", "reguard", "technical-standup"],
+  "Side Control": ["pressure", "mount", "americana", "knee-on-belly", "north-south-control", "breathe-and-hold"],
+  "Under Side Control": ["frame", "hip-escape", "reguard", "technical-bridge", "technical-standup"],
+  "Mount": ["pressure", "armbar", "americana", "arm-triangle", "breathe-and-hold"],
+  "Mounted": ["frame", "hip-escape", "bridge", "elbow-escape", "knee-elbow-escape", "technical-standup"],
+  "Back Control": ["seatbelt-pressure", "body-triangle", "rear-naked-choke", "bow-and-arrow", "breathe-and-hold"],
+  "Back Taken": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Front Headlock": ["headlock-pressure", "slide-by", "guillotine", "front-headlock-spin", "breathe-and-hold"],
+  "Caught Front Headlock": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Turtle": ["hand-fight", "protect-neck", "frame", "technical-standup"],
+  "Ashi Garami": ["ashi-control", "straight-ankle-lock", "toe-hold", "kneebar", "breathe-and-hold"],
+  "Caught Ashi Garami": ["leg-pummel-escape", "hip-escape", "hand-fight", "frame", "technical-standup"]
 };
 
 
@@ -176,6 +240,8 @@ function newMatch(forcedOpponent = null) {
     lastChain: null,
     turnFinishAttempts: [],
     matchReview: null,
+    pendingAdrenalineResult: null,
+    gotPerfectAdrenaline: false,
     player: { points: 0, stamina: getMaxStamina("player") },
     opponent: { points: 0, stamina: MAX_STAMINA },
     hand: [],
@@ -183,9 +249,29 @@ function newMatch(forcedOpponent = null) {
   };
   state.matchReview = createMatchReview();
   applyMindGameSetup();
+  applyVenueModifiers();
   drawHand();
   prepareOpponentIntent();
   render();
+  if (typeof showMatchIntro === "function") showMatchIntro(opponent, state.venue);
+}
+
+function applyVenueModifiers() {
+  const venueId = state.venue?.id;
+  if (venueId === "local-event") {
+    state.mindEffects.opponentAggressive = true;
+    addLog(state, "The crowd energy gets in their head. Opponent plays more aggressively.");
+  } else if (venueId === "championship") {
+    addControl(state, "player", 1, "High-level composure: both athletes arrive composed. You take first control.");
+    addLog(state, "Championship nerves are gone. You trained for this.");
+  } else if (venueId === "beach") {
+    state.mindEffects.submissionBonus = (state.mindEffects.submissionBonus || 0) + 5;
+    addLog(state, "Exhibition format. Submissions come faster and looser on the sand.");
+  } else if (venueId === "street") {
+    state.player.stamina = Math.max(1, state.player.stamina - 1);
+    state.opponent.stamina = Math.max(1, state.opponent.stamina - 1);
+    addLog(state, "Rough conditions. Both fighters start tired.");
+  }
 }
 
 function applyMindGameSetup() {
@@ -349,6 +435,9 @@ function finalizeMatchReview() {
   state.matchReview.grade = matchReviewGrade(state.matchReview);
   state.matchReview.verdict = matchReviewVerdict(state.matchReview);
   saveMatchReview(state.matchReview);
+  const won = state.result.title === "Victory";
+  updateWinStreak(won);
+  checkAchievements(state.matchReview);
   return state.matchReview;
 }
 
@@ -446,16 +535,19 @@ function matchReviewVerdict(review) {
 function drawHand() {
   const playable = cards.filter((card) => canPlay(card, "player") && cardUnlocked(card));
   const rest = cards.find((card) => card.id === "rest");
-  const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest"));
+  const adrenalineBurst = cards.find((card) => card.id === "adrenaline-burst");
+  const playableTechniques = backfillPositionOptions(playable.filter((card) => card.id !== "rest" && card.id !== "adrenaline-burst"));
   const affordableTechniques = playableTechniques.filter((card) => state.player.stamina >= effectiveCardCost(card, "player"));
   const styledPlayable = playableTechniques.filter((card) => isStyleCard(card, state.style));
   const poolBase = styledPlayable.length >= 4 ? weightedStylePool(playableTechniques, state.style) : playableTechniques;
   state.hand = drawUniqueCards(poolBase, 4);
 
+  // Inject Breathe as a fallback slot if hand is short
   if (state.hand.length < 3 && rest && !state.hand.some((card) => card.id === "rest")) {
     state.hand.push(rest);
   }
 
+  // Replace an unaffordable card with Breathe if needed
   if ((!affordableTechniques.length || !state.hand.some((card) => state.player.stamina >= effectiveCardCost(card, "player"))) && rest) {
     state.hand = state.hand.filter((card) => card.id !== "rest");
     if (state.hand.length >= 3) {
@@ -465,6 +557,16 @@ function drawHand() {
       state.hand.push(rest);
     }
   }
+
+  // Inject Adrenaline Burst as a 5th slot when player is nearly empty (≤ 3 stamina)
+  // It does not count as a normal hand slot — it replaces the last card slot instead
+  if (adrenalineBurst && state.player.stamina <= 3 && !state.hand.some((card) => card.id === "adrenaline-burst")) {
+    if (state.hand.length >= 4) {
+      state.hand[3] = adrenalineBurst;
+    } else {
+      state.hand.push(adrenalineBurst);
+    }
+  }
 }
 
 function backfillPositionOptions(playableTechniques) {
@@ -472,10 +574,11 @@ function backfillPositionOptions(playableTechniques) {
 
   const selected = [...playableTechniques];
   const selectedIds = new Set(selected.map((card) => card.id));
+  const recoveryIds = new Set(["rest", "adrenaline-burst", "breathe-and-hold", "technical-standup"]);
   const safetyIds = positionSafetyCardIds[state.position] || [];
   for (const cardId of safetyIds) {
     if (selected.length >= MIN_HAND_TECHNIQUES) break;
-    if (selectedIds.has(cardId)) continue;
+    if (selectedIds.has(cardId) || recoveryIds.has(cardId)) continue;
     const card = cards.find((candidate) => candidate.id === cardId);
     if (!card || card.id === "rest" || !canPlay(card, "player") || !cardUnlocked(card)) continue;
     selected.push(card);
@@ -486,7 +589,7 @@ function backfillPositionOptions(playableTechniques) {
 
   for (const card of cards) {
     if (selected.length >= MIN_HAND_TECHNIQUES) break;
-    if (card.id === "rest" || selectedIds.has(card.id) || !canPlay(card, "player") || !cardUnlocked(card)) continue;
+    if (card.id === "rest" || recoveryIds.has(card.id) || selectedIds.has(card.id) || !canPlay(card, "player") || !cardUnlocked(card)) continue;
     selected.push(card);
     selectedIds.add(card.id);
   }
@@ -686,6 +789,54 @@ function loadSelectedStyleId() {
 
 function saveSelectedStyleId() {
   localStorage.setItem(STYLE_ID_STORAGE_KEY, selectedStyleId);
+}
+
+function loadAchievements() {
+  try { return JSON.parse(localStorage.getItem(ACHIEVEMENTS_KEY) || "[]"); } catch { return []; }
+}
+
+function saveAchievements(list) {
+  localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify(list));
+}
+
+function checkAchievements(review) {
+  const unlocked = new Set(loadAchievements());
+  let changed = false;
+  achievementDefs.forEach((def) => {
+    if (!unlocked.has(def.id) && def.check(state, review)) {
+      unlocked.add(def.id);
+      changed = true;
+      flashAchievementToast(def);
+    }
+  });
+  if (changed) saveAchievements([...unlocked]);
+}
+
+function flashAchievementToast(def) {
+  const toast = document.createElement("div");
+  toast.className = "achievement-toast";
+  toast.innerHTML = `<span class="achievement-toast-icon">${def.icon}</span><div><strong>${escapeHtml(def.name)}</strong><span>${escapeHtml(def.desc)}</span></div>`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add("achievement-toast-visible"), 50);
+  setTimeout(() => {
+    toast.classList.remove("achievement-toast-visible");
+    setTimeout(() => toast.remove(), 500);
+  }, 3500);
+}
+
+function loadWinStreak() {
+  return Math.max(0, Number(localStorage.getItem(WIN_STREAK_KEY)) || 0);
+}
+
+function saveWinStreak(n) {
+  localStorage.setItem(WIN_STREAK_KEY, String(n));
+}
+
+function updateWinStreak(won) {
+  const current = loadWinStreak();
+  const next = won ? current + 1 : 0;
+  saveWinStreak(next);
+  return next;
 }
 
 function setStyle(styleId) {

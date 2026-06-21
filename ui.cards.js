@@ -493,7 +493,7 @@ function renderHand() {
         </div>
       </div>
     `;
-    button.addEventListener("click", () => playTurn(card.id));
+    button.addEventListener("click", () => handleCardClick(card.id));
     els.cardHand.appendChild(button);
   });
 }

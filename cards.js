@@ -752,11 +752,57 @@ const cards = [
     type: "recovery",
     cost: 0,
     requires: ["Standing", "Top Guard", "Bottom Guard", "Top Half Guard", "Bottom Half Guard", "Side Control", "Under Side Control", "Mount", "Mounted", "Back Control", "Back Taken", "Front Headlock", "Caught Front Headlock", "Turtle", "Ashi Garami", "Caught Ashi Garami"],
-    text: "Recover 2 stamina, but give up a little control.",
+    text: "Recover 3 stamina, but give up a little control. Always available.",
     play: (state, actor) => {
-      const recoveryAmount = actor === "player" && hasBonus("recovery") ? 3 : 2;
+      const recoveryAmount = actor === "player" && hasBonus("recovery") ? 4 : 3;
       state[actor].stamina = Math.min(getMaxStamina(actor), state[actor].stamina + recoveryAmount);
-      addControl(state, actor, -1, actionLine(actor, "take a breath", "takes a breath"));
+      addControl(state, other(actor), 1, actionLine(actor, "take a deliberate breath", "takes a deliberate breath"));
+    }
+  },
+  {
+    id: "breathe-and-hold",
+    name: "Breathe and Hold",
+    type: "recovery",
+    cost: 0,
+    requires: ["Top Guard", "Top Half Guard", "Side Control", "Mount", "Front Headlock", "Back Control", "Ashi Garami"],
+    text: "Recover 2 stamina from a dominant position and tighten control. No control penalty.",
+    play: (state, actor) => {
+      state[actor].stamina = Math.min(getMaxStamina(actor), state[actor].stamina + 2);
+      addControl(state, actor, 1, actionLine(actor, "settle the weight and breathe", "settles the weight and breathes"));
+    }
+  },
+  {
+    id: "technical-standup",
+    name: "Technical Standup",
+    type: "recovery",
+    cost: 0,
+    requires: ["Bottom Guard", "Bottom Half Guard", "Under Side Control", "Mounted", "Back Taken", "Caught Front Headlock", "Turtle", "Caught Ashi Garami"],
+    text: "Recover 4 stamina and reset to Standing, but give opponent 2 points for the escape.",
+    play: (state, actor) => {
+      state[actor].stamina = Math.min(getMaxStamina(actor), state[actor].stamina + 4);
+      score(state, other(actor), 2);
+      setRelativePosition(state, actor, "Standing", actionLine(actor, "technical standup and reset", "stands up and resets"));
+    }
+  },
+  {
+    id: "adrenaline-burst",
+    name: "Adrenaline Burst",
+    type: "recovery",
+    cost: 0,
+    requires: ["Standing", "Top Guard", "Bottom Guard", "Top Half Guard", "Bottom Half Guard", "Side Control", "Under Side Control", "Mount", "Mounted", "Back Control", "Back Taken", "Front Headlock", "Caught Front Headlock", "Turtle", "Ashi Garami", "Caught Ashi Garami"],
+    text: "Hit the timing window for a big stamina surge. Perfect: +5. Good: +3. Miss: +2 and −1 control.",
+    play: (state, actor) => {
+      const result = actor === "player" ? (state.pendingAdrenalineResult || "good") : "good";
+      const amounts = { perfect: 5, good: 3, miss: 2 };
+      const amount = amounts[result] || 3;
+      state[actor].stamina = Math.min(getMaxStamina(actor), state[actor].stamina + amount);
+      state.pendingAdrenalineResult = null;
+      if (result === "miss") {
+        addLog(state, `${actor === "player" ? "You mistimed" : `${state.ai.name} mistimes`} the burst — small recovery only.`);
+      } else {
+        const label = result === "perfect" ? "Perfect timing!" : "Good timing!";
+        addLog(state, `${label} ${actor === "player" ? "You surge" : `${state.ai.name} surges`} with +${amount} stamina.`);
+      }
     }
   }
 ];
