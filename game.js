@@ -32,3 +32,10 @@ document.getElementById("startTutorialButton")?.addEventListener("click", () => 
   if (typeof startTutorial === "function") startTutorial();
 });
 openPreMatchModal();
+
+// Register service worker for offline play and PWA install
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/tapout-tactics/sw.js").catch(() => {});
+  });
+}
