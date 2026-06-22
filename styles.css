@@ -1041,48 +1041,10 @@ h2 {
   position: relative;
 }
 
-/* Crowd silhouette strip — top edge of every mat, with head + shoulder shapes */
-.mat-canvas .mat-ring::after {
-  /* Two rows: back row (shorter, lighter) + front row (taller, darker) */
-  background:
-    /* Front row — heads (larger) */
-    radial-gradient(ellipse 10px 13px at 4%   100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 7.5% 100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 11%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 14.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 18%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 21.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 25%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 28.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 32%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 35.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 39%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 42.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 46%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 50%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 53.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 57%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 60.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 64%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 67.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 71%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 74.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 78%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 81.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 85%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    radial-gradient(ellipse 9px  12px at 88.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
-    radial-gradient(ellipse 11px 14px at 92%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
-    radial-gradient(ellipse 8px  11px at 95.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
-    radial-gradient(ellipse 10px 13px at 99%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
-    /* Body/shoulder mass — dark band below heads */
-    linear-gradient(180deg, rgba(2,5,4,0.88) 40%, rgba(2,5,4,0.5) 70%, transparent 100%);
-  bottom: auto;
-  content: "";
-  height: 36px;
-  inset: 0 0 auto 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 2;
+/* On venues with SVG backgrounds, soften the CSS ring overlay */
+.mat-canvas.venue-academy .mat-ring,
+.mat-canvas.venue-academy::after {
+  opacity: 0.25;
 }
 
 /* ── VENUE ARENA REDESIGNS ───────────────────────────────────────────────
@@ -1102,26 +1064,11 @@ h2 {
     100% 100%, 100% 100%;
 }
 
-/* ── ACADEMY: Old school gym, warm fluorescent lighting ───────────────── */
+/* ── ACADEMY: Full gym scene SVG background ─────────────────────────────── */
 .mat-canvas.venue-academy {
   background:
-    /* Wall pad strips at left and right edges */
-    linear-gradient(90deg,
-      rgba(8,14,11,0.92) 0 3.5%, rgba(15,25,20,0.5) 3.5% 6%, transparent 6%,
-      transparent 94%, rgba(15,25,20,0.5) 94% 96.5%, rgba(8,14,11,0.92) 96.5%),
-    /* Ceiling / spectator zone with fluorescent fixtures */
-    radial-gradient(ellipse 30% 8% at 25% 0%, rgba(200,230,210,0.12), transparent 100%),
-    radial-gradient(ellipse 30% 8% at 75% 0%, rgba(200,230,210,0.12), transparent 100%),
-    linear-gradient(180deg, #0a100d 0 14%, rgba(12,18,15,0.55) 14% 20%, transparent 20%),
-    /* Tatami grid rows */
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 30px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 60px),
-    /* Center circle glow */
-    radial-gradient(ellipse 30% 22% at 50% 50%, rgba(255,255,255,0.06), transparent 100%),
-    /* Overhead ambient light */
-    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(180,220,200,0.12), transparent 60%),
-    /* Mat surface base: classic academy gray-blue */
-    linear-gradient(175deg, #2e6e7e 0%, #236070 40%, #193f50 100%);
+    url('assets/venue-academy.svg') center center / cover no-repeat;
+  border-color: rgba(100, 140, 200, 0.5);
 }
 
 /* ── LOCAL EVENT: Community gym, overhead lights, score table ──────────── */
