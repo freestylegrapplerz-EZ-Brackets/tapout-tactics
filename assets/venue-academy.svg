@@ -1,21 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
 <defs>
   <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
-    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-  <filter id="softglow" x="-200%" y="-200%" width="500%" height="500%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="18"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
   <filter id="shadow">
-    <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity="0.65"/>
-  </filter>
-  <filter id="lightshadow">
-    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
+    <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000" flood-opacity="0.6"/>
   </filter>
   <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#383f4e"/>
-    <stop offset="55%" stop-color="#2c3240"/>
+    <stop offset="0%" stop-color="#3a4050"/>
+    <stop offset="60%" stop-color="#2c3240"/>
     <stop offset="100%" stop-color="#1e2430"/>
   </linearGradient>
   <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
@@ -31,339 +25,274 @@
     <stop offset="0%" stop-color="#223880"/>
     <stop offset="100%" stop-color="#142860"/>
   </linearGradient>
-  <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#06080c"/>
-    <stop offset="100%" stop-color="#0e1218"/>
-  </linearGradient>
-  <radialGradient id="lbeam1" cx="25%" cy="0%" r="70%" gradientTransform="scale(1,0.5)">
-    <stop offset="0%" stop-color="#c8e8de" stop-opacity="0.18"/>
+  <radialGradient id="lbeam1" cx="25%" cy="0%" r="80%" gradientTransform="scale(1,0.45)">
+    <stop offset="0%" stop-color="#c8e8de" stop-opacity="0.2"/>
     <stop offset="100%" stop-color="#c8e8de" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="lbeam2" cx="75%" cy="0%" r="70%" gradientTransform="scale(1,0.5)">
-    <stop offset="0%" stop-color="#c8e8de" stop-opacity="0.18"/>
+  <radialGradient id="lbeam2" cx="75%" cy="0%" r="80%" gradientTransform="scale(1,0.45)">
+    <stop offset="0%" stop-color="#c8e8de" stop-opacity="0.2"/>
     <stop offset="100%" stop-color="#c8e8de" stop-opacity="0"/>
   </radialGradient>
-  <radialGradient id="fglow" cx="50%" cy="30%" r="55%">
-    <stop offset="0%" stop-color="#a8c8d8" stop-opacity="0.14"/>
+  <radialGradient id="fglow" cx="50%" cy="20%" r="55%">
+    <stop offset="0%" stop-color="#a8c8d8" stop-opacity="0.16"/>
     <stop offset="100%" stop-color="#a8c8d8" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="vleft" cx="0%" cy="50%" r="55%">
-    <stop offset="0%" stop-color="#000" stop-opacity="0.72"/>
+    <stop offset="0%" stop-color="#000" stop-opacity="0.75"/>
     <stop offset="100%" stop-color="#000" stop-opacity="0"/>
   </radialGradient>
   <radialGradient id="vright" cx="100%" cy="50%" r="55%">
-    <stop offset="0%" stop-color="#000" stop-opacity="0.72"/>
+    <stop offset="0%" stop-color="#000" stop-opacity="0.75"/>
     <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="walllight1" cx="27%" cy="0%" r="50%">
-    <stop offset="0%" stop-color="#c8e0d8" stop-opacity="0.1"/>
-    <stop offset="100%" stop-color="#c8e0d8" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="walllight2" cx="73%" cy="0%" r="50%">
-    <stop offset="0%" stop-color="#c8e0d8" stop-opacity="0.1"/>
-    <stop offset="100%" stop-color="#c8e0d8" stop-opacity="0"/>
   </radialGradient>
 </defs>
 
-<!-- ═══════════════════ CEILING ═══════════════════ -->
-<rect width="800" height="90" fill="url(#ceiling)"/>
+<!-- ════ CEILING ════ -->
+<rect width="800" height="90" fill="#07090e"/>
+<rect y="70" width="800" height="10" fill="#0a0c12"/>
+<rect y="68" width="800" height="3" fill="#12161e"/>
+<rect x="258" y="0" width="4" height="92" fill="#090c12"/>
+<rect x="538" y="0" width="4" height="92" fill="#090c12"/>
 
-<!-- Ceiling beam structure -->
-<rect y="68" width="800" height="10" fill="#0a0c10"/>
-<rect y="66" width="800" height="3"  fill="#141820"/>
-<rect y="78" width="800" height="2"  fill="#060810"/>
-
-<!-- Vertical support brackets at pillar points -->
-<rect x="258" y="0" width="4" height="92" fill="#0a0e14"/>
-<rect x="538" y="0" width="4" height="92" fill="#0a0e14"/>
-
-<!-- Light glow columns from above (behind fixture) -->
+<!-- Light glow halos behind fixtures -->
 <rect width="800" height="450" fill="url(#lbeam1)"/>
 <rect width="800" height="450" fill="url(#lbeam2)"/>
 
 <!-- Left fluorescent fixture -->
-<rect x="85" y="5"  width="236" height="10" rx="2" fill="#1a2030"/>
-<rect x="89" y="7"  width="228" height="6"  rx="1" fill="#263040"/>
-<rect x="91" y="10" width="224" height="9"  rx="2" fill="#b8d8d0"/>
-<rect x="93" y="11" width="220" height="7"  rx="1" fill="#d0e8e2"/>
-<rect x="160" y="11" width="80" height="6"  rx="1" fill="#e8f4f0" filter="url(#glow)"/>
+<rect x="84"  y="5"  width="238" height="10" rx="2" fill="#18202e"/>
+<rect x="88"  y="7"  width="230" height="6"  rx="1" fill="#242e3e"/>
+<rect x="90"  y="9"  width="226" height="9"  rx="2" fill="#b4d4cc"/>
+<rect x="92"  y="10" width="222" height="7"  rx="1" fill="#cce4de"/>
+<rect x="158" y="10" width="84"  height="6"  rx="1" fill="#e4f0ee" filter="url(#glow)"/>
 
 <!-- Right fluorescent fixture -->
-<rect x="479" y="5"  width="236" height="10" rx="2" fill="#1a2030"/>
-<rect x="483" y="7"  width="228" height="6"  rx="1" fill="#263040"/>
-<rect x="485" y="10" width="224" height="9"  rx="2" fill="#b8d8d0"/>
-<rect x="487" y="11" width="220" height="7"  rx="1" fill="#d0e8e2"/>
-<rect x="554" y="11" width="80" height="6"  rx="1" fill="#e8f4f0" filter="url(#glow)"/>
+<rect x="478" y="5"  width="238" height="10" rx="2" fill="#18202e"/>
+<rect x="482" y="7"  width="230" height="6"  rx="1" fill="#242e3e"/>
+<rect x="484" y="9"  width="226" height="9"  rx="2" fill="#b4d4cc"/>
+<rect x="486" y="10" width="222" height="7"  rx="1" fill="#cce4de"/>
+<rect x="552" y="10" width="84"  height="6"  rx="1" fill="#e4f0ee" filter="url(#glow)"/>
 
-<!-- Light cones from fixtures -->
-<polygon points="130,22 256,22 290,92 96,92"  fill="rgba(200,228,218,0.04)"/>
-<polygon points="155,22 231,22 258,92 128,92" fill="rgba(200,228,218,0.035)"/>
-<polygon points="524,22 650,22 704,92 490,92" fill="rgba(200,228,218,0.04)"/>
-<polygon points="549,22 625,22 672,92 522,92" fill="rgba(200,228,218,0.035)"/>
+<!-- Light cone shafts -->
+<polygon points="128,22 254,22 288,92 94,92"  fill="rgba(200,228,218,0.045)"/>
+<polygon points="152,22 230,22 256,92 126,92" fill="rgba(200,228,218,0.03)"/>
+<polygon points="522,22 648,22 706,92 488,92" fill="rgba(200,228,218,0.045)"/>
+<polygon points="546,22 624,22 672,92 520,92" fill="rgba(200,228,218,0.03)"/>
 
-<!-- ═══════════════════ BACK WALL ═══════════════════ -->
-<rect y="92" width="800" height="215" fill="url(#wall)"/>
+<!-- ════ BACK WALL — extends down to y=335 to meet floor level ════ -->
+<rect y="92" width="800" height="243" fill="url(#wall)"/>
+
+<!-- Wall top lighter (near ceiling lights) -->
+<rect y="92" width="800" height="60" fill="rgba(255,255,255,0.03)"/>
+
+<!-- Concrete mortar lines -->
+<line x1="0" y1="108" x2="800" y2="108" stroke="rgba(0,0,0,0.22)"    stroke-width="0.7"/>
+<line x1="0" y1="122" x2="800" y2="122" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+<line x1="0" y1="136" x2="800" y2="136" stroke="rgba(0,0,0,0.2)"     stroke-width="0.7"/>
+<line x1="0" y1="150" x2="800" y2="150" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+<line x1="0" y1="164" x2="800" y2="164" stroke="rgba(0,0,0,0.18)"    stroke-width="0.7"/>
+<line x1="0" y1="178" x2="800" y2="178" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+<line x1="0" y1="192" x2="800" y2="192" stroke="rgba(0,0,0,0.16)"    stroke-width="0.7"/>
+<line x1="0" y1="206" x2="800" y2="206" stroke="rgba(255,255,255,0.035)" stroke-width="0.5"/>
+<line x1="0" y1="220" x2="800" y2="220" stroke="rgba(0,0,0,0.14)"    stroke-width="0.7"/>
+<line x1="0" y1="234" x2="800" y2="234" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+<line x1="0" y1="248" x2="800" y2="248" stroke="rgba(0,0,0,0.12)"    stroke-width="0.7"/>
+<line x1="0" y1="262" x2="800" y2="262" stroke="rgba(255,255,255,0.025)" stroke-width="0.5"/>
+<line x1="0" y1="276" x2="800" y2="276" stroke="rgba(0,0,0,0.1)"     stroke-width="0.7"/>
+<line x1="0" y1="290" x2="800" y2="290" stroke="rgba(255,255,255,0.02)" stroke-width="0.5"/>
+<line x1="0" y1="304" x2="800" y2="304" stroke="rgba(0,0,0,0.1)"     stroke-width="0.7"/>
+<line x1="0" y1="318" x2="800" y2="318" stroke="rgba(255,255,255,0.018)" stroke-width="0.5"/>
+
+<!-- Structural pillars -->
+<rect x="255" y="92" width="8" height="243" fill="rgba(0,0,0,0.3)"/>
+<rect x="255" y="92" width="2" height="243" fill="rgba(255,255,255,0.07)"/>
+<rect x="537" y="92" width="8" height="243" fill="rgba(0,0,0,0.3)"/>
+<rect x="537" y="92" width="2" height="243" fill="rgba(255,255,255,0.07)"/>
 
 <!-- Wall light from ceiling -->
-<rect y="92" width="800" height="215" fill="url(#walllight1)"/>
-<rect y="92" width="800" height="215" fill="url(#walllight2)"/>
+<ellipse cx="200" cy="92" rx="220" ry="160" fill="rgba(200,230,218,0.07)"/>
+<ellipse cx="600" cy="92" rx="220" ry="160" fill="rgba(200,230,218,0.07)"/>
 
-<!-- Concrete texture lines -->
-<line x1="0" y1="106" x2="800" y2="106" stroke="rgba(0,0,0,0.2)"   stroke-width="0.6"/>
-<line x1="0" y1="120" x2="800" y2="120" stroke="rgba(255,255,255,0.045)" stroke-width="0.5"/>
-<line x1="0" y1="134" x2="800" y2="134" stroke="rgba(0,0,0,0.18)"  stroke-width="0.6"/>
-<line x1="0" y1="148" x2="800" y2="148" stroke="rgba(255,255,255,0.04)"  stroke-width="0.5"/>
-<line x1="0" y1="162" x2="800" y2="162" stroke="rgba(0,0,0,0.16)"  stroke-width="0.6"/>
-<line x1="0" y1="176" x2="800" y2="176" stroke="rgba(255,255,255,0.035)" stroke-width="0.5"/>
-<line x1="0" y1="190" x2="800" y2="190" stroke="rgba(0,0,0,0.15)"  stroke-width="0.6"/>
-<line x1="0" y1="204" x2="800" y2="204" stroke="rgba(255,255,255,0.03)"  stroke-width="0.5"/>
-<line x1="0" y1="218" x2="800" y2="218" stroke="rgba(0,0,0,0.14)"  stroke-width="0.6"/>
-<line x1="0" y1="232" x2="800" y2="232" stroke="rgba(255,255,255,0.03)"  stroke-width="0.5"/>
-<line x1="0" y1="246" x2="800" y2="246" stroke="rgba(0,0,0,0.12)"  stroke-width="0.6"/>
-<line x1="0" y1="260" x2="800" y2="260" stroke="rgba(255,255,255,0.025)" stroke-width="0.5"/>
-<line x1="0" y1="274" x2="800" y2="274" stroke="rgba(0,0,0,0.1)"   stroke-width="0.6"/>
-<line x1="0" y1="288" x2="800" y2="288" stroke="rgba(255,255,255,0.02)"  stroke-width="0.5"/>
-<line x1="0" y1="300" x2="800" y2="300" stroke="rgba(0,0,0,0.1)"   stroke-width="0.6"/>
+<!-- ════ LEFT WALL PADS ════ -->
+<rect x="0" y="92"  width="86" height="82" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
+<rect x="0" y="173" width="86" height="82" fill="#162650"   stroke="#0a1830" stroke-width="1.5"/>
+<rect x="0" y="254" width="86" height="81" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
+<rect x="82" y="92" width="4" height="243" fill="rgba(255,255,255,0.08)"/>
+<circle cx="43" cy="133" r="18" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+<text x="43" y="139" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="rgba(255,255,255,0.3)">TT</text>
+<text x="43" y="256" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="6" fill="rgba(255,255,255,0.38)" transform="rotate(-90 43 256)">TAPOUT TACTICS</text>
 
-<!-- Structural wall pillars -->
-<rect x="255" y="92" width="8" height="215" fill="rgba(0,0,0,0.28)"/>
-<rect x="255" y="92" width="2" height="215" fill="rgba(255,255,255,0.06)"/>
-<rect x="537" y="92" width="8" height="215" fill="rgba(0,0,0,0.28)"/>
-<rect x="537" y="92" width="2" height="215" fill="rgba(255,255,255,0.06)"/>
+<!-- ════ RIGHT WALL PADS ════ -->
+<rect x="714" y="92"  width="86" height="82" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
+<rect x="714" y="173" width="86" height="82" fill="#162650"   stroke="#0a1830" stroke-width="1.5"/>
+<rect x="714" y="254" width="86" height="81" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
+<rect x="714" y="92" width="4" height="243" fill="rgba(255,255,255,0.08)"/>
+<circle cx="757" cy="133" r="18" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+<text x="757" y="139" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="rgba(255,255,255,0.3)">TT</text>
+<text x="757" y="256" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.35)" transform="rotate(90 757 256)">CONTROL THE FIGHT</text>
 
-<!-- ═══════════════════ LEFT WALL PADS ═══════════════════ -->
-<rect x="0"  y="92"  width="88" height="74" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
-<rect x="0"  y="165" width="88" height="74" fill="#162650"   stroke="#0a1830" stroke-width="1.5"/>
-<rect x="0"  y="238" width="88" height="69" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
-<!-- Pad edge highlight -->
-<rect x="84" y="92"  width="4" height="215" fill="rgba(255,255,255,0.07)"/>
-<!-- TT mark on left pad -->
-<circle cx="44" cy="130" r="18" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-<text x="44" y="136" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="rgba(255,255,255,0.28)">TT</text>
-<!-- Vertical text -->
-<text x="44" y="236" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="6" fill="rgba(255,255,255,0.38)" transform="rotate(-90 44 236)">TAPOUT TACTICS</text>
-
-<!-- ═══════════════════ RIGHT WALL PADS ═══════════════════ -->
-<rect x="712" y="92"  width="88" height="74" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
-<rect x="712" y="165" width="88" height="74" fill="#162650"   stroke="#0a1830" stroke-width="1.5"/>
-<rect x="712" y="238" width="88" height="69" fill="url(#pad)" stroke="#0a1830" stroke-width="1.5"/>
-<rect x="712" y="92"  width="4" height="215" fill="rgba(255,255,255,0.07)"/>
-<circle cx="756" cy="130" r="18" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-<text x="756" y="136" text-anchor="middle" font-family="Impact,sans-serif" font-size="16" fill="rgba(255,255,255,0.28)">TT</text>
-<text x="756" y="236" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.35)" transform="rotate(90 756 236)">CONTROL THE FIGHT</text>
-
-<!-- ═══════════════════ LEFT SECTION ═══════════════════ -->
-<!-- Hanging academy banner (left vertical) -->
-<line x1="113" y1="88" x2="115" y2="104" stroke="#8a7040" stroke-width="2"/>
-<circle cx="114" cy="88" r="4" fill="#6a5030"/>
-<rect x="96"  y="104" width="38" height="128" fill="#1c3678"/>
-<rect x="96"  y="104" width="38" height="4"   fill="#d4a028"/>
-<rect x="96"  y="228" width="38" height="4"   fill="#d4a028"/>
-<line x1="103" y1="110" x2="127" y2="110" stroke="rgba(212,160,40,0.4)" stroke-width="0.8"/>
-<line x1="103" y1="224" x2="127" y2="224" stroke="rgba(212,160,40,0.4)" stroke-width="0.8"/>
-<text x="115" y="182" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.55)" transform="rotate(-90 115 182)">BJJ ACADEMY</text>
+<!-- ════ LEFT SECTION CONTENT ════ -->
+<!-- Hanging banner (left) -->
+<line x1="113" y1="88" x2="115" y2="105" stroke="#8a7040" stroke-width="2.5"/>
+<circle cx="114" cy="88" r="4.5" fill="#6a5030"/>
+<rect x="96" y="105" width="38" height="130" fill="#1c3678"/>
+<rect x="96" y="105" width="38" height="4"   fill="#d4a028"/>
+<rect x="96" y="231" width="38" height="4"   fill="#d4a028"/>
+<text x="115" y="183" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.58)" transform="rotate(-90 115 183)">BJJ ACADEMY</text>
 
 <!-- Academy Code board -->
-<rect x="147" y="107" width="100" height="115" rx="2" fill="#e4dcc8" filter="url(#shadow)"/>
-<rect x="149" y="109" width="96"  height="26"  fill="#d0c280"/>
-<text x="197" y="126" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="bold" fill="#16100a" letter-spacing="0.5">THE ACADEMY CODE</text>
-<line x1="152" y1="134" x2="244" y2="134" stroke="#8a7840" stroke-width="0.8"/>
-<text x="155" y="148" font-family="Arial,sans-serif" font-size="8" fill="#221808">1. Show up</text>
-<text x="155" y="161" font-family="Arial,sans-serif" font-size="8" fill="#221808">2. Work hard</text>
-<text x="155" y="174" font-family="Arial,sans-serif" font-size="8" fill="#221808">3. Respect everyone</text>
-<text x="155" y="187" font-family="Arial,sans-serif" font-size="8" fill="#221808">4. Never quit</text>
-<text x="197" y="212" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" fill="#8a6838" font-style="italic">est. 2008</text>
-<!-- Push pins -->
-<circle cx="151" cy="111" r="3.5" fill="#b82010"/>
-<circle cx="243" cy="111" r="3.5" fill="#b82010"/>
-<circle cx="151" cy="219" r="3.5" fill="#b82010"/>
-<circle cx="243" cy="219" r="3.5" fill="#b82010"/>
+<rect x="146" y="108" width="102" height="118" rx="2" fill="#e4dcc8" filter="url(#shadow)"/>
+<rect x="148" y="110" width="98"  height="28"  fill="#d0c280"/>
+<text x="197" y="128" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="bold" fill="#16100a" letter-spacing="0.5">THE ACADEMY CODE</text>
+<line x1="150" y1="137" x2="245" y2="137" stroke="#8a7840" stroke-width="0.8"/>
+<text x="154" y="152" font-family="Arial,sans-serif" font-size="8" fill="#221808">1. Show up</text>
+<text x="154" y="165" font-family="Arial,sans-serif" font-size="8" fill="#221808">2. Work hard</text>
+<text x="154" y="178" font-family="Arial,sans-serif" font-size="8" fill="#221808">3. Respect everyone</text>
+<text x="154" y="191" font-family="Arial,sans-serif" font-size="8" fill="#221808">4. Never quit</text>
+<text x="197" y="216" text-anchor="middle" font-family="Arial,sans-serif" font-size="6.5" fill="#8a6838" font-style="italic">est. 2008</text>
+<circle cx="150" cy="112" r="3.5" fill="#b82010"/>
+<circle cx="244" cy="112" r="3.5" fill="#b82010"/>
+<circle cx="150" cy="222" r="3.5" fill="#b82010"/>
+<circle cx="244" cy="222" r="3.5" fill="#b82010"/>
 
-<!-- ═══════════════════ CENTER WALL - FADED MURAL ═══════════════════ -->
-<!-- Faded painted mural - ghost text directly on concrete -->
-<text x="400" y="162" text-anchor="middle" font-family="Impact,sans-serif" font-size="60" fill="rgba(80,110,160,0.1)" letter-spacing="3">TAPOUT</text>
-<text x="400" y="218" text-anchor="middle" font-family="Impact,sans-serif" font-size="60" fill="rgba(80,110,160,0.1)" letter-spacing="3">TACTICS</text>
-<!-- Mural BJJ silhouette art (throw/technique graphic) -->
-<ellipse cx="400" cy="108" rx="50" ry="22" fill="rgba(60,85,130,0.15)"/>
-<path d="M375 100 Q368 105 365 115 Q370 110 376 108" fill="rgba(55,80,125,0.2)"/>
-<path d="M390 96 Q397 93 403 96 L398 108 Q390 106 386 100" fill="rgba(55,80,125,0.22)"/>
-<circle cx="384" cy="94" r="7" fill="rgba(55,80,125,0.2)"/>
-<path d="M415 98 Q422 96 425 104 Q418 112 410 110" fill="rgba(55,80,125,0.18)"/>
-<circle cx="420" cy="94" r="5.5" fill="rgba(55,80,125,0.18)"/>
+<!-- ════ CENTER: FADED MURAL ════ -->
+<text x="400" y="176" text-anchor="middle" font-family="Impact,sans-serif" font-size="64" fill="rgba(80,110,160,0.09)" letter-spacing="3">TAPOUT</text>
+<text x="400" y="236" text-anchor="middle" font-family="Impact,sans-serif" font-size="64" fill="rgba(80,110,160,0.09)" letter-spacing="3">TACTICS</text>
 
-<!-- ═══════════════════ ACADEMY BANNER (CENTER) ═══════════════════ -->
-<!-- Banner mounting grommets and ropes -->
+<!-- ════ ACADEMY BANNER (CENTER) ════ -->
 <line x1="340" y1="88" x2="343" y2="106" stroke="#7a6038" stroke-width="2.5"/>
 <line x1="460" y1="88" x2="457" y2="106" stroke="#7a6038" stroke-width="2.5"/>
 <circle cx="342" cy="88" r="5" fill="#5a4428"/>
 <circle cx="458" cy="88" r="5" fill="#5a4428"/>
-
-<!-- Banner body -->
-<rect x="318" y="106" width="264" height="124" rx="3" fill="url(#banner)" filter="url(#shadow)"/>
-<!-- Gold frame border -->
+<rect x="318" y="106" width="264" height="126" rx="3" fill="url(#banner)" filter="url(#shadow)"/>
 <rect x="318" y="106" width="264" height="4"   fill="#d4a028"/>
-<rect x="318" y="106" width="4"   height="124" fill="#d4a028"/>
-<rect x="578" y="106" width="4"   height="124" fill="#d4a028"/>
-<rect x="318" y="226" width="264" height="4"   fill="#d4a028"/>
-<!-- Inner frame -->
-<rect x="326" y="114" width="248" height="108" fill="none" stroke="rgba(212,160,40,0.22)" stroke-width="1.2"/>
-<!-- ACADEMY text (large impact) -->
-<text x="450" y="160" text-anchor="middle" font-family="Impact,sans-serif" font-size="38" fill="#ffffff" letter-spacing="6">ACADEMY</text>
-<!-- Gold rule -->
-<line x1="338" y1="168" x2="562" y2="168" stroke="#d4a028" stroke-width="1.5" opacity="0.6"/>
-<!-- Subtitle copy -->
-<text x="450" y="184" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" fill="#7ab0d8" letter-spacing="3.5">DISCIPLINE · FOCUS · GRIT</text>
-<!-- Est line -->
-<text x="450" y="200" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="rgba(255,255,255,0.28)" letter-spacing="2">EST. 2008</text>
-<!-- Shield emblem -->
-<path d="M438 208 L450 204 L462 208 L462 220 L450 226 L438 220 Z" fill="none" stroke="rgba(212,160,40,0.5)" stroke-width="1.5"/>
-<text x="450" y="219" text-anchor="middle" font-family="Impact,sans-serif" font-size="12" fill="rgba(255,255,255,0.45)">A</text>
+<rect x="318" y="106" width="4"   height="126" fill="#d4a028"/>
+<rect x="578" y="106" width="4"   height="126" fill="#d4a028"/>
+<rect x="318" y="228" width="264" height="4"   fill="#d4a028"/>
+<rect x="326" y="114" width="248" height="110" fill="none" stroke="rgba(212,160,40,0.22)" stroke-width="1.2"/>
+<text x="450" y="162" text-anchor="middle" font-family="Impact,sans-serif" font-size="38" fill="#ffffff" letter-spacing="6">ACADEMY</text>
+<line x1="338" y1="170" x2="562" y2="170" stroke="#d4a028" stroke-width="1.5" opacity="0.6"/>
+<text x="450" y="186" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" fill="#7ab0d8" letter-spacing="3.5">DISCIPLINE · FOCUS · GRIT</text>
+<text x="450" y="202" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="rgba(255,255,255,0.28)" letter-spacing="2">EST. 2008</text>
+<path d="M438 210 L450 206 L462 210 L462 222 L450 228 L438 222 Z" fill="none" stroke="rgba(212,160,40,0.5)" stroke-width="1.5"/>
+<text x="450" y="221" text-anchor="middle" font-family="Impact,sans-serif" font-size="12" fill="rgba(255,255,255,0.45)">A</text>
 
-<!-- ═══════════════════ RIGHT SECTION ═══════════════════ -->
-<!-- Right vertical banner -->
-<line x1="686" y1="88" x2="685" y2="104" stroke="#8a7040" stroke-width="2"/>
-<circle cx="686" cy="88" r="4" fill="#6a5030"/>
-<rect x="666" y="104" width="38" height="128" fill="#1c3678"/>
-<rect x="666" y="104" width="38" height="4"   fill="#d4a028"/>
-<rect x="666" y="228" width="38" height="4"   fill="#d4a028"/>
-<line x1="673" y1="110" x2="697" y2="110" stroke="rgba(212,160,40,0.4)" stroke-width="0.8"/>
-<text x="685" y="182" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.55)" transform="rotate(90 685 182)">TRAIN HARD</text>
+<!-- ════ RIGHT SECTION CONTENT ════ -->
+<!-- Hanging banner (right) -->
+<line x1="686" y1="88" x2="685" y2="105" stroke="#8a7040" stroke-width="2.5"/>
+<circle cx="686" cy="88" r="4.5" fill="#6a5030"/>
+<rect x="666" y="105" width="38" height="130" fill="#1c3678"/>
+<rect x="666" y="105" width="38" height="4"   fill="#d4a028"/>
+<rect x="666" y="231" width="38" height="4"   fill="#d4a028"/>
+<text x="685" y="185" text-anchor="middle" font-family="Impact,sans-serif" font-size="9" letter-spacing="5" fill="rgba(255,255,255,0.58)" transform="rotate(90 685 185)">TRAIN HARD</text>
 
 <!-- PAIN TODAY sign -->
-<rect x="580" y="115" width="74" height="72" rx="2" fill="#e4dcc8" filter="url(#shadow)"/>
-<rect x="582" y="117" width="70" height="24" fill="#d0c280"/>
-<text x="617" y="133" text-anchor="middle" font-family="Impact,sans-serif" font-size="14" fill="#14100a" letter-spacing="2">PAIN</text>
-<text x="617" y="145" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#221808">TODAY</text>
-<line x1="585" y1="149" x2="649" y2="149" stroke="#8a7840" stroke-width="0.8"/>
-<text x="617" y="163" text-anchor="middle" font-family="Impact,sans-serif" font-size="11" fill="#14100a" letter-spacing="1">STRENGTH</text>
-<text x="617" y="177" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#221808">TOMORROW</text>
-<circle cx="584" cy="119" r="3.5" fill="#185028"/>
-<circle cx="650" cy="119" r="3.5" fill="#185028"/>
+<rect x="580" y="112" width="74" height="74" rx="2" fill="#e4dcc8" filter="url(#shadow)"/>
+<rect x="582" y="114" width="70" height="26" fill="#d0c280"/>
+<text x="617" y="131" text-anchor="middle" font-family="Impact,sans-serif" font-size="14" fill="#14100a" letter-spacing="2">PAIN</text>
+<text x="617" y="144" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#221808">TODAY</text>
+<line x1="584" y1="148" x2="650" y2="148" stroke="#8a7840" stroke-width="0.8"/>
+<text x="617" y="162" text-anchor="middle" font-family="Impact,sans-serif" font-size="11" fill="#14100a" letter-spacing="1">STRENGTH</text>
+<text x="617" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-size="7.5" fill="#221808">TOMORROW</text>
+<circle cx="584" cy="116" r="3.5" fill="#185028"/>
+<circle cx="650" cy="116" r="3.5" fill="#185028"/>
 
-<!-- Trophy shelf -->
-<rect x="576" y="200" width="120" height="7" rx="1" fill="#4a3010" filter="url(#shadow)"/>
-<!-- Trophy 1 (gold — tallest) -->
-<rect x="586" y="178" width="16" height="24" rx="1" fill="#b88010"/>
-<rect x="582" y="198" width="24" height="5"  rx="1" fill="#a07010"/>
-<ellipse cx="594" cy="178" rx="9" ry="6" fill="#c89018"/>
-<circle  cx="594" cy="172" r="5" fill="#d4a020"/>
-<line x1="592" y1="166" x2="596" y2="166" stroke="#d4a020" stroke-width="2"/>
-<!-- Trophy 2 (silver) -->
-<rect x="612" y="183" width="14" height="18" rx="1" fill="#8090a0"/>
-<rect x="608" y="198" width="22" height="5"  rx="1" fill="#707888"/>
-<ellipse cx="619" cy="183" rx="8" ry="5" fill="#9098a8"/>
-<circle  cx="619" cy="178" r="4" fill="#a0a8b8"/>
-<!-- Trophy 3 (bronze) -->
-<rect x="636" y="185" width="12" height="16" rx="1" fill="#906020"/>
-<rect x="632" y="198" width="20" height="5"  rx="1" fill="#805018"/>
-<ellipse cx="642" cy="185" rx="7" ry="4.5" fill="#a07028"/>
-<circle  cx="642" cy="180" r="3.5" fill="#b07830"/>
-<!-- Medal rack below shelf -->
-<rect x="582" y="207" width="110" height="18" rx="2" fill="#2a2218" stroke="#1a1610" stroke-width="1"/>
-<circle cx="598" cy="216" r="6" fill="#d4a020"/>
-<circle cx="614" cy="216" r="6" fill="#9098a8"/>
-<circle cx="630" cy="216" r="5" fill="#a07028"/>
-<line x1="598" y1="207" x2="598" y2="210" stroke="#8a7030" stroke-width="2"/>
-<line x1="614" y1="207" x2="614" y2="210" stroke="#6a7080" stroke-width="2"/>
-<line x1="630" y1="207" x2="630" y2="210" stroke="#705018" stroke-width="2"/>
+<!-- Trophy shelf + trophies -->
+<rect x="578" y="202" width="122" height="7" rx="1" fill="#4a3010" filter="url(#shadow)"/>
+<rect x="587" y="180" width="16" height="24" rx="1" fill="#b88010"/>
+<rect x="583" y="200" width="24" height="5"  rx="1" fill="#a07010"/>
+<ellipse cx="595" cy="180" rx="9" ry="6" fill="#c89018"/>
+<circle  cx="595" cy="174" r="5" fill="#d4a020"/>
+<rect x="613" y="185" width="14" height="18" rx="1" fill="#8090a0"/>
+<rect x="609" y="200" width="22" height="5"  rx="1" fill="#707888"/>
+<ellipse cx="620" cy="185" rx="8" ry="5" fill="#9098a8"/>
+<circle  cx="620" cy="180" r="4" fill="#a0a8b8"/>
+<rect x="637" y="188" width="12" height="14" rx="1" fill="#906020"/>
+<rect x="633" y="200" width="20" height="5"  rx="1" fill="#805018"/>
+<ellipse cx="643" cy="188" rx="7" ry="4" fill="#a07028"/>
+<circle  cx="643" cy="184" r="3.5" fill="#b07830"/>
 
-<!-- Framed competition photo -->
-<rect x="578" y="107" width="60" height="58" rx="2" fill="#14141c" stroke="#5a4828" stroke-width="2" filter="url(#shadow)"/>
-<rect x="582" y="111" width="52" height="46" fill="#1e2230"/>
-<ellipse cx="608" cy="126" rx="16" ry="10" fill="rgba(60,90,140,0.35)"/>
-<circle  cx="601" cy="120" r="5"  fill="rgba(50,80,130,0.55)"/>
-<circle  cx="614" cy="118" r="4.5" fill="rgba(50,80,130,0.45)"/>
-<text x="608" y="149" text-anchor="middle" font-family="Arial,sans-serif" font-size="5" fill="rgba(200,185,150,0.7)">CHAMPIONSHIPS</text>
+<!-- Framed photo -->
+<rect x="580" y="110" width="54" height="60" rx="2" fill="#14141c" stroke="#5a4828" stroke-width="2" filter="url(#shadow)"/>
+<rect x="584" y="114" width="46" height="48" fill="#1e2230"/>
+<ellipse cx="607" cy="132" rx="16" ry="10" fill="rgba(60,90,140,0.35)"/>
+<circle  cx="600" cy="126" r="5"  fill="rgba(50,80,130,0.55)"/>
+<circle  cx="613" cy="124" r="4.5" fill="rgba(50,80,130,0.45)"/>
+<text x="607" y="153" text-anchor="middle" font-family="Arial,sans-serif" font-size="5" fill="rgba(200,185,150,0.7)">CHAMPIONSHIPS</text>
 
-<!-- ═══════════════════ MIDGROUND EQUIPMENT ═══════════════════ -->
-<!-- Heavy bag chain + bag (left) -->
-<line x1="106" y1="92" x2="106" y2="240" stroke="#3a2c18" stroke-width="3" stroke-dasharray="5,4"/>
-<rect x="100" y="228" width="7" height="6" rx="1" fill="#4a3820"/>
-<rect x="90"  y="234" width="32" height="68" rx="12" fill="#141010" stroke="#201418" stroke-width="2.5" filter="url(#shadow)"/>
-<rect x="92"  y="246" width="28" height="7" fill="#0e0c0e" opacity="0.6"/>
-<rect x="92"  y="262" width="28" height="7" fill="#0e0c0e" opacity="0.6"/>
-<rect x="92"  y="278" width="28" height="7" fill="#0e0c0e" opacity="0.6"/>
+<!-- ════ MIDGROUND EQUIPMENT ════ -->
+<!-- Heavy bag + chain -->
+<line x1="107" y1="92" x2="107" y2="247" stroke="#3a2c18" stroke-width="3" stroke-dasharray="5,4"/>
+<rect x="101" y="243" width="7" height="6" rx="1" fill="#4a3820"/>
+<rect x="92" y="248" width="30" height="64" rx="11" fill="#141010" stroke="#201418" stroke-width="2.5" filter="url(#shadow)"/>
+<rect x="94" y="260" width="26" height="6" fill="#0e0c0e" opacity="0.55"/>
+<rect x="94" y="275" width="26" height="6" fill="#0e0c0e" opacity="0.55"/>
+<rect x="94" y="290" width="26" height="6" fill="#0e0c0e" opacity="0.55"/>
 
-<!-- Water cooler (right side) -->
-<rect x="690" y="244" width="22" height="42" rx="2" fill="#263444" stroke="#1a2434" stroke-width="1.5" filter="url(#shadow)"/>
-<rect x="688" y="236" width="26" height="10" rx="2" fill="#3a5068" stroke="#2a3e54" stroke-width="1"/>
-<ellipse cx="701" cy="236" rx="10" ry="7" fill="#4a6080"/>
-<rect x="702" y="265" width="11" height="7" rx="1.5" fill="#1860a8"/>
-<rect x="690" y="283" width="22" height="4" rx="1" fill="#d4dce8" opacity="0.5"/>
+<!-- Water cooler -->
+<rect x="690" y="255" width="22" height="40" rx="2" fill="#263444" stroke="#1a2434" stroke-width="1.5" filter="url(#shadow)"/>
+<rect x="688" y="247" width="26" height="10" rx="2" fill="#3a5068" stroke="#2a3e54" stroke-width="1"/>
+<ellipse cx="701" cy="247" rx="10" ry="7" fill="#4a6080"/>
+<rect x="703" y="272" width="10" height="7" rx="1.5" fill="#1860a8"/>
 
-<!-- Folded mat stack (center-left midground) -->
-<rect x="270" y="278" width="55" height="16" rx="2" fill="#243040" filter="url(#shadow)"/>
-<rect x="272" y="268" width="51" height="13" rx="2" fill="#1e2838"/>
-<rect x="274" y="259" width="47" height="12" rx="2" fill="#182030"/>
-<line x1="273" y1="278" x2="323" y2="278" stroke="#18202e" stroke-width="1.2"/>
-<line x1="275" y1="269" x2="321" y2="269" stroke="#161e2c" stroke-width="0.9"/>
+<!-- Folded mat stack -->
+<rect x="272" y="292" width="52" height="14" rx="2" fill="#243040" filter="url(#shadow)"/>
+<rect x="274" y="282" width="48" height="13" rx="2" fill="#1e2838"/>
+<rect x="276" y="273" width="44" height="12" rx="2" fill="#182030"/>
 
-<!-- Bench (left) -->
-<rect x="90" y="287" width="75" height="9" rx="2" fill="#362010" stroke="#221408" stroke-width="1.2" filter="url(#shadow)"/>
-<rect x="94"  y="295" width="5" height="10" fill="#221408"/>
-<rect x="155" y="295" width="5" height="10" fill="#221408"/>
-<rect x="102" y="296" width="5" height="9"  fill="#221408"/>
-<rect x="147" y="296" width="5" height="9"  fill="#221408"/>
+<!-- Bench + bag -->
+<rect x="92" y="302" width="72" height="8" rx="2" fill="#362010" stroke="#221408" stroke-width="1" filter="url(#shadow)"/>
+<rect x="96"  y="309" width="5" height="9" fill="#221408"/>
+<rect x="154" y="309" width="5" height="9" fill="#221408"/>
+<rect x="96" y="286" width="34" height="18" rx="5" fill="#181818" stroke="#0c0c0c" stroke-width="1.5" filter="url(#shadow)"/>
+<text x="113" y="297" text-anchor="middle" font-family="Impact,sans-serif" font-size="5.5" fill="rgba(220,220,220,0.4)" letter-spacing="1">TAPOUT</text>
 
-<!-- Gear bag on bench -->
-<rect x="96" y="272" width="36" height="18" rx="5" fill="#181818" stroke="#0c0c0c" stroke-width="1.5" filter="url(#shadow)"/>
-<text x="114" y="283" text-anchor="middle" font-family="Impact,sans-serif" font-size="5.5" fill="rgba(220,220,220,0.38)" letter-spacing="1">TAPOUT</text>
+<!-- ════ WALL/FLOOR TRANSITION at y=335 (where fighters stand) ════ -->
+<!-- This is calibrated to y=335 so fighters' feet at ~y=340 touch the floor -->
+<rect y="332" width="800" height="8" fill="#0c1220"/>
+<rect y="335" width="800" height="4" fill="#141c2c"/>
 
-<!-- ═══════════════════ FLOOR ═══════════════════ -->
-<!-- Baseboard trim -->
-<rect y="305" width="800" height="7" fill="#0c1220"/>
-<rect y="307" width="800" height="3" fill="#141c2c"/>
+<!-- ════ FLOOR — starts at y=339, calibrated to shadow cy=340 ════ -->
+<rect y="339" width="800" height="111" fill="url(#floor)"/>
 
-<!-- Floor base -->
-<rect y="308" width="800" height="142" fill="url(#floor)"/>
+<!-- Floor surface sheen -->
+<rect y="339" width="800" height="4" fill="rgba(255,255,255,0.06)"/>
 
-<!-- Tatami seams - horizontal -->
-<line x1="0" y1="344" x2="800" y2="344" stroke="#1e2e40" stroke-width="2.5"/>
-<line x1="0" y1="378" x2="800" y2="378" stroke="#1e2e40" stroke-width="2.5"/>
-<line x1="0" y1="412" x2="800" y2="412" stroke="#1e2e40" stroke-width="2.5"/>
-<line x1="0" y1="446" x2="800" y2="446" stroke="#1e2e40" stroke-width="2.5"/>
+<!-- Tatami horizontal seams -->
+<line x1="0" y1="365" x2="800" y2="365" stroke="#1e2e40" stroke-width="2.2"/>
+<line x1="0" y1="392" x2="800" y2="392" stroke="#1e2e40" stroke-width="2.2"/>
+<line x1="0" y1="419" x2="800" y2="419" stroke="#1e2e40" stroke-width="2.2"/>
+<line x1="0" y1="446" x2="800" y2="446" stroke="#1e2e40" stroke-width="2.2"/>
 
-<!-- Tatami seams - vertical -->
-<line x1="100" y1="308" x2="100" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="200" y1="308" x2="200" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="300" y1="308" x2="300" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="400" y1="308" x2="400" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="500" y1="308" x2="500" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="600" y1="308" x2="600" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
-<line x1="700" y1="308" x2="700" y2="450" stroke="#1c2c3c" stroke-width="1.8"/>
+<!-- Tatami vertical seams -->
+<line x1="100" y1="339" x2="100" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="200" y1="339" x2="200" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="300" y1="339" x2="300" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="400" y1="339" x2="400" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="500" y1="339" x2="500" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="600" y1="339" x2="600" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
+<line x1="700" y1="339" x2="700" y2="450" stroke="#1c2c3c" stroke-width="1.6"/>
 
-<!-- Floor surface sheen (top edge highlight) -->
-<rect y="308" width="800" height="4" fill="rgba(255,255,255,0.055)"/>
+<!-- Wear marks -->
+<line x1="162" y1="350" x2="205" y2="362" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
+<line x1="450" y1="370" x2="490" y2="382" stroke="rgba(255,255,255,0.035)" stroke-width="2.5"/>
+<line x1="315" y1="405" x2="350" y2="414" stroke="rgba(255,255,255,0.03)" stroke-width="2"/>
+<line x1="558" y1="353" x2="596" y2="365" stroke="rgba(255,255,255,0.04)" stroke-width="3"/>
 
-<!-- Wear marks / scuff marks on tatami -->
-<line x1="162" y1="322" x2="208" y2="338" stroke="rgba(255,255,255,0.04)" stroke-width="3.5"/>
-<line x1="440" y1="350" x2="486" y2="366" stroke="rgba(255,255,255,0.035)" stroke-width="3"/>
-<line x1="308" y1="396" x2="348" y2="407" stroke="rgba(255,255,255,0.03)" stroke-width="2.5"/>
-<line x1="558" y1="325" x2="598" y2="340" stroke="rgba(255,255,255,0.04)" stroke-width="3.5"/>
-<line x1="235" y1="418" x2="265" y2="426" stroke="rgba(255,255,255,0.025)" stroke-width="2"/>
+<!-- Ghost floor text -->
+<text x="400" y="385" text-anchor="middle" font-family="Impact,sans-serif" font-size="32" fill="rgba(255,255,255,0.05)" letter-spacing="6">TAPOUT TACTICS</text>
 
-<!-- Branded ghost text on floor -->
-<text x="400" y="365" text-anchor="middle" font-family="Impact,sans-serif" font-size="40" fill="rgba(255,255,255,0.045)" letter-spacing="7">TAPOUT</text>
-<text x="400" y="408" text-anchor="middle" font-family="Impact,sans-serif" font-size="40" fill="rgba(255,255,255,0.045)" letter-spacing="7">TACTICS</text>
+<!-- Floor center glow (reflection under fighters) -->
+<ellipse cx="400" cy="360" rx="280" ry="55" fill="url(#fglow)"/>
 
-<!-- Floor center glow (reflection pool under fighters) -->
-<ellipse cx="400" cy="380" rx="270" ry="75" fill="url(#fglow)"/>
+<!-- Ceiling light pools on floor -->
+<ellipse cx="200" cy="410" rx="230" ry="65" fill="rgba(200,228,216,0.07)"/>
+<ellipse cx="600" cy="410" rx="230" ry="65" fill="rgba(200,228,216,0.07)"/>
 
-<!-- Ceiling light pools landing on floor -->
-<ellipse cx="200" cy="410" rx="240" ry="80" fill="rgba(200,228,216,0.065)"/>
-<ellipse cx="600" cy="410" rx="240" ry="80" fill="rgba(200,228,216,0.065)"/>
-
-<!-- ═══════════════════ DEPTH / ATMOSPHERE ═══════════════════ -->
-<!-- Side vignettes -->
+<!-- ════ DEPTH / ATMOSPHERE ════ -->
 <rect width="170" height="450" fill="url(#vleft)"/>
 <rect x="630"  width="170" height="450" fill="url(#vright)"/>
-
-<!-- Ceiling drop shadow -->
-<rect width="800" height="48" fill="rgba(0,0,0,0.42)"/>
-
-<!-- Bottom floor fade -->
-<rect y="420" width="800" height="30" fill="rgba(0,0,0,0.22)"/>
-
-<!-- Atmospheric depth haze on background (simulates DOF) -->
-<rect y="92" width="800" height="215" fill="rgba(24,32,46,0.14)"/>
+<rect width="800" height="46" fill="rgba(0,0,0,0.44)"/>
+<rect y="425" width="800" height="25" fill="rgba(0,0,0,0.22)"/>
+<!-- Background DOF haze -->
+<rect y="92" width="800" height="243" fill="rgba(22,30,44,0.15)"/>
 </svg>
