@@ -1,5 +1,5 @@
 // Tapout Tactics service worker — caches all game files for offline play.
-const CACHE = "tapout-tactics-v3";
+const CACHE = "tapout-tactics-v4";
 const ASSETS = [
   "/tapout-tactics/",
   "/tapout-tactics/index.html",
