@@ -6,6 +6,10 @@ document.getElementById("viewProgressButton")?.addEventListener("click", () => {
   els.resultOverlay.hidden = true;
   setActiveScreen("athlete");
 });
+document.getElementById("mainMenuButton")?.addEventListener("click", () => {
+  els.resultOverlay.hidden = true;
+  setActiveScreen("match");
+});
 document.getElementById("logToggleButton")?.addEventListener("click", () => {
   const log = document.getElementById("log");
   const btn = document.getElementById("logToggleButton");
