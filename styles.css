@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&display=swap');
+
 :root {
   color-scheme: dark;
   --bg: #0d1411;
@@ -11,6 +13,13 @@
   --gold: #f3c76b;
   --blue: #6fa8ff;
   --purple: #b089ff;
+  /* Typography */
+  --font-display: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+  --font-game:    'Barlow Condensed', Arial, sans-serif;
+  /* Glow tokens */
+  --glow-accent: 0 0 24px rgba(103, 211, 145, 0.28);
+  --glow-gold:   0 0 24px rgba(243, 199, 107, 0.28);
+  --glow-danger: 0 0 24px rgba(240, 106, 95, 0.28);
 }
 
 * {
@@ -24,7 +33,9 @@ body {
     radial-gradient(circle at top, rgba(103, 211, 145, 0.18), transparent 34rem),
     linear-gradient(180deg, #101a15, var(--bg));
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-game);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
 }
 
 button {
@@ -34,8 +45,21 @@ button {
   color: #08110c;
   cursor: pointer;
   font: inherit;
+  font-family: var(--font-game);
   font-weight: 800;
+  letter-spacing: 0.03em;
   padding: 0.8rem 1rem;
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+button:not(:disabled):not(.secondary-button):not(.log-toggle-btn):not(.card):hover {
+  box-shadow: var(--glow-accent), 0 4px 12px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0) scale(0.98);
 }
 
 button:disabled {
@@ -75,31 +99,50 @@ button:disabled {
 
 .top-bar {
   align-items: center;
+  background: linear-gradient(180deg, rgba(22, 36, 29, 0.99), rgba(14, 22, 18, 0.99));
+  border: 1px solid var(--line);
+  border-bottom-color: rgba(103, 211, 145, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(103, 211, 145, 0.08);
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 0.85rem 1rem;
 }
 
 .screen-tabs {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.4rem;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  padding: 0.5rem;
+  padding: 0.4rem;
 }
 
 .screen-tabs button {
-  background: #203027;
-  border: 1px solid var(--line);
+  background: rgba(16, 26, 21, 0.7);
+  border: 1px solid rgba(52, 70, 62, 0.5);
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
   color: var(--muted);
-  min-height: 46px;
-  padding: 0.55rem;
+  font-family: var(--font-game);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  min-height: 44px;
+  padding: 0.5rem;
+  text-transform: uppercase;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 
 .screen-tabs button.active {
-  background: linear-gradient(160deg, #2f6749, #1d3429);
-  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(47, 103, 73, 0.5), rgba(29, 52, 41, 0.5));
+  border-color: rgba(52, 70, 62, 0.8);
+  border-bottom-color: var(--accent);
+  box-shadow: 0 0 16px rgba(103, 211, 145, 0.1);
   color: var(--text);
-  box-shadow: 0 0 0 2px rgba(103, 211, 145, 0.16);
+}
+
+.screen-tabs button:hover:not(.active) {
+  background: rgba(24, 38, 31, 0.9);
+  color: rgba(244, 247, 242, 0.7);
 }
 
 .brand-lockup {
@@ -144,12 +187,17 @@ p {
 }
 
 h1 {
-  font-size: clamp(1.9rem, 8vw, 3.2rem);
-  line-height: 0.95;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 8vw, 3.6rem);
+  letter-spacing: 0.04em;
+  line-height: 0.92;
   margin-bottom: 0;
 }
 
 h2 {
+  font-family: var(--font-game);
+  font-weight: 800;
+  letter-spacing: 0.02em;
   margin-bottom: 0.5rem;
 }
 
@@ -175,8 +223,10 @@ h2 {
 
 .scoreboard strong {
   display: block;
-  font-size: 2rem;
-  line-height: 1.1;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 
 .belt-panel {
@@ -910,8 +960,11 @@ h2 {
 
 .position-panel h2 {
   color: var(--gold);
-  font-size: clamp(1.35rem, 4vw, 2.4rem);
-  margin: 0.15rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  letter-spacing: 0.04em;
+  margin: 0.1rem 0;
+  text-shadow: var(--glow-gold);
 }
 
 .position-path {
@@ -980,10 +1033,50 @@ h2 {
     inset 0 0 0 10px rgba(7, 18, 20, 0.34),
     inset 0 0 0 18px rgba(244, 247, 242, 0.045),
     inset 0 28px 90px rgba(255, 255, 255, 0.06),
-    inset 0 -38px 88px rgba(2, 8, 11, 0.26);
+    inset 0 -38px 88px rgba(2, 8, 11, 0.36),
+    inset -40px 0 80px rgba(2, 8, 11, 0.18),
+    inset 40px 0 80px rgba(2, 8, 11, 0.18);
   min-height: 360px;
   overflow: hidden;
   position: relative;
+}
+
+/* Crowd silhouette strip — top edge of every mat */
+.mat-canvas .mat-ring::after {
+  background:
+    radial-gradient(ellipse 8px 18px at 3% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 14px at 6% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 9% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 9px 20px at 12% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 15px at 15% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 18% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 22% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 10px 22px at 26% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 30% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 34% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 14px at 38% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 9px 20px at 42% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 46% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 50% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 15px at 54% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
+    radial-gradient(ellipse 9px 20px at 58% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 17px at 62% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 66% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 14px at 70% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 10px 22px at 74% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 78% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 82% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 6px 15px at 86% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
+    radial-gradient(ellipse 9px 20px at 90% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
+    radial-gradient(ellipse 7px 16px at 94% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
+    radial-gradient(ellipse 8px 18px at 97% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%);
+  bottom: auto;
+  content: "";
+  height: 22px;
+  inset: 0 0 auto 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
 }
 
 .mat-canvas.venue-academy {
@@ -1651,6 +1744,7 @@ h2 {
   border-radius: 12px;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.45),
     inset 0 0 30px rgba(255, 255, 255, 0.04),
     0 18px 34px rgba(0, 0, 0, 0.34);
   color: var(--text);
@@ -1659,6 +1753,30 @@ h2 {
   padding: 0;
   position: relative;
   text-align: left;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+/* Legendary gets a premium gold-shimmer border */
+.card.rarity-legendary {
+  border-color: color-mix(in srgb, var(--gold) 72%, #161616);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.45),
+    inset 0 0 30px rgba(255, 255, 255, 0.04),
+    0 0 0 1px color-mix(in srgb, var(--gold) 30%, transparent),
+    0 18px 40px rgba(0, 0, 0, 0.4),
+    var(--glow-gold);
+}
+
+.card.rarity-epic {
+  border-color: color-mix(in srgb, var(--purple) 72%, #161616);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.45),
+    inset 0 0 30px rgba(255, 255, 255, 0.04),
+    0 0 0 1px color-mix(in srgb, var(--purple) 28%, transparent),
+    0 18px 36px rgba(0, 0, 0, 0.38),
+    var(--glow-accent);
 }
 
 .card::before {
@@ -1673,7 +1791,9 @@ h2 {
 }
 
 .card:disabled {
-  filter: saturate(0.75) brightness(0.82);
+  cursor: not-allowed;
+  filter: saturate(0.15) brightness(0.45);
+  opacity: 0.7;
 }
 
 .card-frame {
@@ -1701,14 +1821,14 @@ h2 {
 
 .rarity-gem {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.62), transparent 42%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), transparent 42%),
     linear-gradient(225deg, var(--rarity-color), color-mix(in srgb, var(--rarity-color) 42%, #050505));
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--rarity-color) 42%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--rarity-color) 55%, transparent);
   display: inline-block;
-  height: 34px;
+  height: 38px;
   transform: rotate(45deg);
-  width: 34px;
+  width: 38px;
 }
 
 .card .rarity-lockup span:last-child {
@@ -1754,12 +1874,12 @@ h2 {
 .card-title {
   color: #f8f8f2;
   display: block;
-  font-family: Impact, Haettenschweiler, "Arial Black", sans-serif;
-  font-size: clamp(1.75rem, 2.5vw, 2.45rem);
-  letter-spacing: 0.02em;
-  line-height: 0.9;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.2vw, 2.2rem);
+  letter-spacing: 0.03em;
+  line-height: 0.92;
   text-shadow:
-    0 3px 0 rgba(0, 0, 0, 0.72),
+    0 2px 0 rgba(0, 0, 0, 0.72),
     0 0 18px color-mix(in srgb, var(--rarity-color) 22%, transparent);
   text-transform: uppercase;
 }
@@ -2075,8 +2195,22 @@ h2 {
 
 .result-panel h2 {
   color: var(--gold);
-  font-size: 2.2rem;
-  margin: 0.2rem 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 8vw, 4.5rem);
+  letter-spacing: 0.06em;
+  margin: 0.15rem 0 0.4rem;
+  text-shadow: var(--glow-gold);
+  text-transform: uppercase;
+}
+
+.result-overlay.result-win .result-panel h2 {
+  color: var(--accent);
+  text-shadow: var(--glow-accent);
+}
+
+.result-overlay.result-loss .result-panel h2 {
+  color: var(--danger);
+  text-shadow: var(--glow-danger);
 }
 
 .result-panel p {
