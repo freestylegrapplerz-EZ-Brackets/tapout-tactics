@@ -6,6 +6,10 @@ document.getElementById("viewProgressButton")?.addEventListener("click", () => {
   els.resultOverlay.hidden = true;
   setActiveScreen("athlete");
 });
+document.getElementById("mainMenuButton")?.addEventListener("click", () => {
+  els.resultOverlay.hidden = true;
+  setActiveScreen("match");
+});
 document.getElementById("logToggleButton")?.addEventListener("click", () => {
   const log = document.getElementById("log");
   const btn = document.getElementById("logToggleButton");
@@ -32,3 +36,10 @@ document.getElementById("startTutorialButton")?.addEventListener("click", () => 
   if (typeof startTutorial === "function") startTutorial();
 });
 openPreMatchModal();
+
+// Register service worker for offline play and PWA install
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/tapout-tactics/sw.js").catch(() => {});
+  });
+}
