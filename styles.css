@@ -1041,18 +1041,11 @@ h2 {
   position: relative;
 }
 
-/* On venues with SVG backgrounds, soften the CSS ring overlay */
-.mat-canvas.venue-academy .mat-ring,
-.mat-canvas.venue-academy::after {
-  opacity: 0.25;
-}
-
 /* ── VENUE ARENA REDESIGNS ───────────────────────────────────────────────
    Each venue: dark spectator zone → transition → lit mat surface → depth
    ─────────────────────────────────────────────────────────────────────── */
 
 /* Shared tatami texture pattern applied via ::before upgrade */
-.mat-canvas.venue-academy,
 .mat-canvas.venue-local-event,
 .mat-canvas.venue-open-arena,
 .mat-canvas.venue-championship,
@@ -1066,10 +1059,14 @@ h2 {
 
 /* ── ACADEMY: Full gym scene SVG background ─────────────────────────────── */
 .mat-canvas.venue-academy {
-  background:
-    url('assets/venue-academy.svg') center center / cover no-repeat;
+  background: url('assets/venue-academy.svg') center center / cover no-repeat !important;
   border-color: rgba(100, 140, 200, 0.5);
 }
+
+/* Strip all CSS overlay layers so the SVG scene shows cleanly */
+.mat-canvas.venue-academy::before { display: none !important; }
+.mat-canvas.venue-academy::after  { display: none !important; }
+.mat-canvas.venue-academy .mat-ring { display: none !important; }
 
 /* ── LOCAL EVENT: Community gym, overhead lights, score table ──────────── */
 .mat-canvas.venue-local-event {
