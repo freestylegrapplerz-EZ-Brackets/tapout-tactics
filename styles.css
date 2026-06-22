@@ -1041,113 +1041,213 @@ h2 {
   position: relative;
 }
 
-/* Crowd silhouette strip — top edge of every mat */
+/* Crowd silhouette strip — top edge of every mat, with head + shoulder shapes */
 .mat-canvas .mat-ring::after {
+  /* Two rows: back row (shorter, lighter) + front row (taller, darker) */
   background:
-    radial-gradient(ellipse 8px 18px at 3% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 14px at 6% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 9% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 9px 20px at 12% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 15px at 15% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 18% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 22% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 10px 22px at 26% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 30% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 34% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 14px at 38% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 9px 20px at 42% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 46% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 50% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 15px at 54% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
-    radial-gradient(ellipse 9px 20px at 58% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 17px at 62% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 66% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 14px at 70% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 10px 22px at 74% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 78% 0%, rgba(4,8,6,0.9) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 82% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 6px 15px at 86% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%),
-    radial-gradient(ellipse 9px 20px at 90% 0%, rgba(4,8,6,0.85) 0 60%, transparent 61%),
-    radial-gradient(ellipse 7px 16px at 94% 0%, rgba(4,8,6,0.75) 0 60%, transparent 61%),
-    radial-gradient(ellipse 8px 18px at 97% 0%, rgba(4,8,6,0.8) 0 60%, transparent 61%);
+    /* Front row — heads (larger) */
+    radial-gradient(ellipse 10px 13px at 4%   100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 7.5% 100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 11%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 14.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 18%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 21.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 25%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 28.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 32%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 35.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 39%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 42.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 46%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 50%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 53.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 57%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 60.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 64%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 67.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 71%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 74.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 78%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 81.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 85%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    radial-gradient(ellipse 9px  12px at 88.5%100%, rgba(2,5,4,0.88) 0 70%, transparent 71%),
+    radial-gradient(ellipse 11px 14px at 92%  100%, rgba(2,5,4,0.9)  0 70%, transparent 71%),
+    radial-gradient(ellipse 8px  11px at 95.5%100%, rgba(2,5,4,0.85) 0 70%, transparent 71%),
+    radial-gradient(ellipse 10px 13px at 99%  100%, rgba(2,5,4,0.92) 0 70%, transparent 71%),
+    /* Body/shoulder mass — dark band below heads */
+    linear-gradient(180deg, rgba(2,5,4,0.88) 40%, rgba(2,5,4,0.5) 70%, transparent 100%);
   bottom: auto;
   content: "";
-  height: 22px;
+  height: 36px;
   inset: 0 0 auto 0;
   pointer-events: none;
   position: absolute;
   z-index: 2;
 }
 
+/* ── VENUE ARENA REDESIGNS ───────────────────────────────────────────────
+   Each venue: dark spectator zone → transition → lit mat surface → depth
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Shared tatami texture pattern applied via ::before upgrade */
+.mat-canvas.venue-academy,
+.mat-canvas.venue-local-event,
+.mat-canvas.venue-open-arena,
+.mat-canvas.venue-championship,
+.mat-canvas.venue-beach,
+.mat-canvas.venue-street {
+  background-size:
+    100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    30px 30px, 60px 30px,
+    100% 100%, 100% 100%;
+}
+
+/* ── ACADEMY: Old school gym, warm fluorescent lighting ───────────────── */
 .mat-canvas.venue-academy {
   background:
-    linear-gradient(180deg, rgba(12, 17, 15, 0.9) 0 16%, rgba(23, 33, 29, 0.3) 16% 22%, transparent 22%),
-    repeating-linear-gradient(90deg, transparent 0 13%, rgba(255,255,255,0.05) 13% 13.4%, transparent 13.4% 26%),
-    linear-gradient(90deg, rgba(255,255,255,0.15) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.1) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.065) 0 2px, transparent 2px 10px),
-    radial-gradient(ellipse at 50% 48%, rgba(244, 247, 242, 0.18) 0 14%, transparent 15%),
-    linear-gradient(145deg, #347f94 0%, #266d86 45%, #1a4d65 100%);
+    /* Wall pad strips at left and right edges */
+    linear-gradient(90deg,
+      rgba(8,14,11,0.92) 0 3.5%, rgba(15,25,20,0.5) 3.5% 6%, transparent 6%,
+      transparent 94%, rgba(15,25,20,0.5) 94% 96.5%, rgba(8,14,11,0.92) 96.5%),
+    /* Ceiling / spectator zone with fluorescent fixtures */
+    radial-gradient(ellipse 30% 8% at 25% 0%, rgba(200,230,210,0.12), transparent 100%),
+    radial-gradient(ellipse 30% 8% at 75% 0%, rgba(200,230,210,0.12), transparent 100%),
+    linear-gradient(180deg, #0a100d 0 14%, rgba(12,18,15,0.55) 14% 20%, transparent 20%),
+    /* Tatami grid rows */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 60px),
+    /* Center circle glow */
+    radial-gradient(ellipse 30% 22% at 50% 50%, rgba(255,255,255,0.06), transparent 100%),
+    /* Overhead ambient light */
+    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(180,220,200,0.12), transparent 60%),
+    /* Mat surface base: classic academy gray-blue */
+    linear-gradient(175deg, #2e6e7e 0%, #236070 40%, #193f50 100%);
 }
 
+/* ── LOCAL EVENT: Community gym, overhead lights, score table ──────────── */
 .mat-canvas.venue-local-event {
   background:
-    radial-gradient(circle at 6% 13%, rgba(244,247,242,0.28) 0 4px, transparent 5px),
-    radial-gradient(circle at 13% 12%, rgba(244,247,242,0.2) 0 3px, transparent 4px),
-    radial-gradient(circle at 88% 14%, rgba(244,247,242,0.24) 0 4px, transparent 5px),
-    radial-gradient(circle at 95% 12%, rgba(244,247,242,0.16) 0 3px, transparent 4px),
-    linear-gradient(180deg, #1b1d1d 0 18%, rgba(9, 12, 12, 0.36) 18% 24%, transparent 24%),
-    linear-gradient(90deg, rgba(255,255,255,0.17) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.1) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 10px),
-    linear-gradient(145deg, #3d96ae 0%, #2d7891 45%, #1d566d 100%);
+    /* Score table / judge area at top edge */
+    linear-gradient(180deg, rgba(12,14,14,0.95) 0 6%, rgba(18,22,22,0.6) 6% 10%, transparent 10%),
+    /* Crowd zone - darker with occasional light spots */
+    linear-gradient(180deg, transparent 0, rgba(6,9,9,0.88) 10% 20%, rgba(6,9,9,0.4) 20% 26%, transparent 26%),
+    /* Overhead ceiling lights — 3 visible fixtures */
+    radial-gradient(ellipse 14% 10% at 20% 0%, rgba(240,248,235,0.2), transparent 100%),
+    radial-gradient(ellipse 16% 12% at 50% 0%, rgba(240,248,235,0.22), transparent 100%),
+    radial-gradient(ellipse 14% 10% at 80% 0%, rgba(240,248,235,0.2), transparent 100%),
+    /* Tatami grid */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.07) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 60px),
+    /* Light wash from fixtures */
+    radial-gradient(ellipse 90% 65% at 50% 15%, rgba(200,230,215,0.1), transparent 70%),
+    /* Mat surface: competition blue */
+    linear-gradient(160deg, #2e8ca8 0%, #226e8a 45%, #164f6a 100%);
 }
 
+/* ── OPEN TOURNAMENT: Larger venue, barriers, professional setup ────────── */
 .mat-canvas.venue-open-arena {
   background:
-    linear-gradient(180deg, rgba(16, 21, 29, 0.94) 0 14%, rgba(54, 64, 74, 0.32) 14% 22%, transparent 22%),
-    linear-gradient(90deg, rgba(244,247,242,0.12) 0 2px, transparent 2px 9%),
-    linear-gradient(90deg, rgba(255,255,255,0.18) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.1) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(-45deg, rgba(2, 20, 27, 0.24) 0 2px, transparent 2px 11px),
-    radial-gradient(ellipse at 50% 48%, rgba(244, 247, 242, 0.18) 0 14%, transparent 15%),
-    linear-gradient(145deg, #3997bd 0%, #216b94 50%, #173d5b 100%);
+    /* Side barriers / boundary boards */
+    linear-gradient(90deg,
+      rgba(6,10,18,0.9) 0 2.5%, rgba(14,20,32,0.45) 2.5% 5%, transparent 5%,
+      transparent 95%, rgba(14,20,32,0.45) 95% 97.5%, rgba(6,10,18,0.9) 97.5%),
+    /* Scoreboard display zone at top */
+    linear-gradient(180deg, rgba(10,14,22,0.96) 0 12%, rgba(14,20,30,0.45) 12% 18%, transparent 18%),
+    /* Multiple overhead floodlights */
+    radial-gradient(ellipse 22% 14% at 20% 1%, rgba(220,240,255,0.18), transparent),
+    radial-gradient(ellipse 20% 12% at 50% 0%, rgba(220,240,255,0.22), transparent),
+    radial-gradient(ellipse 22% 14% at 80% 1%, rgba(220,240,255,0.18), transparent),
+    /* Tatami grid */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.07) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 60px),
+    /* Broad floodlight coverage */
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(200,225,245,0.14), transparent 60%),
+    /* Mat: deeper competition blue */
+    linear-gradient(165deg, #2480a8 0%, #1a6086 45%, #0f3d5c 100%);
 }
 
+/* ── CHAMPIONSHIP: Dark arena, dramatic spotlight, gold accents ──────────── */
 .mat-canvas.venue-championship {
   background:
-    radial-gradient(circle at 28% 1%, rgba(255,255,255,0.5), transparent 19%),
-    radial-gradient(circle at 72% 1%, rgba(111,168,255,0.42), transparent 20%),
-    radial-gradient(ellipse at 50% 35%, rgba(243,199,107,0.16), transparent 34%),
-    linear-gradient(180deg, #020304 0 19%, rgba(2,3,4,0.54) 19% 27%, transparent 27%),
-    linear-gradient(90deg, rgba(255,255,255,0.14) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.08) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.045) 0 2px, transparent 2px 10px),
-    linear-gradient(145deg, #33485a 0%, #1e2d3d 52%, #0b111a 100%);
+    /* Hard edge side darkness — arena walls */
+    linear-gradient(90deg,
+      rgba(2,3,5,0.96) 0 4%, rgba(5,8,14,0.55) 4% 8%, transparent 8%,
+      transparent 92%, rgba(5,8,14,0.55) 92% 96%, rgba(2,3,5,0.96) 96%),
+    /* Deep crowd darkness + scoreboard strip */
+    linear-gradient(180deg, #010103 0 6%, rgba(1,1,3,0.92) 6% 22%, rgba(1,1,3,0.4) 22% 30%, transparent 30%),
+    /* Camera flashes in crowd — scattered light pops */
+    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.28) 0 2px, transparent 3px),
+    radial-gradient(circle at 22% 18%, rgba(255,255,255,0.22) 0 2px, transparent 3px),
+    radial-gradient(circle at 38% 13%, rgba(255,255,255,0.18) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 16%, rgba(255,255,255,0.2) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 12%, rgba(255,255,255,0.24) 0 2px, transparent 3px),
+    radial-gradient(circle at 91% 17%, rgba(255,255,255,0.2) 0 2px, transparent 3px),
+    /* Main spotlight beam from directly above */
+    radial-gradient(ellipse 60% 100% at 50% 0%, rgba(255,255,255,0.18) 0%, rgba(255,240,200,0.08) 40%, transparent 70%),
+    /* Secondary fill lights: left blue, right warm */
+    radial-gradient(ellipse 40% 80% at 0% 30%, rgba(80,120,200,0.12), transparent 60%),
+    radial-gradient(ellipse 40% 80% at 100% 30%, rgba(200,160,80,0.1), transparent 60%),
+    /* Gold center glow — the prize is on this mat */
+    radial-gradient(ellipse 35% 25% at 50% 50%, rgba(243,199,107,0.12), transparent),
+    /* Tatami grid — subtle on dark championship mat */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.1) 0 2px, transparent 2px 60px),
+    /* Mat: dark navy, dramatic */
+    linear-gradient(170deg, #1a2535 0%, #101828 50%, #060b12 100%);
 }
 
+/* ── BEACH: Sunset, sand, portable mat, palm shadows ──────────────────── */
 .mat-canvas.venue-beach {
   background:
-    radial-gradient(circle at 88% 11%, rgba(255,218,133,0.92) 0 22px, transparent 23px),
-    linear-gradient(180deg, rgba(39, 90, 124, 0.9) 0 19%, rgba(215, 176, 105, 0.22) 19% 28%, transparent 28%),
-    radial-gradient(ellipse at 10% 18%, rgba(13, 52, 33, 0.55) 0 7%, transparent 8%),
-    radial-gradient(ellipse at 92% 19%, rgba(13, 52, 33, 0.48) 0 7%, transparent 8%),
-    linear-gradient(90deg, rgba(255,255,255,0.15) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.1) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 10px),
-    linear-gradient(145deg, #53a9bd 0%, #31849c 54%, #d0aa67 55% 100%);
+    /* Palm tree shadow across top-left */
+    linear-gradient(125deg, rgba(8,24,14,0.55) 0 12%, transparent 12%),
+    /* Sun in top-right corner */
+    radial-gradient(circle at 88% 8%, rgba(255,220,100,1) 0 18px, rgba(255,200,50,0.5) 18px 28px, transparent 29px),
+    /* Sky gradient - horizon line */
+    linear-gradient(180deg,
+      #1a4a6e 0 10%,
+      #2d6d94 10% 20%,
+      rgba(215,180,105,0.35) 20% 28%,
+      transparent 28%),
+    /* Sand texture at mat edges */
+    linear-gradient(90deg,
+      rgba(185,148,82,0.7) 0 4%, rgba(185,148,82,0.2) 4% 8%, transparent 8%,
+      transparent 92%, rgba(185,148,82,0.2) 92% 96%, rgba(185,148,82,0.7) 96%),
+    linear-gradient(180deg, transparent 75%, rgba(185,148,82,0.4) 80%, rgba(185,148,82,0.7) 100%),
+    /* Warm sunset light wash */
+    radial-gradient(ellipse 120% 80% at 88% 0%, rgba(255,180,60,0.25), transparent 55%),
+    /* Tatami grid — warm tint */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 60px),
+    /* Mat surface: warm teal fading to golden sand tones */
+    linear-gradient(165deg, #3a8fa0 0% 45%, #5a9e80 45% 72%, #c4965a 72% 100%);
 }
 
+/* ── STREET: Night, concrete, oil-drum fires, harsh lamp posts ──────────── */
 .mat-canvas.venue-street {
   background:
-    repeating-linear-gradient(60deg, rgba(244,247,242,0.055) 0 2px, transparent 2px 18px),
-    radial-gradient(circle at 18% 8%, rgba(243,199,107,0.28), transparent 16%),
-    radial-gradient(circle at 82% 9%, rgba(111,168,255,0.18), transparent 18%),
-    linear-gradient(180deg, #090b0d 0 20%, rgba(11, 13, 16, 0.48) 20% 28%, transparent 28%),
-    linear-gradient(90deg, rgba(255,255,255,0.11) 0 3px, transparent 3px 25%),
-    linear-gradient(0deg, rgba(255,255,255,0.08) 0 3px, transparent 3px 33%),
-    repeating-linear-gradient(-45deg, rgba(2, 20, 27, 0.24) 0 2px, transparent 2px 11px),
-    linear-gradient(145deg, #46515b 0%, #2e3943 45%, #171c22 100%);
+    /* Chain-link fence shadow at top */
+    repeating-linear-gradient(0deg, transparent 0 8px, rgba(0,0,0,0.15) 8px 10px),
+    repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,0.12) 8px 10px),
+    /* Street ceiling / sky — near-black night */
+    linear-gradient(180deg, #04050a 0 16%, rgba(4,5,10,0.7) 16% 24%, transparent 24%),
+    /* Oil drum fire glow — left side */
+    radial-gradient(ellipse 18% 30% at 3% 22%, rgba(255,100,20,0.3), transparent 70%),
+    radial-gradient(circle at 3% 20%, rgba(255,140,40,0.5), transparent 8%),
+    /* Oil drum fire glow — right side */
+    radial-gradient(ellipse 18% 30% at 97% 22%, rgba(255,100,20,0.25), transparent 70%),
+    radial-gradient(circle at 97% 20%, rgba(255,140,40,0.45), transparent 8%),
+    /* Street lamp pools from above */
+    radial-gradient(ellipse 28% 18% at 20% 2%, rgba(243,210,100,0.22), transparent),
+    radial-gradient(ellipse 28% 18% at 80% 2%, rgba(243,210,100,0.2), transparent),
+    /* Concrete texture — cracked lines */
+    linear-gradient(87deg, transparent 0 32%, rgba(0,0,0,0.08) 32% 32.5%, transparent 32.5%),
+    linear-gradient(178deg, transparent 0 48%, rgba(0,0,0,0.06) 48% 48.5%, transparent 48.5%),
+    /* Tatami grid — barely visible, gritty */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 60px),
+    /* Rolled mat on concrete — dark, gritty */
+    linear-gradient(160deg, #2e3640 0%, #1e2530 45%, #111820 100%);
 }
 
 .mat-canvas::before {
@@ -1187,8 +1287,12 @@ h2 {
 }
 
 .mat-ring {
-  border: 5px solid rgba(244, 247, 242, 0.46);
+  border: 3px solid rgba(244, 247, 242, 0.55);
   border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(244, 247, 242, 0.12),
+    inset 0 0 0 1px rgba(244, 247, 242, 0.08),
+    0 0 30px rgba(244, 247, 242, 0.06);
   inset: 14% 9% 20%;
   position: absolute;
   transform: rotate(-7deg) scaleY(0.72);
