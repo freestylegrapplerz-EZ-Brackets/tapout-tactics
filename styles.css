@@ -1041,7 +1041,11 @@ h2 {
   position: relative;
 }
 
-/* Crowd silhouettes — removed pending arena redesign */
+/* On venues with SVG backgrounds, soften the CSS ring overlay */
+.mat-canvas.venue-academy .mat-ring,
+.mat-canvas.venue-academy::after {
+  opacity: 0.25;
+}
 
 /* ── VENUE ARENA REDESIGNS ───────────────────────────────────────────────
    Each venue: dark spectator zone → transition → lit mat surface → depth
@@ -1060,26 +1064,11 @@ h2 {
     100% 100%, 100% 100%;
 }
 
-/* ── ACADEMY: Old school gym, warm fluorescent lighting ───────────────── */
+/* ── ACADEMY: Full gym scene SVG background ─────────────────────────────── */
 .mat-canvas.venue-academy {
   background:
-    /* Wall pad strips at left and right edges */
-    linear-gradient(90deg,
-      rgba(8,14,11,0.92) 0 3.5%, rgba(15,25,20,0.5) 3.5% 6%, transparent 6%,
-      transparent 94%, rgba(15,25,20,0.5) 94% 96.5%, rgba(8,14,11,0.92) 96.5%),
-    /* Ceiling / spectator zone with fluorescent fixtures */
-    radial-gradient(ellipse 30% 8% at 25% 0%, rgba(200,230,210,0.12), transparent 100%),
-    radial-gradient(ellipse 30% 8% at 75% 0%, rgba(200,230,210,0.12), transparent 100%),
-    linear-gradient(180deg, #0a100d 0 14%, rgba(12,18,15,0.55) 14% 20%, transparent 20%),
-    /* Tatami grid rows */
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 30px),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 60px),
-    /* Center circle glow */
-    radial-gradient(ellipse 30% 22% at 50% 50%, rgba(255,255,255,0.06), transparent 100%),
-    /* Overhead ambient light */
-    radial-gradient(ellipse 80% 60% at 50% 10%, rgba(180,220,200,0.12), transparent 60%),
-    /* Mat surface base: classic academy gray-blue */
-    linear-gradient(175deg, #2e6e7e 0%, #236070 40%, #193f50 100%);
+    url('assets/venue-academy.svg') center center / cover no-repeat;
+  border-color: rgba(100, 140, 200, 0.5);
 }
 
 /* ── LOCAL EVENT: Community gym, overhead lights, score table ──────────── */
