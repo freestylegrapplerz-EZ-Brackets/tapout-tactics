@@ -30,13 +30,14 @@ Same cycle as [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
 
 ---
 
-## Performance 2 (HYPOTHESIS — do not build)
+## Performance 2 (HYPOTHESIS — on hold)
 
-**Mechanical hypothesis (prior):** *"Does it matter where I start?"*
+**Status:** **Not authorized** — [STRATEGIC-UNCERTAINTY-ANALYSIS.md](./STRATEGIC-UNCERTAINTY-ANALYSIS.md) concludes P1 evidence shows healthy strategic uncertainty + sustained curiosity; not a problem requiring immediate fix.
 
-**Aspirational reframe (under analysis):** *"There is more here than I'm extracting."* — glimpse excellence without solutions.
+Prior mechanical hypothesis: *"Does it matter where I start?"*  
+Prior aspirational reframe: *"There is more here than I'm extracting."*  
 
-**Authorize only after:** EP selects P2 **purpose** (aspiration vs rule) + **one instrument** from aspiration analysis.
+Both remain **hypotheses** until curiosity plateau or aggregated P1 playtests say otherwise.
 
 ---
 

@@ -29,12 +29,14 @@ Evidence-driven onboarding: same cycle as [Evidence-Driven Production](./EVIDENC
 
 ## Next gate
 
-**EP review:** [ASPIRATION-ANALYSIS.md](./ASPIRATION-ANALYSIS.md) — Is Performance 2 about **aspiration** (better thinking exists) vs **mechanics** (spark origin)?
+**EP review:** [STRATEGIC-UNCERTAINTY-ANALYSIS.md](./STRATEGIC-UNCERTAINTY-ANALYSIS.md) — Does P1 evidence indicate a **problem** or **healthy depth**?
 
-CEO P1 logged: `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
+**Interim verdict (analysis):** Curiosity sustained · strategic uncertainty expected at ~20 min · **no build authorized**
 
-Performance 2 **not authorized** until EP selects purpose + one hypothesis.
+CEO P1: `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
+
+Performance 2 **on hold** — not justified by current evidence alone.
 
 ---
 
-*Aspiration analysis complete. No implementation.*
+*Hold. Observe. Curiosity is the metric.*
