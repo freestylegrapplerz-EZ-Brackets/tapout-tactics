@@ -4,27 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GLYPH</title>
+<!--
+  Vertical Slice · Phase B — The Hope Performance
+  Sim: src/simulation.js · Renderer: src/cascadeRenderer.js
+  Frontier = lead actor. Score hidden during performance. Curtain call before credits.
+-->
 <style>
   :root{
     --bg:#080a0e; --panel:#12161d; --line:#252d38; --txt:#e8eef6; --dim:#7a8799;
-    --fire:#ff5a3c; --light:#ffd23c; --water:#3ca5ff; --crystal:#c46bff; --empty:#161b22;
+    --fire:#ff5a3c; --light:#ffd23c; --water:#3ca5ff; --crystal:#c46bff;
+    --empty:#161b22; --lit-glow:#ffffff44;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--txt);
     font:15px/1.4 system-ui,Segoe UI,Roboto,sans-serif;min-height:100%}
   .wrap{max-width:720px;margin:0 auto;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
   h1{font-size:17px;margin:0 0 2px;font-weight:700}
-  .sub{color:var(--dim);font-size:12px;margin:0 0 12px;line-height:1.45}
-  .onboard{color:var(--dim);font-size:13px;margin:0 0 14px;line-height:1.5}
-  #board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:min(100%,440px);
-         margin:0 auto 12px;aspect-ratio:1}
-  .cell{background:var(--empty);border:1px solid var(--line);border-radius:10px;
+  .sub{color:var(--dim);font-size:12px;margin:0 0 14px;line-height:1.45}
+  .onboard{color:var(--dim);font-size:13px;margin:0 0 12px;line-height:1.5}
+  .stage-wrap{position:relative;width:min(100%,440px);margin:0 auto 12px}
+  #board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;aspect-ratio:1;position:relative;z-index:1}
+  #travelSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .cell{position:relative;background:var(--empty);border:1px solid var(--line);border-radius:10px;
         display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;
-        cursor:pointer;user-select:none;color:#0c0f14;min-height:0}
+        cursor:pointer;user-select:none;color:#0c0f14;transition:filter .2s, opacity .25s;min-height:0}
   .cell.empty{color:transparent}
   .cell.F{background:var(--fire)} .cell.L{background:var(--light)}
   .cell.W{background:var(--water)} .cell.C{background:var(--crystal)}
   .cell.spark-ready{outline:2px dashed #ffffff66;outline-offset:-3px}
+  .cell.lit{box-shadow:0 0 0 2px #fff, 0 0 22px 4px var(--lit-glow);filter:saturate(1.15)}
+  .cell.cold{opacity:.35;filter:saturate(.5)}
+  .cell.approaching{outline:2px solid #fff;outline-offset:-2px;animation:pulse 0.35s ease infinite alternate}
+  @keyframes pulse{from{outline-color:#ffffff55}to{outline-color:#ffffffcc}}
+  .cell.hit{animation:hit .32s ease forwards}
+  @keyframes hit{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  .frontier-hud{text-align:center;margin:0 auto 14px;min-height:88px;display:flex;flex-direction:column;
+                align-items:center;justify-content:center;gap:4px}
+  .frontier-hud .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .frontier-hud .chain{font-size:52px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
+                        transition:transform .12s ease}
+  .frontier-hud .chain.bump{transform:scale(1.12)}
+  .frontier-hud .hope{font-size:15px;font-weight:600;color:#b8c5d9;min-height:22px}
+  .frontier-hud .hope.hot{color:#fff}
+  .credits{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+           margin-bottom:14px;opacity:0;transform:translateY(8px);transition:opacity .4s, transform .4s}
+  .credits.show{opacity:1;transform:none}
+  .credits .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+  .credits .score{font-size:28px;font-weight:800;color:#7ef0a6;margin:4px 0 8px}
+  .credits .meta{font-size:13px;color:var(--dim)}
   #hand{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;min-height:50px;margin-bottom:12px}
   .rune{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;
         font-weight:800;font-size:17px;cursor:pointer;border:2px solid #0000;color:#0c0f14}
@@ -36,157 +63,50 @@
   button{background:#1e2630;color:var(--txt);border:1px solid var(--line);border-radius:9px;
          padding:8px 13px;font-size:13px;cursor:pointer;font-weight:600}
   button.primary{background:#2f6bff;border-color:#2f6bff}
-  #status{text-align:center;min-height:22px;font-size:13px;color:var(--dim)}
-  .ver{text-align:center;font-size:10px;color:#4a5568;margin-top:16px}
+  #msg{text-align:center;min-height:22px;font-size:13px;color:var(--dim)}
+  .ver{text-align:center;font-size:10px;color:#4a5568;margin-top:12px}
+  .perf-mode .credits{display:none}
+  .perf-mode.performance .credits{display:block}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Vertical Slice · Phase A — foundation</p>
+  <p class="sub">Vertical Slice · Phase B — watch the frontier</p>
   <p class="onboard">Place runes so they touch. Tap one to spark.</p>
 
-  <div id="board"></div>
+  <div class="frontier-hud" aria-live="polite">
+    <div class="label">The frontier</div>
+    <div class="chain" id="vChain">—</div>
+    <div class="hope" id="vHope">Place runes. Tap one to call Action.</div>
+  </div>
+
+  <div class="stage-wrap">
+    <svg id="travelSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <div id="board"></div>
+  </div>
+
   <div id="hand"></div>
 
   <div class="controls">
     <button class="primary" id="btnNew">New Hand</button>
     <button id="btnClear">Clear Board</button>
+    <button id="btnMute">🔊 Sound</button>
   </div>
 
-  <div id="status">Pick a rune, place it, then spark.</div>
+  <div class="credits" id="credits">
+    <div class="k">After the performance</div>
+    <div class="score" id="vScore">0</div>
+    <div class="meta" id="vMeta"></div>
+  </div>
+
+  <div id="msg">Right-click a rune to pick it up before Action.</div>
   <div class="ver" id="version"></div>
 </div>
 
 <script type="module">
-import {
-  createHand,
-  computeTarget,
-  emptyGrid,
-  simulateCascade,
-} from "./src/simulation.js";
-
-const VERSION = "vs-0.1.0-a2";
-
-/** @type {"build"|"resolving"|"done"} */
-let phase = "build";
-/** @type {(import("./src/config.js").Element|null)[][]} */
-let grid = emptyGrid();
-/** @type {{ el: import("./src/config.js").Element, used: boolean }[]} */
-let hand = [];
-/** @type {number|null} */
-let sel = null;
-let target = 0;
-let best = 0;
-
-const boardEl = document.getElementById("board");
-const handEl = document.getElementById("hand");
-const statusEl = document.getElementById("status");
-document.getElementById("version").textContent = VERSION;
-
-function newHand() {
-  hand = createHand();
-  target = computeTarget(hand);
-  best = 0;
-  clearBoard();
-}
-
-function clearBoard() {
-  grid = emptyGrid();
-  hand.forEach((h) => (h.used = false));
-  sel = null;
-  phase = "build";
-  statusEl.textContent = "Pick a rune, place it, then spark.";
-  render();
-}
-
-function render() {
-  handEl.innerHTML = "";
-  hand.forEach((h, i) => {
-    const d = document.createElement("div");
-    d.className = `rune ${h.el}${h.used ? " used" : ""}${sel === i ? " sel" : ""}`;
-    d.textContent = h.el;
-    d.onclick = () => {
-      if (phase !== "build" || h.used) return;
-      sel = sel === i ? null : i;
-      render();
-    };
-    handEl.appendChild(d);
-  });
-
-  boardEl.innerHTML = "";
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 5; c++) {
-      const cell = document.createElement("div");
-      const v = grid[r][c];
-      cell.className = `cell ${v || "empty"}${v && phase === "build" ? " spark-ready" : ""}`;
-      cell.id = `cell-${r}-${c}`;
-      cell.textContent = v || "";
-      cell.onclick = () => onCell(r, c);
-      boardEl.appendChild(cell);
-    }
-  }
-}
-
-function onCell(r, c) {
-  if (phase !== "build") return;
-  if (grid[r][c]) {
-    spark(r, c);
-    return;
-  }
-  if (sel === null) {
-    statusEl.textContent = "Pick a rune from your hand first.";
-    return;
-  }
-  grid[r][c] = hand[sel].el;
-  hand[sel].used = true;
-  sel = null;
-  render();
-}
-
-boardEl.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-  if (phase !== "build") return;
-  const t = e.target.closest(".cell");
-  if (!t) return;
-  const [, r, c] = t.id.split("-").map(Number);
-  if (!grid[r][c]) return;
-  const el = grid[r][c];
-  const slot = hand.find((h) => h.used && h.el === el);
-  if (slot) slot.used = false;
-  grid[r][c] = null;
-  render();
-});
-
-function spark(sr, sc) {
-  phase = "resolving";
-  sel = null;
-  render();
-
-  const result = simulateCascade(grid, sr, sc);
-  const { steps, finalScore, chainLength } = result;
-
-  if (!chainLength) {
-    statusEl.textContent = "Nothing connected.";
-    phase = "done";
-    return;
-  }
-
-  if (finalScore > best) best = finalScore;
-  const hit = finalScore >= target;
-  statusEl.textContent =
-    `${chainLength}-rune chain · ${finalScore} pts · Target ${target}` +
-    (hit ? " · Beat it!" : ` · Short by ${target - finalScore}`) +
-    (best ? ` · Best ${best}` : "");
-
-  console.log("[cascade]", { version: VERSION, steps, finalScore, chainLength });
-  phase = "done";
-}
-
-document.getElementById("btnNew").onclick = () => newHand();
-document.getElementById("btnClear").onclick = () => clearBoard();
-
-newHand();
+import { bootGame } from "./src/game.js";
+bootGame(document.getElementById("root"));
 </script>
 </body>
 </html>

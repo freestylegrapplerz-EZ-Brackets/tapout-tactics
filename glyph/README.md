@@ -30,10 +30,20 @@ cd glyph
 npm test          # simulation kernel tests
 ```
 
-Open `index.html` in a browser (local server recommended for ES modules):
+Open `index.html` in a browser (local server required for ES modules):
 
 ```bash
 npx --yes serve . -p 5173
+```
+
+**Live demo (branch):**  
+https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
+
+**Smoke test (optional, requires Playwright):**
+
+```bash
+npx --yes serve . -p 5173 &
+npm install --no-save playwright@1.49.0 && node scripts/smoke-phase-b.mjs
 ```
 
 ---
@@ -41,12 +51,18 @@ npx --yes serve . -p 5173
 ## Architecture
 
 ```
-src/config.js       — frozen constants (Hope Pass parity)
-src/simulation.js   — deterministic cascade + step log (A2)
-index.html          — presentation shell (grows through Phases B–E)
+src/config.js          — frozen constants (Hope Pass parity)
+src/simulation.js      — deterministic cascade + step log (A2)
+src/performance.js     — timing + hope lines (Hope Pass parity)
+src/cascadeRenderer.js — frontier playback from step log (B1–B4)
+src/game.js            — board state + presentation glue
+src/audio.js           — minimal Web Audio tones
+index.html             — shell
 ```
 
-**Event log pattern:** `simulateCascade()` emits steps; renderer and audio subscribe to the same log. Sim never depends on presentation.
+**Phase B complete (`vs-0.2.0-b4`):** frontier travel, lit/cold, chain HUD, curtain call, credits after performance.
+
+**Event log pattern:** `simulateCascade()` emits steps; `playCascade()` follows — never guesses.
 
 ---
 

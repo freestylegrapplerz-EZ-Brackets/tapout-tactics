@@ -1,60 +1,41 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Vertical Slice production authorized.*
+*Updated 2026-06-29 — Phase B complete. Awaiting CEO review before Phase C.*
 
 ## Current phase
 
-**Vertical Slice implementation — Phase A (Foundation).**
+**Vertical Slice · Phase B — COMPLETE.** Stopped at plan boundary. Phase C not started.
 
 | Deliverable | Status |
 |---|---|
-| CEO plan approval | ✅ 2026-06-29 |
-| [VS-FEELING.md](./VS-FEELING.md) | ✅ Created |
-| A1 tech stack lock | ✅ `glyph/README.md` |
-| A2 simulation kernel | ✅ `glyph/src/simulation.js` + tests |
-| A3 input + board state | 🔄 In progress (`glyph/index.html`) |
-| Phase B cascade renderer | ⏳ Next (frontier performance) |
+| A2 simulation kernel | ✅ |
+| B1 cascade playback from step log | ✅ `src/cascadeRenderer.js` |
+| B2 frontier travel + approaching | ✅ SVG travel lines |
+| B3 lit/cold + chain HUD | ✅ |
+| B4 curtain call + credits reveal | ✅ score hidden during performance |
+| Phase C (onboarding polish) | ⏸ Blocked — awaiting Phase B review |
 
-**Build:** `glyph/index.html` · version `vs-0.1.0-a2`  
-**Tests:** `cd glyph && npm test`
+**Build:** `glyph/index.html` · version **`vs-0.2.0-b4`**
+
+```bash
+cd glyph && npm test
+npx --yes serve glyph -p 5173
+```
 
 ## Frozen
 
-| Artifact | Path | Notes |
-|---|---|---|
-| Hope Pass (Milestone 1) | `experiments/glyph-spark-test/hope-pass.html` | No changes without EP-approved hypothesis |
-| Spark Test v1 (baseline) | `experiments/glyph-spark-test/index.html` | Reference only |
-| Playtest Protocol v1 | `docs/PLAYTEST-PROTOCOL-v1.md` | All sessions use this sheet |
-| Studio Constitution | `docs/STUDIO-CONSTITUTION.md` | Amendments only via formal process |
-
-## CEO production amendments (active)
-
-1. **Hope Contract proof** — not product proof. Filter: *Does this increase hope?*
-2. **Greenlight Review** at slice end — GREEN / YELLOW / RED
-3. **VS-FEELING.md** — minute-by-minute feeling target for all milestones
-
-## Production rule (before every feature)
-
-1. Which constitutional principle?
-2. PRODUCT or WORLD?
-3. If removed, would emotional experience worsen?
-4. Player evidence?
-
-## Operating docs
-
-- [VS-FEELING.md](./VS-FEELING.md) — feeling target (production)
-- [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md) — approved scope
-- [Studio Constitution](./STUDIO-CONSTITUTION.md)
-- [Playtest Protocol v1](./PLAYTEST-PROTOCOL-v1.md)
-
-## Emotional contract (unchanged)
-
-> The player directs a performance they authored. They hope the frontier reaches one more rune. The game never lies about whether it did. Pride lands before the numbers.
+| Artifact | Path |
+|---|---|
+| Hope Pass (Milestone 1) | `experiments/glyph-spark-test/hope-pass.html` |
+| Studio Constitution | `docs/STUDIO-CONSTITUTION.md` |
+| VS feeling target | `docs/VS-FEELING.md` |
 
 ## Next gate
 
-**Phase B complete → VS-1** — cascade renderer with frontier travel, lit/cold, curtain call at Hope Pass parity.
+**CEO Phase B review** → then **VS-1 playtest** (frontier as lead actor?)
+
+Phase C authorized only after Phase B approval.
 
 ---
 
-*Building. Testing. Observing. Refining.*
+*Phase B complete. Stopped as directed.*
