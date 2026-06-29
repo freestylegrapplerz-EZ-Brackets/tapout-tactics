@@ -33,7 +33,11 @@
   .cell.W{background:var(--water)} .cell.C{background:var(--crystal)}
   .cell.spark-ready{outline:2px dashed #ffffff66;outline-offset:-3px}
   .cell.lit{box-shadow:0 0 0 2px #fff, 0 0 22px 4px var(--lit-glow);filter:saturate(1.15)}
+  .cell.spark-origin.lit{box-shadow:0 0 0 2px #fff,0 0 0 4px #ffffff28,0 0 26px 6px #ffd23c33;filter:saturate(1.2)}
   .cell.cold{opacity:.35;filter:saturate(.5)}
+  .cell.cold-adjacent{opacity:.44;filter:saturate(.58);outline:1px dashed #ffffff40;outline-offset:-3px}
+  .cell.cold-one-gap{opacity:.38;filter:saturate(.52);outline:1px dotted #ffffff30;outline-offset:-3px}
+  .cell.cold-isolated{opacity:.22;filter:saturate(.35)}
   .cell.approaching{outline:2px solid #fff;outline-offset:-2px;animation:pulse 0.35s ease infinite alternate}
   @keyframes pulse{from{outline-color:#ffffff55}to{outline-color:#ffffffcc}}
   .cell.hit{animation:hit .32s ease forwards}

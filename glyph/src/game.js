@@ -7,8 +7,9 @@ import {
 } from "./simulation.js";
 import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
+import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 
-export const VERSION = "vs-0.2.0-b4";
+export const VERSION = "vs-0.2.1-p0";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -29,6 +30,10 @@ export function bootGame(root) {
   let best = 0;
   /** @type {Set<string>} */
   let litSet = new Set();
+  /** @type {string|null} */
+  let sparkOriginKey = null;
+  /** @type {Map<string, import("./aftermath.js").ColdKind>|null} */
+  let coldTaxonomy = null;
   /** @type {{ cancel: () => void }|null} */
   let activeCascade = null;
 
@@ -63,6 +68,8 @@ export function bootGame(root) {
     sel = null;
     phase = "build";
     litSet = new Set();
+    sparkOriginKey = null;
+    coldTaxonomy = null;
     root.classList.remove("performance");
     creditsEl.classList.remove("show");
     chainEl.textContent = "—";
@@ -97,8 +104,17 @@ export function bootGame(root) {
         const k = `${r},${c}`;
         let cls = `cell ${v || "empty"}`;
         if (v && phase === "build") cls += " spark-ready";
-        if (litSet.has(k)) cls += " lit";
-        else if (v && phase !== "build") cls += " cold";
+        if (sparkOriginKey === k) cls += " spark-origin";
+        if (litSet.has(k)) {
+          cls += " lit";
+        } else if (v && phase !== "build") {
+          if (phase === "curtain" || phase === "done") {
+            const kind = coldTaxonomy?.get(k);
+            cls += kind ? ` cold ${coldClassForKind(kind)}` : " cold";
+          } else {
+            cls += " cold";
+          }
+        }
         cell.className = cls;
         cell.id = `cell-${r}-${c}`;
         cell.textContent = v || "";
@@ -144,14 +160,18 @@ export function bootGame(root) {
     root.classList.add("performance");
     creditsEl.classList.remove("show");
     litSet = new Set();
+    sparkOriginKey = `${sr},${sc}`;
     render();
 
     const { steps, finalScore, chainLength } = simulateCascade(grid, sr, sc);
+    const aftermath = analyzeAftermath(grid, sr, sc, steps);
+    coldTaxonomy = aftermath.coldTaxonomy;
 
     if (!chainLength) {
       hopeEl.textContent = "Nothing connected.";
       phase = "done";
       showCredits(finalScore, chainLength);
+      render();
       return;
     }
 
@@ -174,10 +194,12 @@ export function bootGame(root) {
       tone: audio.tone.bind(audio),
       onCurtainCall: () => {
         phase = "curtain";
+        render();
       },
       onCredits: (final, chain) => {
         activeCascade = null;
         showCredits(final, chain);
+        render();
       },
     });
   }

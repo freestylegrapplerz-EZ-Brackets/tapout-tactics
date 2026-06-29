@@ -1,6 +1,6 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Phase B complete. Awaiting CEO review before Phase C.*
+*Updated 2026-06-29 — P0 complete, awaiting CEO playtest.*
 
 ## Milestone review rule (CEO)
 
@@ -10,41 +10,34 @@ Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
 
 ## Current phase
 
-**ANALYSIS — Teach mastery without instruction.** No implementation authorized.
+**P0 — COMPLETE · AWAITING CEO PLAYTEST**
 
-**Trigger:** CEO Phase B playtest — *"How should I have chained this?"* (good) → *"Am I playing this game right?"* (communication gap)
+**Hypothesis:** Readable causality on the board converts *"Am I playing correctly?"* → *"How can I improve?"*
 
 | Item | Status |
 |---|---|
-| Phase B build | ✅ `vs-0.2.0-b4` — performance complete |
-| CEO playtest finding | ✅ Logged |
-| Communication analysis | ✅ [TEACH-MASTERY-WITHOUT-INSTRUCTION.md](./TEACH-MASTERY-WITHOUT-INSTRUCTION.md) |
-| Phase C / implementation | ⏸ Blocked — awaiting EP review of analysis |
+| Spark origin persistence | ✅ |
+| Cold rune taxonomy | ✅ |
+| Playable build | ✅ `vs-0.2.1-p0` |
+| Build notes | ✅ `glyph/build-notes/p0-vs-0.2.1-p0.md` |
+| CEO playtest | ⏳ Required |
 
-**Latest playable build (unchanged):**  
-https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
-
-**Build:** `glyph/index.html` · version **`vs-0.2.0-b4`**
-
-```bash
-cd glyph && npm test
-npx --yes serve glyph -p 5173
-```
+**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
 ## Frozen
 
 | Artifact | Path |
 |---|---|
-| Hope Pass (Milestone 1) | `experiments/glyph-spark-test/hope-pass.html` |
+| Hope Pass | `experiments/glyph-spark-test/hope-pass.html` |
 | Studio Constitution | `docs/STUDIO-CONSTITUTION.md` |
-| VS feeling target | `docs/VS-FEELING.md` |
+| Analysis | `docs/TEACH-MASTERY-WITHOUT-INSTRUCTION.md` |
 
 ## Next gate
 
-**Executive Producer review** of [TEACH-MASTERY-WITHOUT-INSTRUCTION.md](./TEACH-MASTERY-WITHOUT-INSTRUCTION.md) → select **one P0 intervention** → then playable milestone with evidence.
+**CEO P0 playtest** → hypothesis pass/revise/fail → milestone review together.
 
-Phase C implementation not authorized until analysis approved.
+Everything else waits.
 
 ---
 
-*Analysis only. No build in progress.*
+*Stopped. Board is the mirror.*
