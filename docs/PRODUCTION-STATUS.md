@@ -1,6 +1,10 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — P0 complete, awaiting CEO playtest.*
+*Updated 2026-06-29 — First Five Performances approved.*
+
+## Production rule (EP)
+
+> *Can the player discover this instead?* → **If yes, discovery wins.**
 
 ## Milestone review rule (CEO)
 
@@ -10,16 +14,20 @@ Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
 
 ## Current phase
 
-**ANALYSIS — Discovery Sequence philosophy.** No implementation authorized.
+**The First Five Performances — APPROVED · not implemented**
+
+Canonical spec: [FIRST-FIVE-PERFORMANCES.md](./FIRST-FIVE-PERFORMANCES.md)
 
 | Item | Status |
 |---|---|
-| P0 board mirror | ✅ Built · readability under review |
-| Discovery Sequence analysis | ✅ [DISCOVERY-SEQUENCE-ANALYSIS.md](./DISCOVERY-SEQUENCE-ANALYSIS.md) |
-| Five handcrafted boards | ⏸ Not authorized |
-| Implementation | ⏸ Blocked |
+| Puzzle-designer frame | ✅ Approved |
+| Five performance questions | ✅ Defined |
+| Board 5 = self-surprise graduation | ✅ Locked |
+| P0 board mirror (`vs-0.2.1-p0`) | ✅ Built · legibility TBD |
+| Performance implementation | ⏸ Not authorized |
 
-**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
+**Latest build:** `vs-0.2.1-p0`  
+https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
 ## Frozen
 
@@ -27,14 +35,14 @@ Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
 |---|---|
 | Hope Pass | `experiments/glyph-spark-test/hope-pass.html` |
 | Studio Constitution | `docs/STUDIO-CONSTITUTION.md` |
-| Analysis | `docs/TEACH-MASTERY-WITHOUT-INSTRUCTION.md` |
+| First Five Performances | `docs/FIRST-FIVE-PERFORMANCES.md` |
 
 ## Next gate
 
-**CEO P0 playtest** → hypothesis pass/revise/fail → milestone review together.
-
-Everything else waits.
+1. Board mirror legibility review (lit/cold obvious enough for Performance 1?)
+2. CEO/EP lock Performance 5 puzzle spec (self-surprise authoring)
+3. Implementation milestone authorization — one performance at a time
 
 ---
 
-*Stopped. Board is the mirror.*
+*Questions, not lessons. Performances, not tutorials.*
