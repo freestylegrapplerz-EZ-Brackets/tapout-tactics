@@ -1,15 +1,15 @@
 import { SIZE } from "./config.js";
 import {
   computeTarget,
-  createHand,
   emptyGrid,
   simulateCascade,
 } from "./simulation.js";
 import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
+import { getActivePerformance, handFromElements } from "./performances.js";
 
-export const VERSION = "vs-0.2.1-p0";
+export const VERSION = "vs-0.3.0-performance-1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -51,13 +51,23 @@ export function bootGame(root) {
   const versionEl = /** @type {HTMLDivElement} */ (root.querySelector("#version"));
   const muteBtn = /** @type {HTMLButtonElement} */ (root.querySelector("#btnMute"));
 
+  const activePerformance = getActivePerformance();
+
   versionEl.textContent = VERSION;
 
-  function newHand() {
-    hand = createHand();
+  function loadPerformanceHand() {
+    hand = handFromElements(activePerformance.handElements);
     target = computeTarget(hand);
     best = 0;
     clearBoard();
+    console.info("[glyph:performance]", {
+      version: VERSION,
+      performanceId: activePerformance.id,
+    });
+  }
+
+  function newHand() {
+    loadPerformanceHand();
   }
 
   function clearBoard() {
@@ -166,6 +176,16 @@ export function bootGame(root) {
     const { steps, finalScore, chainLength } = simulateCascade(grid, sr, sc);
     const aftermath = analyzeAftermath(grid, sr, sc, steps);
     coldTaxonomy = aftermath.coldTaxonomy;
+
+    console.info("[glyph:spark]", {
+      version: VERSION,
+      performanceId: activePerformance.id,
+      sparkOrigin: [sr, sc],
+      chainLength,
+      litCount: steps.length,
+      coldCount: coldTaxonomy.size,
+      coldKinds: Object.fromEntries(coldTaxonomy),
+    });
 
     if (!chainLength) {
       hopeEl.textContent = "Nothing connected.";

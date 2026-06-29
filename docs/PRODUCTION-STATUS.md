@@ -1,48 +1,36 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — First Five Performances approved.*
+*Updated 2026-06-29 — Performance 1 built, awaiting playtest.*
 
-## Production rule (EP)
+## Production rules
 
-> *Can the player discover this instead?* → **If yes, discovery wins.**
+> *Can the player discover this instead?* → **Discovery wins.**
 
-## Milestone review rule (CEO)
-
-Every milestone ends with a **playable build**. Production stops until CEO has played, reviewed changes, and answered targeted review questions.
-
-Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
+> **Build one performance → playtest → observe → author next from evidence.**
 
 ## Current phase
 
-**The First Five Performances — APPROVED · not implemented**
-
-Canonical spec: [FIRST-FIVE-PERFORMANCES.md](./FIRST-FIVE-PERFORMANCES.md)
+**Performance 1 — BUILT · AWAITING PLAYTEST**
 
 | Item | Status |
 |---|---|
-| Puzzle-designer frame | ✅ Approved |
-| Five performance questions | ✅ Defined |
-| Board 5 = self-surprise graduation | ✅ Locked |
-| P0 board mirror (`vs-0.2.1-p0`) | ✅ Built · legibility TBD |
-| Performance implementation | ⏸ Not authorized |
+| Performance 1 (`performance-1`) | ✅ `vs-0.3.0-performance-1` |
+| Build notes + review questions | ✅ `glyph/build-notes/performance-1-vs-0.3.0.md` |
+| Performances 2–5 | 📋 Hypotheses only — `docs/PERFORMANCE-HYPOTHESES.md` |
+| Performance 2+ implementation | ⏸ Blocked until P1 evidence |
 
-**Latest build:** `vs-0.2.1-p0`  
-https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
+**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
-## Frozen
+## Onboarding philosophy
 
-| Artifact | Path |
-|---|---|
-| Hope Pass | `experiments/glyph-spark-test/hope-pass.html` |
-| Studio Constitution | `docs/STUDIO-CONSTITUTION.md` |
-| First Five Performances | `docs/FIRST-FIVE-PERFORMANCES.md` |
+**The First Five Performances** — [FIRST-FIVE-PERFORMANCES.md](./FIRST-FIVE-PERFORMANCES.md)
+
+Evidence-driven onboarding: same cycle as [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
 
 ## Next gate
 
-1. Board mirror legibility review (lit/cold obvious enough for Performance 1?)
-2. CEO/EP lock Performance 5 puzzle spec (self-surprise authoring)
-3. Implementation milestone authorization — one performance at a time
+**Performance 1 playtest** → Explain → Hypothesize Performance 2 from **observed behavior** → EP authorizes P2 build.
 
 ---
 
-*Questions, not lessons. Performances, not tutorials.*
+*Build one. Observe. Learn. Then continue.*

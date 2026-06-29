@@ -1,8 +1,16 @@
 # GLYPH — The First Five Performances
 
 **Internal name:** The First Five Performances *(formerly Discovery Sequence)*  
-**Status:** **APPROVED** (Executive Producer) — **no implementation authorized yet**  
+**Status:** **APPROVED** — **Performance 1 built** · Performances 2–5 are **hypotheses**  
 **Audience:** Design, production, playtest facilitators
+
+**Production method (EP):** Onboarding follows [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
+
+> **Build one performance → playtest → observe → author the next from evidence.**  
+> **Do not lock Performances 2–5.** Performance 5 remains a **vision**, not a specification.
+
+**Hypotheses doc:** [PERFORMANCE-HYPOTHESES.md](./PERFORMANCE-HYPOTHESES.md)  
+**Performance 1 build:** `vs-0.3.0-performance-1` · `glyph/build-notes/performance-1-vs-0.3.0.md`
 
 **Do not think like a teacher. Think like a puzzle designer.**
 
@@ -62,6 +70,24 @@ Any feature proposal that **explains** must survive:
 
 ---
 
+## Evidence-driven onboarding
+
+Onboarding is not a fixed five-asset pipeline. It is **the same evidence loop as the rest of GLYPH:**
+
+```
+OBSERVE → MEASURE → EXPLAIN → HYPOTHESIZE → BUILD ONE PERFORMANCE → STOP → REPEAT
+```
+
+| Performance | Status |
+|---|---|
+| **Performance 1** | **Built** — playtest to reveal how players naturally learn |
+| **Performances 2–4** | **Hypotheses** — author after prior playtest evidence |
+| **Performance 5** | **Vision only** — graduation = self-surprise; not specified until earned |
+
+**Performance 1 playtest purpose:** Not merely connection — **observe natural learning behavior** (disconnection experiments, mirror inspection, replay patterns, verbatim questions).
+
+---
+
 ## The five performances
 
 **Rules for all five:**
@@ -89,9 +115,19 @@ Any feature proposal that **explains** must survive:
 
 **Curiosity preserved if:** Disconnected placement is never punished or labeled wrong.
 
+**Implemented:** `src/performances.js` · hand `F,F,W,F,F,W,F,F` · `performance-1`
+
 ---
 
-### Performance 2 — *"Does it matter where I start?"*
+### Performances 2–5 — HYPOTHESES (not production assets)
+
+**Do not implement.** See [PERFORMANCE-HYPOTHESES.md](./PERFORMANCE-HYPOTHESES.md).
+
+The sections below are **design hypotheses** — useful for discussion, **not locked** until playtest evidence authorizes the next performance.
+
+---
+
+### Performance 2 — *HYPOTHESIS: "Does it matter where I start?"*
 
 **Question the board poses:** *Same stones — does it matter which one I call Action on?*
 
@@ -108,7 +144,7 @@ Any feature proposal that **explains** must survive:
 
 ---
 
-### Performance 3 — *"Can it reach across that gap?"*
+### Performance 3 — *HYPOTHESIS: "Can it reach across that gap?"*
 
 **Question the board poses:** *There's empty space between these clusters — can the chain cross it?*
 
@@ -123,7 +159,7 @@ Any feature proposal that **explains** must survive:
 
 ---
 
-### Performance 4 — *"Can it go more than one way at once?"*
+### Performance 4 — *HYPOTHESIS: "Can it go more than one way at once?"*
 
 **Question the board poses:** *If I set this up right… will the wave split?*
 
@@ -140,7 +176,7 @@ Any feature proposal that **explains** must survive:
 
 ---
 
-### Performance 5 — *"I didn't know I could do that."* (Graduation)
+### Performance 5 — *VISION: "I didn't know I could do that."* (Graduation — not a specification)
 
 **Question the board poses:** *No new question. Open stage.*
 
@@ -216,11 +252,13 @@ The opening five are the **opening movement**. The symphony is procedural.
 
 ## Dependencies (production)
 
-Before implementing Performances:
+**Performance 1:**
+- Board mirror legibility — observe in P1 playtest
+- Performance config — `src/performances.js` ✅
 
-1. **Board mirror legibility** — lit vs cold must be obvious; P0 taxonomy may need revision if too subtle
-2. **Performance data format** — handcrafted hand + optional seed board as config (implementation later)
-3. **EP/CEO lock** on Performance 5 puzzle spec — must be authored to produce self-surprise, not tested once
+**Performance 2+:** Blocked until P1 evidence review.
+
+**Performance 5:** Vision only until P1–P4 evidence exists.
 
 ---
 
@@ -243,7 +281,8 @@ Before any copy, UI, or "help" feature ships:
 - [TEACH-MASTERY-WITHOUT-INSTRUCTION.md](./TEACH-MASTERY-WITHOUT-INSTRUCTION.md) — diagnosis (mirror not teacher)
 - [VS-FEELING.md](./VS-FEELING.md) — minute-by-minute feeling target
 - [Studio Constitution](./STUDIO-CONSTITUTION.md) — supreme authority
-- [DISCOVERY-SEQUENCE-ANALYSIS.md](./DISCOVERY-SEQUENCE-ANALYSIS.md) — superseded analysis (historical)
+- [PERFORMANCE-HYPOTHESES.md](./PERFORMANCE-HYPOTHESES.md) — P2–P5 hypotheses
+- [EVIDENCE-DRIVEN-PRODUCTION.md](./EVIDENCE-DRIVEN-PRODUCTION.md) — onboarding loop
 
 ---
 
