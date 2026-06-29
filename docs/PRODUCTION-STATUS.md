@@ -1,46 +1,67 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Progressive Discovery product philosophy.*
+*Updated 2026-06-29 — Craftsmanship priority (Executive Producer).*
 
-## Product philosophy (EP — supersedes onboarding frame)
+## Product priority (EP — supersedes mechanics/content work)
 
-**[Progressive Discovery](./PROGRESSIVE-DISCOVERY.md)**
+**[Craftsmanship](./CRAFTSMANSHIP.md)** — highest priority
 
-> *"I understand this."* → *"Wait… there's more."*
+> *If this mechanic never changed again… would this interaction still make players smile?*
 
-Layers of **understanding** — not levels. Game grows with player. Never overwhelming. Never finished learning.
+**Frozen:** Constitution · mechanics · Performance 1 content · no progression · no new systems
 
-**Rules:** Discovery wins · Curiosity is the metric · Evidence paces next layer
-
-## Current phase
-
-**Performance 1 built · Progressive Discovery Layer A1 · playtest / observe**
-
-| Item | Status |
-|---|---|
-| Progressive Discovery philosophy | ✅ Locked |
-| Performance 1 (`performance-1`) | ✅ `vs-0.3.0-performance-1` |
-| Layer A1 (connection) | ✅ CEO evidence — mastered |
-| Layers A2+ | ⏸ Not product-invited yet — **correct pace** |
-| Performance 2+ | ⏸ Hypotheses — evidence-gated |
-| Build authorized | **None** |
-
-**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
-
-## Key analyses
-
-| Doc | Role |
-|---|---|
-| [PROGRESSIVE-DISCOVERY.md](./PROGRESSIVE-DISCOVERY.md) | **Product philosophy** |
-| [STRATEGIC-UNCERTAINTY-ANALYSIS.md](./STRATEGIC-UNCERTAINTY-ANALYSIS.md) | A1 strategic fog healthy |
-| [playtest-logs/GLYPH-PT-CEO-P1.md](./playtest-logs/GLYPH-PT-CEO-P1.md) | Layer A1 evidence |
-
-## Next gate
-
-**Observe** — more play at Layer A1 · watch for A1 mastery signals across sessions before inviting A2
-
-**Do not build** aspiration/strategic comms/P2 until evidence authorizes next **layer invitation**
+**Paused:** Progressive Discovery layer invitations (P2+) until feel milestones prove delight
 
 ---
 
-*One layer at a time. The game grows with the player.*
+## Current phase
+
+**Craftsmanship C1 built · CEO review gate**
+
+| Item | Status |
+|---|---|
+| Craftsmanship philosophy | ✅ Locked |
+| C1 Interaction Feel | ✅ `vs-0.4.0-craftsmanship-c1` |
+| C2 Cascade Feel | 🔶 Partial (in C1 build) |
+| C3 Visual Language | 🔶 Partial (theme.css + lit/cold) |
+| C4 Audio | 🔶 Partial (UI + curtain sounds) |
+| C5 Mobile | 🔶 Partial (touch targets, long-press) |
+| Performance 2+ / progression | ⏸ Paused |
+| New gameplay systems | 🚫 Out of scope |
+
+**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/craftsmanship-c1-6013/glyph/index.html
+
+---
+
+## Milestone queue
+
+1. **C1** Interaction Feel — **awaiting CEO review**
+2. **C2** Cascade Feel — deepen travel, rhythm, hope, curtain
+3. **C3** Visual Language — complete one-board identity
+4. **C4** Audio — interaction + frontier + silence pass
+5. **C5** Mobile — one-thumb effortless pass
+
+Each milestone: playable build + build notes + targeted review questions ([protocol](./MILESTONE-REVIEW-PROTOCOL.md))
+
+---
+
+## Key documents
+
+| Doc | Role |
+|---|---|
+| [CRAFTSMANSHIP.md](./CRAFTSMANSHIP.md) | **Production priority** |
+| [VS-FEELING.md](./VS-FEELING.md) | Acceptance map |
+| [PROGRESSIVE-DISCOVERY.md](./PROGRESSIVE-DISCOVERY.md) | Learning philosophy (invites paused) |
+| [build-notes/craftsmanship-c1-vs-0.4.0.md](../glyph/build-notes/craftsmanship-c1-vs-0.4.0.md) | Latest build |
+
+---
+
+## Next gate
+
+**CEO plays C1** → answers review questions → authorize C2 or revise C1
+
+**Do not build** Performance 2, progression, or new systems until craftsmanship milestones pass
+
+---
+
+*The Vertical Slice wins because it feels incredible.*

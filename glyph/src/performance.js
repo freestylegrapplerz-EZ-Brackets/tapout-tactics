@@ -39,7 +39,12 @@ export function hopeLine(chain, total, combo) {
 }
 
 /** Spark ignition beat before first step (Hope Pass parity). */
-export const SPARK_BEAT_MS = 70;
+export const SPARK_BEAT_MS = 85;
 
-/** Curtain hold before credits (Hope Pass parity). */
-export const CURTAIN_HOLD_MS = 550;
+/** Curtain hold before credits — breath after performance. */
+export const CURTAIN_HOLD_MS = 650;
+
+/** @param {number} t 0..1 */
+export function easeOutCubic(t) {
+  return 1 - (1 - t) ** 3;
+}

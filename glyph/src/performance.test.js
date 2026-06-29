@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   cellCenter,
+  easeOutCubic,
   hopeLine,
   isArc,
   stepDelay,
@@ -43,5 +44,11 @@ describe("performance timing", () => {
     assert.ok(c.x > 0 && c.y > 0);
     const c2 = cellCenter(SIZE - 1, SIZE - 1);
     assert.ok(c2.x > c.x && c2.y > c.y);
+  });
+
+  it("easeOutCubic decelerates toward 1", () => {
+    assert.equal(easeOutCubic(0), 0);
+    assert.equal(easeOutCubic(1), 1);
+    assert.ok(easeOutCubic(0.5) > 0.5);
   });
 });

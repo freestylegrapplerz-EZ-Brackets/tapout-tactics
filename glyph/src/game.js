@@ -8,8 +8,9 @@ import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import { getActivePerformance, handFromElements } from "./performances.js";
+import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-0.3.0-performance-1";
+export const VERSION = "vs-0.4.0-craftsmanship-c1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -88,7 +89,7 @@ export function bootGame(root) {
     scoreEl.textContent = "0";
     metaEl.textContent = "";
     svgEl.innerHTML = "";
-    msgEl.textContent = "Right-click a rune to pick it up before Action.";
+    msgEl.textContent = "Drag a rune onto the board — or hold a placed rune to pick it up.";
     render();
   }
 
@@ -98,11 +99,6 @@ export function bootGame(root) {
       const d = document.createElement("div");
       d.className = `rune ${h.el}${h.used ? " used" : ""}${sel === i ? " sel" : ""}`;
       d.textContent = h.el;
-      d.onclick = () => {
-        if (phase !== "build" || h.used) return;
-        sel = sel === i ? null : i;
-        render();
-      };
       handEl.appendChild(d);
     });
 
@@ -128,43 +124,51 @@ export function bootGame(root) {
         cell.className = cls;
         cell.id = `cell-${r}-${c}`;
         cell.textContent = v || "";
-        cell.onclick = () => onCell(r, c);
         boardEl.appendChild(cell);
       }
     }
   }
 
-  function onCell(r, c) {
-    if (phase !== "build") return;
-    if (grid[r][c]) {
-      spark(r, c);
-      return;
-    }
-    if (sel === null) {
-      hopeEl.textContent = "Pick a rune from your hand first.";
-      return;
-    }
-    grid[r][c] = hand[sel].el;
-    hand[sel].used = true;
+  function placeFromHand(handIndex, r, c) {
+    if (phase !== "build" || hand[handIndex]?.used || grid[r][c]) return false;
+    grid[r][c] = hand[handIndex].el;
+    hand[handIndex].used = true;
     sel = null;
     render();
+    return true;
   }
 
-  boardEl.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    if (phase !== "build") return;
-    const t = e.target.closest(".cell");
-    if (!t) return;
-    const [, r, c] = t.id.split("-").map(Number);
-    if (!grid[r][c]) return;
+  function pickupAt(r, c) {
+    if (phase !== "build" || !grid[r][c]) return false;
     const el = grid[r][c];
     const slot = hand.find((h) => h.used && h.el === el);
     if (slot) slot.used = false;
     grid[r][c] = null;
     render();
-  });
+    return true;
+  }
+
+  function onSelect(index) {
+    if (phase !== "build" || hand[index]?.used) return;
+    sel = sel === index ? null : index;
+    render();
+  }
+
+  function onEmptyTap(r, c) {
+    if (phase !== "build" || grid[r][c]) return;
+    if (sel === null) {
+      hopeEl.textContent = "Pick a rune from your hand first.";
+      return;
+    }
+    if (placeFromHand(sel, r, c)) {
+      audio.drop();
+    }
+  }
 
   function spark(sr, sc) {
+    if (phase !== "build" || !grid[sr][sc]) return;
+
+    audio.resume();
     phase = "resolving";
     sel = null;
     root.classList.add("performance");
@@ -212,6 +216,7 @@ export function bootGame(root) {
         hopeEl.classList.toggle("hot", hot);
       },
       tone: audio.tone.bind(audio),
+      curtain: audio.curtain.bind(audio),
       onCurtainCall: () => {
         phase = "curtain";
         render();
@@ -236,12 +241,37 @@ export function bootGame(root) {
     creditsEl.classList.add("show");
   }
 
-  root.querySelector("#btnNew").addEventListener("click", () => newHand());
-  root.querySelector("#btnClear").addEventListener("click", () => clearBoard());
+  attachInteractions({
+    handEl,
+    boardEl,
+    rootEl: root,
+    canInteract: () => phase === "build",
+    onSelect,
+    onPlace: placeFromHand,
+    onPickup: pickupAt,
+    onSpark: spark,
+    onEmptyTap,
+    audio,
+  });
+
+  root.querySelector("#btnNew").addEventListener("click", () => {
+    audio.resume();
+    newHand();
+  });
+  root.querySelector("#btnClear").addEventListener("click", () => {
+    audio.resume();
+    clearBoard();
+  });
   muteBtn.addEventListener("click", () => {
     audio.setMuted(!audio.isMuted());
     muteBtn.textContent = audio.isMuted() ? "🔇 Muted" : "🔊 Sound";
   });
+
+  document.body.addEventListener(
+    "pointerdown",
+    () => audio.resume(),
+    { once: false, passive: true },
+  );
 
   newHand();
 }

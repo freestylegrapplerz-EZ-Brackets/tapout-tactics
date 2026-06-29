@@ -1,5 +1,6 @@
 import {
   cellCenter,
+  easeOutCubic,
   hopeLine,
   isArc,
   SPARK_BEAT_MS,
@@ -10,10 +11,8 @@ import {
 
 /** @typedef {import("./simulation.js").CascadeStep} CascadeStep */
 
-/**
- * @typedef {Object} ToneFn
- * @property {(freq: number, dur?: number, vol?: number) => void} tone
- */
+/** Element stroke colors for travel lines */
+const EL_STROKE = { F: "#ff5638", L: "#ffd033", W: "#38a8ff", C: "#c05cff" };
 
 /**
  * @typedef {Object} CascadeRendererOptions
@@ -22,7 +21,8 @@ import {
  * @property {(litKeys: Set<string>) => void} onLitChange
  * @property {(chain: number) => void} onChainUpdate
  * @property {(text: string, hot: boolean) => void} onHopeUpdate
- * @property {ToneFn["tone"]} [tone]
+ * @property {(freq: number, dur?: number, vol?: number) => void} [tone]
+ * @property {(strong: boolean) => void} [curtain]
  * @property {(steps: CascadeStep[]) => void} onCurtainCall
  * @property {(finalScore: number, chainLength: number) => void} onCredits
  */
@@ -56,7 +56,7 @@ export function playCascade(steps, opts) {
   }
 
   opts.onHopeUpdate("Action!", false);
-  opts.tone?.(180, 0.08, 0.08);
+  opts.tone?.(180, 0.1, 0.07);
 
   let i = 0;
 
@@ -76,7 +76,7 @@ export function playCascade(steps, opts) {
 
     opts.onHopeUpdate(hopeLine(s.chain, total, s.combo), hot);
 
-    drawTravel(s.fromRow, s.fromCol, s.r, s.c, travel, () => {
+    drawTravel(s, travel, () => {
       if (cancelled) return;
 
       litSet.add(`${s.r},${s.c}`);
@@ -90,14 +90,15 @@ export function playCascade(steps, opts) {
       opts.onLitChange(new Set(litSet));
       opts.onChainUpdate(s.chain);
 
-      const pitch = 280 + s.chain * 38 + (s.el === "C" ? 90 : 0) + (arc ? 25 : 0);
-      opts.tone?.(pitch, 0.07, 0.09 + (s.chain / total) * 0.06);
+      const pitch = 260 + s.chain * 42 + (s.el === "C" ? 85 : 0) + (arc ? 30 : 0);
+      const vol = 0.07 + (s.chain / total) * 0.07;
+      opts.tone?.(pitch, 0.08, vol);
       if (s.combo === "steam") {
-        window.setTimeout(() => opts.tone?.(pitch * 1.3, 0.05, 0.07), 40);
+        window.setTimeout(() => opts.tone?.(pitch * 1.35, 0.06, vol * 0.85), 45);
       }
 
       i++;
-      const pause = Math.max(28, stepDelay(i - 1, total) - travel);
+      const pause = Math.max(32, stepDelay(i - 1, total) - travel);
       timeoutId = window.setTimeout(playStep, pause);
     });
   }
@@ -110,15 +111,10 @@ export function playCascade(steps, opts) {
 
     const chain = steps.length;
     const final = steps[chain - 1].score;
+    const strong = chain >= 3;
 
-    if (chain >= 3) {
-      opts.onHopeUpdate("YES!", true);
-      opts.tone?.(440, 0.12, 0.12);
-      window.setTimeout(() => opts.tone?.(660, 0.15, 0.1), 80);
-    } else {
-      opts.onHopeUpdate(chain ? "Connected." : "", false);
-    }
-
+    opts.onHopeUpdate(strong ? "YES!" : chain ? "Connected." : "", strong);
+    opts.curtain?.(strong);
     opts.onChainUpdate(chain);
     opts.onCurtainCall(steps);
 
@@ -128,15 +124,14 @@ export function playCascade(steps, opts) {
   }
 
   /**
-   * @param {number} fr
-   * @param {number} fc
-   * @param {number} tr
-   * @param {number} tc
+   * @param {CascadeStep} step
    * @param {number} dur
    * @param {() => void} onDone
    */
-  function drawTravel(fr, fc, tr, tc, dur, onDone) {
+  function drawTravel(step, dur, onDone) {
     opts.svgEl.innerHTML = "";
+    const { fromRow: fr, fromCol: fc, r: tr, c: tc, el } = step;
+
     if (fr < 0) {
       onDone();
       return;
@@ -144,16 +139,29 @@ export function playCascade(steps, opts) {
 
     const a = cellCenter(fr, fc);
     const b = cellCenter(tr, tc);
+    const stroke = EL_STROKE[el] ?? "#fff";
+
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", String(a.x));
     line.setAttribute("y1", String(a.y));
     line.setAttribute("x2", String(a.x));
     line.setAttribute("y2", String(a.y));
-    line.setAttribute("stroke", "#fff");
-    line.setAttribute("stroke-width", "1.2");
+    line.setAttribute("stroke", stroke);
+    line.setAttribute("stroke-width", "1.6");
     line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("opacity", "0.85");
+    line.setAttribute("opacity", "0.92");
     opts.svgEl.appendChild(line);
+
+    const glow = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    glow.setAttribute("x1", String(a.x));
+    glow.setAttribute("y1", String(a.y));
+    glow.setAttribute("x2", String(a.x));
+    glow.setAttribute("y2", String(a.y));
+    glow.setAttribute("stroke", "#ffffff");
+    glow.setAttribute("stroke-width", "0.6");
+    glow.setAttribute("stroke-linecap", "round");
+    glow.setAttribute("opacity", "0.55");
+    opts.svgEl.appendChild(glow);
 
     const cell = opts.getCell(tr, tc);
     cell?.classList.add("approaching");
@@ -162,10 +170,15 @@ export function playCascade(steps, opts) {
 
     function frame(now) {
       if (cancelled) return;
-      const t = Math.min(1, (now - t0) / dur);
-      line.setAttribute("x2", String(a.x + (b.x - a.x) * t));
-      line.setAttribute("y2", String(a.y + (b.y - a.y) * t));
-      if (t < 1) {
+      const raw = Math.min(1, (now - t0) / dur);
+      const t = easeOutCubic(raw);
+      const x = a.x + (b.x - a.x) * t;
+      const y = a.y + (b.y - a.y) * t;
+      line.setAttribute("x2", String(x));
+      line.setAttribute("y2", String(y));
+      glow.setAttribute("x2", String(x));
+      glow.setAttribute("y2", String(y));
+      if (raw < 1) {
         rafId = requestAnimationFrame(frame);
       } else {
         cell?.classList.remove("approaching");
