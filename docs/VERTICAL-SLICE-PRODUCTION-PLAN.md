@@ -22,7 +22,9 @@ The Vertical Slice is **not** attempting to prove GLYPH. It is attempting to pro
 
 If not, it is probably not part of the Vertical Slice.
 
-**Feeling target:** [VS-FEELING.md](./VS-FEELING.md)
+**Production rule (EP):** Before any explanation — *Can the player discover this instead?* **Discovery wins.**
+
+**First session authoring:** [The First Five Performances](./FIRST-FIVE-PERFORMANCES.md) — handcrafted opening boards; questions not lessons; Board 5 graduation = self-surprise.
 
 **What we are NOT doing in Milestone 2 planning:**
 - Full game · content pipeline · meta progression · monetization · multiple biomes · classes · shop · daily seeds · Steam page assets at scale
