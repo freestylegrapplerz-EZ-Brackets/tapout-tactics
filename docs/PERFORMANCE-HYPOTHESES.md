@@ -20,30 +20,23 @@ Same cycle as [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
 
 ---
 
-## Performance 1 (IMPLEMENTED — playtest)
+## Performance 1 (IMPLEMENTED — playtest complete)
 
 **Question hypothesis:** *"Will the lonely one fire?"*
 
-**Purpose:** Not merely connection — **reveal how players naturally learn GLYPH.**
+**CEO playtest:** `docs/playtest-logs/GLYPH-PT-CEO-P1.md` — **Pass.** Connection discovered; curiosity preserved; new question: *"How good can I become?"*
 
-**Build:** `vs-0.3.0-performance-1` · `src/performances.js`
+**Aspiration analysis:** [ASPIRATION-ANALYSIS.md](./ASPIRATION-ANALYSIS.md) — Performance 2 purpose may be **aspiration**, not mechanics.
 
 ---
 
 ## Performance 2 (HYPOTHESIS — do not build)
 
-**Question hypothesis:** *"Does it matter where I start?"*
+**Mechanical hypothesis (prior):** *"Does it matter where I start?"*
 
-**Why we think this might be next:** Phase 2 core decision #4 (spark origin). Only pursue if P1 evidence shows players understand connection but don't vary or question Action point.
+**Aspirational reframe (under analysis):** *"There is more here than I'm extracting."* — glimpse excellence without solutions.
 
-**Evidence that would authorize P2:**
-- Players consistently spark same topology without exploring origin
-- Post-P1 language: *"What if I started from the other one?"* (unprompted or after mirror inspection)
-- P1 graduation: voluntary second Spark with **layout or origin change**
-
-**Evidence that would reject or defer P2:**
-- P1 players still confused about lit vs cold / connection
-- Facilitator must explain adjacency after P1
+**Authorize only after:** EP selects P2 **purpose** (aspiration vs rule) + **one instrument** from aspiration analysis.
 
 ---
 

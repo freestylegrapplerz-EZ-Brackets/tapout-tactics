@@ -29,12 +29,12 @@ Evidence-driven onboarding: same cycle as [Evidence-Driven Production](./EVIDENC
 
 ## Next gate
 
-**Performance 1 CEO playtest logged** — `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
+**EP review:** [ASPIRATION-ANALYSIS.md](./ASPIRATION-ANALYSIS.md) — Is Performance 2 about **aspiration** (better thinking exists) vs **mechanics** (spark origin)?
 
-**EP decision:** Select **one** Performance 2 question from evidence (spark origin · element identity · score authorship).
+CEO P1 logged: `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
 
-Performance 2 build **not authorized** until EP selects hypothesis.
+Performance 2 **not authorized** until EP selects purpose + one hypothesis.
 
 ---
 
-*P1 evidence collected. Awaiting EP authorisation for P2 question.*
+*Aspiration analysis complete. No implementation.*
