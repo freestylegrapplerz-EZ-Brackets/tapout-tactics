@@ -10,17 +10,14 @@ Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
 
 ## Current phase
 
-**P0 — COMPLETE · AWAITING CEO PLAYTEST**
-
-**Hypothesis:** Readable causality on the board converts *"Am I playing correctly?"* → *"How can I improve?"*
+**ANALYSIS — Discovery Sequence philosophy.** No implementation authorized.
 
 | Item | Status |
 |---|---|
-| Spark origin persistence | ✅ |
-| Cold rune taxonomy | ✅ |
-| Playable build | ✅ `vs-0.2.1-p0` |
-| Build notes | ✅ `glyph/build-notes/p0-vs-0.2.1-p0.md` |
-| CEO playtest | ⏳ Required |
+| P0 board mirror | ✅ Built · readability under review |
+| Discovery Sequence analysis | ✅ [DISCOVERY-SEQUENCE-ANALYSIS.md](./DISCOVERY-SEQUENCE-ANALYSIS.md) |
+| Five handcrafted boards | ⏸ Not authorized |
+| Implementation | ⏸ Blocked |
 
 **Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
