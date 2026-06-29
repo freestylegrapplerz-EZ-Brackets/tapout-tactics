@@ -1,6 +1,11 @@
 # GLYPH — Production Status
 
-*Updated at entry into evidence-driven development.*
+*Updated 2026-06-29 — Milestone 2 planning complete.*
+
+## Current phase
+
+**Vertical Slice planning (Milestone 2) — COMPLETE.** Awaiting CEO approval to implement.  
+Plan: [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md)
 
 ## Frozen
 
@@ -15,11 +20,13 @@
 
 | Work | Owner | Output |
 |---|---|---|
+| **CEO review** | Greg | Approve / revise Vertical Slice plan |
 | **Evidence collection** | Facilitators | Completed Playtest Protocol v1 sheets |
-| **Aggregation** | Executive Producer | Master spreadsheet rows per session |
-| **Next build change** | Blocked | Requires approved single-variable hypothesis |
+| **Implementation** | Blocked | Requires plan approval + VS gate discipline |
 
 ## Operating docs
+
+- [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md) — Milestone 2 (planning only)
 
 - [Studio Constitution](./STUDIO-CONSTITUTION.md)
 - [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md)
@@ -34,13 +41,10 @@
 
 ## Next gate
 
-**Hope Pass evidence review** — after ≥N Protocol v1 sessions:
+**CEO approval of Vertical Slice plan** — then **VS-1 evidence gate** after simulation kernel + cascade renderer reach Hope Pass parity.
 
-- Did hope language appear unprompted?
-- Did voluntary replays cluster?
-- Did players describe the frontier, not only score?
-- Go / no-go / one-variable hypothesis for Milestone 2
+Implementation order (when approved): A1 tech stack lock → A2 simulation kernel → cascade renderer → interaction → VS-1 playtest.
 
 ---
 
-*Bottleneck: evidence. Production continues.*
+*Bottleneck: approval, then frontier feel in production build.*
