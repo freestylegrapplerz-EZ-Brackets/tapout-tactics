@@ -25,6 +25,8 @@
 - [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md)
 - [Playtest Protocol v1](./PLAYTEST-PROTOCOL-v1.md)
 - [Creative Direction Bible v1](./CREATIVE-DIRECTION-BIBLE.md) — calm · hope · comfort positioning
+- [Environmental Architecture Study v1](./ENVIRONMENTAL-ARCHITECTURE-STUDY.md) — real-world place before mood boards
+- [Meridian Room DNA](./MERIDIAN-ROOM-DNA.md) — environmental DNA; Product vs World framework
 
 ## Emotional contract (unchanged)
 
