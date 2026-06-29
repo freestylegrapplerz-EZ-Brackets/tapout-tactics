@@ -1,6 +1,7 @@
 import { SIZE } from "./config.js";
 import {
   computeTarget,
+  createHand,
   emptyGrid,
   simulateCascade,
 } from "./simulation.js";
@@ -10,7 +11,7 @@ import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import { getActivePerformance, handFromElements } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-0.4.0-craftsmanship-c1";
+export const VERSION = "vs-0.4.1-craftsmanship-c1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -68,7 +69,11 @@ export function bootGame(root) {
   }
 
   function newHand() {
-    loadPerformanceHand();
+    hand = createHand();
+    target = computeTarget(hand);
+    best = 0;
+    clearBoard();
+    console.info("[glyph:hand]", { version: VERSION, mode: "random" });
   }
 
   function clearBoard() {
