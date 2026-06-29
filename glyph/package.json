@@ -1,0 +1,10 @@
+{
+  "name": "glyph-vertical-slice",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GLYPH Vertical Slice — Hope Contract production build",
+  "scripts": {
+    "test": "node --test src/simulation.test.js"
+  }
+}

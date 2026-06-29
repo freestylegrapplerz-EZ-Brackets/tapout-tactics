@@ -2,7 +2,7 @@
 
 **Author:** Technical Director planning document  
 **Audience:** Greg (CEO), Executive Producer, Creative Director  
-**Status:** PLANNING ONLY — **not permission to implement** until this plan is approved.
+**Status:** APPROVED — implementation authorized 2026-06-29 (CEO)
 
 **Frozen inputs (do not redesign):**
 - [Studio Constitution](./STUDIO-CONSTITUTION.md)
@@ -13,6 +13,16 @@
 **The Vertical Slice question:**
 
 > *If someone downloaded GLYPH today, would the first five minutes convince them to play another five?*
+
+**CEO Amendment 1 — Hope Contract, not product proof:**
+
+The Vertical Slice is **not** attempting to prove GLYPH. It is attempting to prove the **Hope Contract**. Every production decision:
+
+> *Does this increase the player's feeling of hope?*
+
+If not, it is probably not part of the Vertical Slice.
+
+**Feeling target:** [VS-FEELING.md](./VS-FEELING.md)
 
 **What we are NOT doing in Milestone 2 planning:**
 - Full game · content pipeline · meta progression · monetization · multiple biomes · classes · shop · daily seeds · Steam page assets at scale
@@ -436,6 +446,7 @@ F3. CEO / EP slice review — ship externally?
 | **VS-2** | End of Phase C | Onboarding + interaction | 5→5 minute 5? | ≥3/5 voluntary 2nd spark within 10 min; Q4 cites non-score reason |
 | **VS-3** | End of Phase E | Calm identity + audio | Full emotional contract? | ≥70% "calm" or "hope" in post; CEO 5→5 question yes |
 | **VS-4** | Pre-external show | Slice tagged | Disappearance + Product | Meridian invisible; Product rubric ≥8/10 facilitator avg |
+| **GREENLIGHT** | Vertical Slice complete | Tagged build | Hope Contract earned next investment? | **GREEN** continue · **YELLOW** revise · **RED** stop (CEO Amendment 2) |
 
 **On fail:** Evidence → Explain → Hypothesize → **Change ONE thing** → re-gate.  
 **Do not** proceed to next Phase until **gate owner** (EP) releases.
@@ -515,14 +526,15 @@ If gate answer is "none" — **reject**.
 
 ---
 
-## Approval checklist (before implementation begins)
+## Approval checklist
 
-- [ ] CEO approves this plan
+- [x] CEO approves this plan (2026-06-29)
 - [ ] EP approves evidence gates VS-1/2/3 thresholds (N testers)
 - [ ] Creative Director approves art/audio minimum lists
-- [ ] **A1 tech stack** decision recorded
-- [ ] Hope Pass remains frozen as regression reference
-- [ ] First implementation task is **A2 simulation kernel** — not UI, not art
+- [x] **A1 tech stack** decision recorded — `glyph/README.md`
+- [x] Hope Pass remains frozen as regression reference
+- [x] First implementation task **A2 simulation kernel** — in progress (`glyph/src/simulation.js`)
+- [x] **VS-FEELING.md** created (CEO Amendment 3)
 
 ---
 
@@ -534,4 +546,4 @@ It is **GLYPH the proof** — that a stranger in five minutes feels **calm**, **
 
 Build the performance. Let the Meridian Room whisper. Protect the scope. Test before you polish.
 
-*Planning complete. Implementation waits on approval.*
+*Approved. Building.*

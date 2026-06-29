@@ -1,11 +1,22 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Milestone 2 planning complete.*
+*Updated 2026-06-29 — Vertical Slice production authorized.*
 
 ## Current phase
 
-**Vertical Slice planning (Milestone 2) — COMPLETE.** Awaiting CEO approval to implement.  
-Plan: [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md)
+**Vertical Slice implementation — Phase A (Foundation).**
+
+| Deliverable | Status |
+|---|---|
+| CEO plan approval | ✅ 2026-06-29 |
+| [VS-FEELING.md](./VS-FEELING.md) | ✅ Created |
+| A1 tech stack lock | ✅ `glyph/README.md` |
+| A2 simulation kernel | ✅ `glyph/src/simulation.js` + tests |
+| A3 input + board state | 🔄 In progress (`glyph/index.html`) |
+| Phase B cascade renderer | ⏳ Next (frontier performance) |
+
+**Build:** `glyph/index.html` · version `vs-0.1.0-a2`  
+**Tests:** `cd glyph && npm test`
 
 ## Frozen
 
@@ -16,24 +27,25 @@ Plan: [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md)
 | Playtest Protocol v1 | `docs/PLAYTEST-PROTOCOL-v1.md` | All sessions use this sheet |
 | Studio Constitution | `docs/STUDIO-CONSTITUTION.md` | Amendments only via formal process |
 
-## Active
+## CEO production amendments (active)
 
-| Work | Owner | Output |
-|---|---|---|
-| **CEO review** | Greg | Approve / revise Vertical Slice plan |
-| **Evidence collection** | Facilitators | Completed Playtest Protocol v1 sheets |
-| **Implementation** | Blocked | Requires plan approval + VS gate discipline |
+1. **Hope Contract proof** — not product proof. Filter: *Does this increase hope?*
+2. **Greenlight Review** at slice end — GREEN / YELLOW / RED
+3. **VS-FEELING.md** — minute-by-minute feeling target for all milestones
+
+## Production rule (before every feature)
+
+1. Which constitutional principle?
+2. PRODUCT or WORLD?
+3. If removed, would emotional experience worsen?
+4. Player evidence?
 
 ## Operating docs
 
-- [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md) — Milestone 2 (planning only)
-
+- [VS-FEELING.md](./VS-FEELING.md) — feeling target (production)
+- [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md) — approved scope
 - [Studio Constitution](./STUDIO-CONSTITUTION.md)
-- [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md)
 - [Playtest Protocol v1](./PLAYTEST-PROTOCOL-v1.md)
-- [Creative Direction Bible v1](./CREATIVE-DIRECTION-BIBLE.md) — calm · hope · comfort positioning
-- [Environmental Architecture Study v1](./ENVIRONMENTAL-ARCHITECTURE-STUDY.md) — real-world place before mood boards
-- [Meridian Room DNA](./MERIDIAN-ROOM-DNA.md) — environmental DNA; Product vs World framework
 
 ## Emotional contract (unchanged)
 
@@ -41,10 +53,8 @@ Plan: [Vertical Slice Production Plan](./VERTICAL-SLICE-PRODUCTION-PLAN.md)
 
 ## Next gate
 
-**CEO approval of Vertical Slice plan** — then **VS-1 evidence gate** after simulation kernel + cascade renderer reach Hope Pass parity.
-
-Implementation order (when approved): A1 tech stack lock → A2 simulation kernel → cascade renderer → interaction → VS-1 playtest.
+**Phase B complete → VS-1** — cascade renderer with frontier travel, lit/cold, curtain call at Hope Pass parity.
 
 ---
 
-*Bottleneck: approval, then frontier feel in production build.*
+*Building. Testing. Observing. Refining.*
