@@ -10,14 +10,19 @@ Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
 
 ## Current phase
 
-**Phase B — COMPLETE · AWAITING CEO PLAYTEST**
+**ANALYSIS — Teach mastery without instruction.** No implementation authorized.
+
+**Trigger:** CEO Phase B playtest — *"How should I have chained this?"* (good) → *"Am I playing this game right?"* (communication gap)
 
 | Item | Status |
 |---|---|
-| Playable build | ✅ `vs-0.2.0-b4` |
-| Build notes | ✅ `glyph/build-notes/phase-b-vs-0.2.0-b4.md` |
-| CEO playtest | ⏳ **Required before Phase C** |
-| Phase C | ⏸ Not authorized |
+| Phase B build | ✅ `vs-0.2.0-b4` — performance complete |
+| CEO playtest finding | ✅ Logged |
+| Communication analysis | ✅ [TEACH-MASTERY-WITHOUT-INSTRUCTION.md](./TEACH-MASTERY-WITHOUT-INSTRUCTION.md) |
+| Phase C / implementation | ⏸ Blocked — awaiting EP review of analysis |
+
+**Latest playable build (unchanged):**  
+https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
 **Build:** `glyph/index.html` · version **`vs-0.2.0-b4`**
 
@@ -36,10 +41,10 @@ npx --yes serve glyph -p 5173
 
 ## Next gate
 
-**CEO Phase B playtest** — play `vs-0.2.0-b4`, answer review questions in build notes, then milestone review together.
+**Executive Producer review** of [TEACH-MASTERY-WITHOUT-INSTRUCTION.md](./TEACH-MASTERY-WITHOUT-INSTRUCTION.md) → select **one P0 intervention** → then playable milestone with evidence.
 
-Phase C authorized only after sign-off.
+Phase C implementation not authorized until analysis approved.
 
 ---
 
-*Stopped. Waiting for CEO to play.*
+*Analysis only. No build in progress.*
