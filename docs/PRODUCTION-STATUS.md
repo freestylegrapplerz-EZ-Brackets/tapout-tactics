@@ -29,8 +29,12 @@ Evidence-driven onboarding: same cycle as [Evidence-Driven Production](./EVIDENC
 
 ## Next gate
 
-**Performance 1 playtest** → Explain → Hypothesize Performance 2 from **observed behavior** → EP authorizes P2 build.
+**Performance 1 CEO playtest logged** — `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
+
+**EP decision:** Select **one** Performance 2 question from evidence (spark origin · element identity · score authorship).
+
+Performance 2 build **not authorized** until EP selects hypothesis.
 
 ---
 
-*Build one. Observe. Learn. Then continue.*
+*P1 evidence collected. Awaiting EP authorisation for P2 question.*
