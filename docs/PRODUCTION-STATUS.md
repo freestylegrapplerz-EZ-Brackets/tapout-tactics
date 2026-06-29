@@ -1,42 +1,46 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Performance 1 built, awaiting playtest.*
+*Updated 2026-06-29 — Progressive Discovery product philosophy.*
 
-## Production rules
+## Product philosophy (EP — supersedes onboarding frame)
 
-> *Can the player discover this instead?* → **Discovery wins.**
+**[Progressive Discovery](./PROGRESSIVE-DISCOVERY.md)**
 
-> **Build one performance → playtest → observe → author next from evidence.**
+> *"I understand this."* → *"Wait… there's more."*
+
+Layers of **understanding** — not levels. Game grows with player. Never overwhelming. Never finished learning.
+
+**Rules:** Discovery wins · Curiosity is the metric · Evidence paces next layer
 
 ## Current phase
 
-**Performance 1 — BUILT · AWAITING PLAYTEST**
+**Performance 1 built · Progressive Discovery Layer A1 · playtest / observe**
 
 | Item | Status |
 |---|---|
+| Progressive Discovery philosophy | ✅ Locked |
 | Performance 1 (`performance-1`) | ✅ `vs-0.3.0-performance-1` |
-| Build notes + review questions | ✅ `glyph/build-notes/performance-1-vs-0.3.0.md` |
-| Performances 2–5 | 📋 Hypotheses only — `docs/PERFORMANCE-HYPOTHESES.md` |
-| Performance 2+ implementation | ⏸ Blocked until P1 evidence |
+| Layer A1 (connection) | ✅ CEO evidence — mastered |
+| Layers A2+ | ⏸ Not product-invited yet — **correct pace** |
+| Performance 2+ | ⏸ Hypotheses — evidence-gated |
+| Build authorized | **None** |
 
 **Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
 
-## Onboarding philosophy
+## Key analyses
 
-**The First Five Performances** — [FIRST-FIVE-PERFORMANCES.md](./FIRST-FIVE-PERFORMANCES.md)
-
-Evidence-driven onboarding: same cycle as [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
+| Doc | Role |
+|---|---|
+| [PROGRESSIVE-DISCOVERY.md](./PROGRESSIVE-DISCOVERY.md) | **Product philosophy** |
+| [STRATEGIC-UNCERTAINTY-ANALYSIS.md](./STRATEGIC-UNCERTAINTY-ANALYSIS.md) | A1 strategic fog healthy |
+| [playtest-logs/GLYPH-PT-CEO-P1.md](./playtest-logs/GLYPH-PT-CEO-P1.md) | Layer A1 evidence |
 
 ## Next gate
 
-**EP review:** [STRATEGIC-UNCERTAINTY-ANALYSIS.md](./STRATEGIC-UNCERTAINTY-ANALYSIS.md) — Does P1 evidence indicate a **problem** or **healthy depth**?
+**Observe** — more play at Layer A1 · watch for A1 mastery signals across sessions before inviting A2
 
-**Interim verdict (analysis):** Curiosity sustained · strategic uncertainty expected at ~20 min · **no build authorized**
-
-CEO P1: `docs/playtest-logs/GLYPH-PT-CEO-P1.md`
-
-Performance 2 **on hold** — not justified by current evidence alone.
+**Do not build** aspiration/strategic comms/P2 until evidence authorizes next **layer invitation**
 
 ---
 
-*Hold. Observe. Curiosity is the metric.*
+*One layer at a time. The game grows with the player.*

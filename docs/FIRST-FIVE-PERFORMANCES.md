@@ -1,7 +1,11 @@
 # GLYPH — The First Five Performances
 
-**Internal name:** The First Five Performances *(formerly Discovery Sequence)*  
-**Status:** **APPROVED** — **Performance 1 built** · Performances 2–5 are **hypotheses**  
+**Internal name:** The First Five Performances  
+**Status:** Subordinate to [Progressive Discovery](./PROGRESSIVE-DISCOVERY.md) — **product philosophy**  
+**Role:** First **layer invitations** into Progressive Discovery — not a tutorial track
+
+> **Superseded framing:** "Onboarding" → **Progressive Discovery** (EP). Performances are the first beats of a lifelong learning curve.
+
 **Audience:** Design, production, playtest facilitators
 
 **Production method (EP):** Onboarding follows [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md).
