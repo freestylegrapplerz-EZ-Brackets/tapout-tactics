@@ -24,6 +24,7 @@
 - [Studio Constitution](./STUDIO-CONSTITUTION.md)
 - [Evidence-Driven Production](./EVIDENCE-DRIVEN-PRODUCTION.md)
 - [Playtest Protocol v1](./PLAYTEST-PROTOCOL-v1.md)
+- [Creative Direction Bible v1](./CREATIVE-DIRECTION-BIBLE.md) — calm · hope · comfort positioning
 
 ## Emotional contract (unchanged)
 
