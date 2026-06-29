@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLYPH — Hope Pass (Milestone 1)</title>
+<!--
+  MILESTONE 1: THE HOPE PASS
+  Same mechanics as Spark Test v1. Emotional performance only.
+  Constitution: frontier = lead actor; score hidden during performance;
+  natural approach (travel time = honest physics of propagation); no fake beats.
+  Still an experiment — goal is to disprove assumptions before scaling.
+-->
+<style>
+  :root{
+    --bg:#080a0e; --panel:#12161d; --line:#252d38; --txt:#e8eef6; --dim:#7a8799;
+    --fire:#ff5a3c; --light:#ffd23c; --water:#3ca5ff; --crystal:#c46bff;
+    --empty:#161b22; --lit-glow:#ffffff44;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font:15px/1.4 system-ui,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:720px;margin:0 auto;padding:16px}
+  h1{font-size:17px;margin:0 0 2px;font-weight:700}
+  .sub{color:var(--dim);font-size:12px;margin:0 0 16px;line-height:1.45}
+  .stage-wrap{position:relative;width:min(100%,440px);margin:0 auto 12px}
+  #board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;aspect-ratio:1;position:relative;z-index:1}
+  #travelSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .cell{position:relative;background:var(--empty);border:1px solid var(--line);border-radius:10px;
+        display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;
+        cursor:pointer;user-select:none;color:#0c0f14;transition:filter .2s, opacity .25s}
+  .cell.empty{color:transparent}
+  .cell.F{background:var(--fire)} .cell.L{background:var(--light)}
+  .cell.W{background:var(--water)} .cell.C{background:var(--crystal)}
+  .cell.spark-ready{outline:2px dashed #ffffff66;outline-offset:-3px}
+  .cell.lit{box-shadow:0 0 0 2px #fff, 0 0 22px 4px var(--lit-glow);filter:saturate(1.15)}
+  .cell.cold{opacity:.35;filter:saturate(.5)}
+  .cell.approaching{outline:2px solid #fff;outline-offset:-2px;animation:pulse 0.35s ease infinite alternate}
+  @keyframes pulse{from{outline-color:#ffffff55}to{outline-color:#ffffffcc}}
+  .cell.hit{animation:hit .32s ease forwards}
+  @keyframes hit{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+  .frontier-hud{text-align:center;margin:0 auto 14px;min-height:88px;display:flex;flex-direction:column;
+                align-items:center;justify-content:center;gap:4px}
+  .frontier-hud .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .frontier-hud .chain{font-size:52px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
+                        transition:transform .12s ease}
+  .frontier-hud .chain.bump{transform:scale(1.12)}
+  .frontier-hud .hope{font-size:15px;font-weight:600;color:#b8c5d9;min-height:22px}
+  .frontier-hud .hope.hot{color:#fff}
+  .credits{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+           margin-bottom:14px;opacity:0;transform:translateY(8px);transition:opacity .4s, transform .4s}
+  .credits.show{opacity:1;transform:none}
+  .credits .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+  .credits .score{font-size:28px;font-weight:800;color:#7ef0a6;margin:4px 0 8px}
+  .credits .meta{font-size:13px;color:var(--dim)}
+  #hand{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;min-height:50px;margin-bottom:12px}
+  .rune{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+        font-weight:800;font-size:17px;cursor:pointer;border:2px solid #0000;color:#0c0f14}
+  .rune.F{background:var(--fire)} .rune.L{background:var(--light)}
+  .rune.W{background:var(--water)} .rune.C{background:var(--crystal)}
+  .rune.sel{border-color:#fff;transform:translateY(-2px)}
+  .rune.used{opacity:.15;pointer-events:none}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+  button{background:#1e2630;color:var(--txt);border:1px solid var(--line);border-radius:9px;
+         padding:8px 13px;font-size:13px;cursor:pointer;font-weight:600}
+  button.primary{background:#2f6bff;border-color:#2f6bff}
+  #msg{text-align:center;min-height:22px;font-size:13px;color:var(--dim)}
+  .perf-mode .credits{display:none}
+  .perf-mode.performance .credits{display:block}
+</style>
+</head>
+<body>
+<div class="wrap perf-mode" id="root">
+  <h1>GLYPH — Hope Pass</h1>
+  <p class="sub">Milestone 1. Same rules as Spark Test v1. Score hidden during the performance — curtain call first, credits after. Watch the frontier.</p>
+
+  <div class="frontier-hud" aria-live="polite">
+    <div class="label">The frontier</div>
+    <div class="chain" id="vChain">—</div>
+    <div class="hope" id="vHope">Place runes. Click one to call Action.</div>
+  </div>
+
+  <div class="stage-wrap">
+    <svg id="travelSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <div id="board"></div>
+  </div>
+
+  <div id="hand"></div>
+
+  <div class="controls">
+    <button class="primary" id="btnNew">New Hand</button>
+    <button id="btnClear">Clear Board</button>
+    <button id="btnMute">🔊 Sound</button>
+  </div>
+
+  <div class="credits" id="credits">
+    <div class="k">After the performance</div>
+    <div class="score" id="vScore">0</div>
+    <div class="meta" id="vMeta"></div>
+  </div>
+
+  <div id="msg">Right-click a rune to pick it up before Action.</div>
+</div>
+
+<script>
+"use strict";
+const SIZE=5, HAND_SIZE=8, L_RANGE=3;
+const BASE={F:10,L:10,W:12,C:8};
+
+let grid, hand, sel, phase, best, target, soundOn=true, litSet=new Set();
+
+const $=id=>document.getElementById(id);
+const root=$("root"), boardEl=$("board"), handEl=$("hand"), svgEl=$("travelSvg");
+const chainEl=$("vChain"), hopeEl=$("vHope"), creditsEl=$("credits");
+
+let actx;
+function tone(freq,dur=0.06,vol=0.1,type="triangle"){
+  if(!soundOn)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.value=vol; o.connect(g); g.connect(actx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+dur);
+    o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+
+function randEl(){
+  const r=Math.random();
+  if(r<0.34)return "F"; if(r<0.60)return "L"; if(r<0.80)return "W"; return "C";
+}
+
+function newHand(){
+  hand=[];
+  for(let i=0;i<HAND_SIZE;i++) hand.push({el:randEl(),used:false});
+  const have=e=>hand.some(h=>h.el===e);
+  if(!have("L"))hand[0].el="L";
+  if(!have("C"))hand[1].el="C";
+  if(!have("W"))hand[2].el="W";
+  target=Math.round(hand.reduce((s,h)=>s+BASE[h.el],0)*2.4);
+  best=0;
+  clearBoard(true);
+}
+
+function clearBoard(){
+  grid=Array.from({length:SIZE},()=>Array.from({length:SIZE},()=>null));
+  hand.forEach(h=>h.used=false);
+  sel=null; phase="build"; litSet.clear();
+  root.classList.remove("performance");
+  creditsEl.classList.remove("show");
+  chainEl.textContent="—";
+  hopeEl.textContent="Place runes. Click one to call Action.";
+  hopeEl.classList.remove("hot");
+  $("vScore").textContent="0";
+  $("vMeta").textContent="";
+  svgEl.innerHTML="";
+  render();
+}
+
+function cellCenter(r,c){
+  const gap=8, cols=SIZE;
+  const w=100, h=100;
+  const cellW=(w-gap*(cols-1))/cols;
+  const x=c*(cellW+gap)+cellW/2;
+  const y=r*(cellW+gap)+cellW/2;
+  return {x,y};
+}
+
+function targetsOf(r,c,el){
+  const out=[], has=(rr,cc)=>rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&grid[rr][cc];
+  if(el==="F"){
+    [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc])=>{if(has(r+dr,c+dc))out.push([r+dr,c+dc]);});
+  }else if(el==="W"||el==="C"){
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){
+      if(!dr&&!dc)continue;
+      if(has(r+dr,c+dc))out.push([r+dr,c+dc]);
+    }
+  }else if(el==="L"){
+    [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr,dc])=>{
+      for(let k=1;k<=L_RANGE;k++){
+        const rr=r+dr*k, cc=c+dc*k;
+        if(rr<0||rr>=SIZE||cc<0||cc>=SIZE)break;
+        if(grid[rr][cc]){out.push([rr,cc]);break;}
+      }
+    });
+  }
+  return out;
+}
+
+function simulate(sr,sc){
+  const activated=new Set(), queued=new Set();
+  const key=(r,c)=>r+","+c;
+  let layer=[[sr,sc,null,-1,-1]];
+  queued.add(key(sr,sc));
+  const steps=[]; let mult=1, score=0;
+  while(layer.length){
+    const next=[];
+    for(const [r,c,src,fr,fc] of layer){
+      if(activated.has(key(r,c)))continue;
+      activated.add(key(r,c));
+      const el=grid[r][c];
+      let gain=Math.round(BASE[el]*mult);
+      let combo="";
+      if(el==="W"&&(src==="F"||src==="L")){gain+=15;mult+=0.25;combo="steam";}
+      score+=gain; mult+=0.15;
+      if(el==="C")mult+=0.6;
+      steps.push({r,c,el,fr,fc,gain,score,chain:steps.length+1,combo});
+      for(const [tr,tc] of targetsOf(r,c,el)){
+        if(!activated.has(key(tr,tc))&&!queued.has(key(tr,tc))){
+          queued.add(key(tr,tc));
+          next.push([tr,tc,el,r,c]);
+        }
+      }
+    }
+    layer=next;
+  }
+  return steps;
+}
+
+function render(){
+  handEl.innerHTML="";
+  hand.forEach((h,i)=>{
+    const d=document.createElement("div");
+    d.className="rune "+h.el+(h.used?" used":"")+(sel===i?" sel":"");
+    d.textContent=h.el;
+    d.onclick=()=>{if(phase!=="build"||h.used)return;sel=sel===i?null:i;render();};
+    handEl.appendChild(d);
+  });
+  boardEl.innerHTML="";
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){
+    const cell=document.createElement("div");
+    const v=grid[r][c], k=r+","+c;
+    let cls="cell "+(v||"empty");
+    if(v&&phase==="build")cls+=" spark-ready";
+    if(litSet.has(k))cls+=" lit";
+    else if(v&&phase!=="build")cls+=" cold";
+    cell.className=cls;
+    cell.id="cell-"+r+"-"+c;
+    cell.textContent=v||"";
+    cell.onclick=()=>onCell(r,c);
+    boardEl.appendChild(cell);
+  }
+}
+
+function onCell(r,c){
+  if(phase!=="build")return;
+  if(grid[r][c]){spark(r,c);return;}
+  if(sel===null){hopeEl.textContent="Pick a rune from your hand first.";return;}
+  grid[r][c]=hand[sel].el;
+  hand[sel].used=true;
+  sel=null;
+  render();
+}
+
+boardEl.addEventListener("contextmenu",e=>{
+  e.preventDefault();
+  if(phase!=="build")return;
+  const t=e.target.closest(".cell"); if(!t)return;
+  const [,r,c]=t.id.split("-").map(Number);
+  if(!grid[r][c])return;
+  const el=grid[r][c];
+  const slot=hand.find(h=>h.used&&h.el===el);
+  if(slot)slot.used=false;
+  grid[r][c]=null;
+  render();
+});
+
+function drawTravel(fr,fc,tr,tc,dur,onDone){
+  svgEl.innerHTML="";
+  if(fr<0){onDone();return;}
+  const a=cellCenter(fr,fc), b=cellCenter(tr,tc);
+  const line=document.createElementNS("http://www.w3.org/2000/svg","line");
+  line.setAttribute("x1",a.x); line.setAttribute("y1",a.y);
+  line.setAttribute("x2",a.x); line.setAttribute("y2",a.y);
+  line.setAttribute("stroke","#fff");
+  line.setAttribute("stroke-width","1.2");
+  line.setAttribute("stroke-linecap","round");
+  line.setAttribute("opacity","0.85");
+  svgEl.appendChild(line);
+  const cell=$("cell-"+tr+"-"+tc);
+  if(cell)cell.classList.add("approaching");
+  const t0=performance.now();
+  function frame(now){
+    const t=Math.min(1,(now-t0)/dur);
+    line.setAttribute("x2",a.x+(b.x-a.x)*t);
+    line.setAttribute("y2",a.y+(b.y-a.y)*t);
+    if(t<1)requestAnimationFrame(frame);
+    else{
+      if(cell)cell.classList.remove("approaching");
+      svgEl.innerHTML="";
+      onDone();
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function stepDelay(i,total){
+  const t=i/Math.max(1,total-1);
+  return Math.round(165 - t*105);
+}
+
+function travelDuration(i,total, isArc){
+  const base=stepDelay(i,total)*0.45;
+  return isArc ? base*1.35 : base;
+}
+
+function isArc(fr,fc,tr,tc){
+  return Math.abs(fr-tr)+Math.abs(fc-tc)>1;
+}
+
+function hopeLine(chain, total, combo){
+  if(chain<=1)return "It's spreading…";
+  if(chain===total)return "…";
+  if(combo==="steam")return "Come on…";
+  if(chain>=total-1)return "One more…";
+  if(chain>=Math.floor(total*0.6))return "Keep going…";
+  return "Come on…";
+}
+
+function spark(sr,sc){
+  phase="resolving";
+  sel=null;
+  root.classList.add("performance");
+  creditsEl.classList.remove("show");
+  litSet.clear();
+  render();
+  const steps=simulate(sr,sc);
+  const total=steps.length;
+  if(!total){
+    hopeEl.textContent="Nothing connected.";
+    phase="done";
+    showCredits(0,0);
+    return;
+  }
+  let i=0;
+  hopeEl.textContent="Action!";
+  tone(180,0.08,0.08);
+  setTimeout(()=>playStep(),70);
+
+  function playStep(){
+    if(i>=total){curtainCall(steps);return;}
+    const s=steps[i];
+    const arc=isArc(s.fr,s.fc,s.r,s.c);
+    const travel=travelDuration(i,total,arc);
+    hopeEl.textContent=hopeLine(s.chain,total,s.combo);
+    if(s.chain>=2)hopeEl.classList.add("hot");
+
+    drawTravel(s.fr,s.fc,s.r,s.c,travel,()=>{
+      const cell=$("cell-"+s.r+"-"+s.c);
+      litSet.add(s.r+","+s.c);
+      if(cell){
+        cell.classList.remove("cold","approaching");
+        cell.classList.add("hit","lit");
+        setTimeout(()=>cell.classList.remove("hit"),320);
+      }
+      chainEl.textContent=s.chain;
+      chainEl.classList.add("bump");
+      setTimeout(()=>chainEl.classList.remove("bump"),120);
+      const pitch=280+s.chain*38+(s.el==="C"?90:0)+(arc?25:0);
+      tone(pitch,0.07,0.09+(s.chain/total)*0.06);
+      if(s.combo==="steam")setTimeout(()=>tone(pitch*1.3,0.05,0.07),40);
+      render();
+      i++;
+      setTimeout(playStep, Math.max(28, stepDelay(i-1,total)-travel));
+    });
+  }
+}
+
+function curtainCall(steps){
+  phase="curtain";
+  const chain=steps.length;
+  const final=steps[chain-1].score;
+  svgEl.innerHTML="";
+  document.querySelectorAll(".approaching").forEach(el=>el.classList.remove("approaching"));
+  if(chain>=3){
+    hopeEl.textContent="YES!";
+    hopeEl.classList.add("hot");
+    tone(440,0.12,0.12);
+    setTimeout(()=>tone(660,0.15,0.1),80);
+  }else{
+    hopeEl.textContent=chain?"Connected.":"";
+  }
+  chainEl.textContent=chain||"—";
+  setTimeout(()=>showCredits(final,chain),550);
+}
+
+function showCredits(final,chain){
+  phase="done";
+  if(final>best)best=final;
+  $("vScore").textContent=final;
+  const hit=final>=target;
+  $("vMeta").textContent=
+    chain+"-rune chain · Target "+target+(hit?" · Beat it!":" · Short by "+(target-final))+
+    (best?" · Best this session "+best:"");
+  creditsEl.classList.add("show");
+}
+
+$("btnNew").onclick=()=>newHand();
+$("btnClear").onclick=()=>clearBoard();
+$("btnMute").onclick=()=>{
+  soundOn=!soundOn;
+  $("btnMute").textContent=soundOn?"🔊 Sound":"🔇 Muted";
+};
+
+newHand();
+</script>
+</body>
+</html>

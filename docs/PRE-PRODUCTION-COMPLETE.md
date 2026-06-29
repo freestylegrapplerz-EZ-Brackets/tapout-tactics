@@ -38,14 +38,13 @@
 - Does the curtain call land?
 - Does the predictability sweet spot exist in practice?
 
-→ **Spark Test v2 (Hope Pass)** — first execution milestone under the Constitution.
+→ **Milestone 1: Hope Pass** — `experiments/glyph-spark-test/hope-pass.html` (production opened).
 
-## The one question for all future work
+## Production gate (two questions)
 
-> **Which constitutional principle does this feature strengthen?**
-
-If none — it probably doesn't belong.
+1. Which constitutional principle does this strengthen?
+2. What player evidence justifies building it now?
 
 ---
 
-*Discovery ends. Protection begins.*
+*Discovery ends. Protection begins. Production opened.*

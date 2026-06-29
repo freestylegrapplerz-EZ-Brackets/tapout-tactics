@@ -83,17 +83,22 @@ Performance first. Score, targets, and meta feedback after the cascade lands —
 **§11. The player progresses — not the power bar.**
 Progression adds breadth and challenge, never permanent strength that makes outcomes untrustworthy.
 
+**§13. Prototype before doctrine.**
+The Constitution protects **proven** truths, not untested assumptions. If repeated player evidence contradicts a principle, initiate a formal amendment — do not ignore evidence, and do not change the Constitution for convenience. *(Amendment XIII — Greg / Creative Director, production open.)*
+
 *(Supporting craft standards from pre-production — not numbered on the wall but binding in review: legibility is a feature; predict smart / delight surprised via cognitive limits; cold runes are hope for the next performance; depth is data not animation.)*
 
 ---
 
 ## Article II — The Design Review Question
 
-**Every design review begins with one question:**
+**Every design review begins with two questions:**
 
-> **"Which constitutional principle does this feature strengthen?"**
+> **1. Which constitutional principle does this feature strengthen?**
+> **2. What player evidence justifies building it now?**
 
-If the answer is **"none"** — it probably doesn't belong.
+If the answer to (1) is **"none"** — it probably doesn't belong.
+If the answer to (2) is weak — it waits.
 
 If the answer is **"convenience only"** — it does not belong.
 
@@ -112,11 +117,13 @@ Pre-production produced:
 - A passed Spark Test (mechanic survives; spectacle/hope does not yet)
 - Choreography, suspense/hope, and studio culture documents
 
-**Phase: Execution — protected by this Constitution.**
+**Phase: Production — protected by this Constitution.**
+
+We no longer write design philosophy documents unless (a) a new foundational truth is discovered, or (b) a constitutional amendment is required. Time belongs to **build → test → observe → refine.**
 
 Execution order (binding until amended by evidence):
 
-1. **Hope Pass (Spark Test v2)** — same rules; score hidden by default; frontier as lead actor; natural approach only; no fake beats. *Disprove or prove hope.*
+1. **Milestone 1: Hope Pass (Spark Test v2)** — same rules; score hidden by default; frontier as lead actor; natural approach only; no fake beats. *Disprove or prove hope.*
 2. **Only if hope passes** — expand within constitutional bounds (legibility, story, curtain call).
 3. **Never skip the hope gate** for features, content, meta, monetization, or polish.
 
