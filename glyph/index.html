@@ -11,13 +11,14 @@
   Sim: src/simulation.js · Renderer: src/cascadeRenderer.js
   Frontier = lead actor. Score hidden during performance. Curtain call before credits.
 -->
-<link rel="stylesheet" href="./src/theme.css">
+<link rel="stylesheet" href="./src/theme.css?v=vs-0.4.2">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
   <p class="sub">Vertical Slice · Craftsmanship — feel first</p>
-  <p class="onboard">Place runes so they touch. Tap one to spark. New Hand deals a fresh mix.</p>
+  <p class="hand-mode" id="handMode">Opening hand · Fire + Water only</p>
+  <p class="onboard">Place runes so they touch. Tap one to spark.</p>
 
   <div class="frontier-hud" aria-live="polite">
     <div class="label">The frontier</div>
@@ -49,7 +50,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js";
+import { bootGame } from "./src/game.js?v=vs-0.4.2";
 bootGame(document.getElementById("root"));
 </script>
 </body>

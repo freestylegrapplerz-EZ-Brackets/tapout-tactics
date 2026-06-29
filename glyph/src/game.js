@@ -11,7 +11,7 @@ import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import { getActivePerformance, handFromElements } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-0.4.1-craftsmanship-c1";
+export const VERSION = "vs-0.4.2-craftsmanship-c1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -51,17 +51,31 @@ export function bootGame(root) {
   const metaEl = /** @type {HTMLDivElement} */ (root.querySelector("#vMeta"));
   const msgEl = /** @type {HTMLDivElement} */ (root.querySelector("#msg"));
   const versionEl = /** @type {HTMLDivElement} */ (root.querySelector("#version"));
+  const handModeEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector("#handMode"));
   const muteBtn = /** @type {HTMLButtonElement} */ (root.querySelector("#btnMute"));
 
   const activePerformance = getActivePerformance();
 
+  /** @type {"performance-1"|"random"} */
+  let handMode = "performance-1";
+
   versionEl.textContent = VERSION;
 
+  function updateHandModeLabel() {
+    if (!handModeEl) return;
+    handModeEl.textContent =
+      handMode === "performance-1"
+        ? "Opening hand · Fire + Water only"
+        : "New hand · Fire · Lightning · Water · Crystal";
+  }
+
   function loadPerformanceHand() {
+    handMode = "performance-1";
     hand = handFromElements(activePerformance.handElements);
     target = computeTarget(hand);
     best = 0;
     clearBoard();
+    updateHandModeLabel();
     console.info("[glyph:performance]", {
       version: VERSION,
       performanceId: activePerformance.id,
@@ -69,11 +83,17 @@ export function bootGame(root) {
   }
 
   function newHand() {
+    handMode = "random";
     hand = createHand();
     target = computeTarget(hand);
     best = 0;
     clearBoard();
-    console.info("[glyph:hand]", { version: VERSION, mode: "random" });
+    updateHandModeLabel();
+    console.info("[glyph:hand]", {
+      version: VERSION,
+      mode: "random",
+      elements: hand.map((h) => h.el),
+    });
   }
 
   function clearBoard() {
@@ -278,5 +298,5 @@ export function bootGame(root) {
     { once: false, passive: true },
   );
 
-  newHand();
+  loadPerformanceHand();
 }

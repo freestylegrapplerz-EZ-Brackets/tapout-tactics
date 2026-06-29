@@ -84,8 +84,16 @@ h1 {
 .sub {
   color: var(--muted);
   font-size: 12px;
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-sm);
   line-height: 1.5;
+}
+
+.hand-mode {
+  color: var(--dim);
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 var(--space-md);
+  line-height: 1.45;
 }
 
 .onboard {
