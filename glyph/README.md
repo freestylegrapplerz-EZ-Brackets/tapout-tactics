@@ -62,6 +62,8 @@ index.html             — shell
 
 **Phase B complete (`vs-0.2.0-b4`):** frontier travel, lit/cold, chain HUD, curtain call, credits after performance.
 
+**Build notes:** [build-notes/phase-b-vs-0.2.0-b4.md](./build-notes/phase-b-vs-0.2.0-b4.md) — CEO playtest required before Phase C.
+
 **Event log pattern:** `simulateCascade()` emits steps; `playCascade()` follows — never guesses.
 
 ---

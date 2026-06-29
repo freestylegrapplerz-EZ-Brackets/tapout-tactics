@@ -2,18 +2,22 @@
 
 *Updated 2026-06-29 — Phase B complete. Awaiting CEO review before Phase C.*
 
+## Milestone review rule (CEO)
+
+Every milestone ends with a **playable build**. Production stops until CEO has played, reviewed changes, and answered targeted review questions.
+
+Protocol: [Milestone Review Protocol](./MILESTONE-REVIEW-PROTOCOL.md)
+
 ## Current phase
 
-**Vertical Slice · Phase B — COMPLETE.** Stopped at plan boundary. Phase C not started.
+**Phase B — COMPLETE · AWAITING CEO PLAYTEST**
 
-| Deliverable | Status |
+| Item | Status |
 |---|---|
-| A2 simulation kernel | ✅ |
-| B1 cascade playback from step log | ✅ `src/cascadeRenderer.js` |
-| B2 frontier travel + approaching | ✅ SVG travel lines |
-| B3 lit/cold + chain HUD | ✅ |
-| B4 curtain call + credits reveal | ✅ score hidden during performance |
-| Phase C (onboarding polish) | ⏸ Blocked — awaiting Phase B review |
+| Playable build | ✅ `vs-0.2.0-b4` |
+| Build notes | ✅ `glyph/build-notes/phase-b-vs-0.2.0-b4.md` |
+| CEO playtest | ⏳ **Required before Phase C** |
+| Phase C | ⏸ Not authorized |
 
 **Build:** `glyph/index.html` · version **`vs-0.2.0-b4`**
 
@@ -32,10 +36,10 @@ npx --yes serve glyph -p 5173
 
 ## Next gate
 
-**CEO Phase B review** → then **VS-1 playtest** (frontier as lead actor?)
+**CEO Phase B playtest** — play `vs-0.2.0-b4`, answer review questions in build notes, then milestone review together.
 
-Phase C authorized only after Phase B approval.
+Phase C authorized only after sign-off.
 
 ---
 
-*Phase B complete. Stopped as directed.*
+*Stopped. Waiting for CEO to play.*
