@@ -1,47 +1,39 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Craftsmanship priority (Executive Producer).*
-
-## Product priority (EP — supersedes mechanics/content work)
-
-**[Craftsmanship](./CRAFTSMANSHIP.md)** — highest priority
-
-> *If this mechanic never changed again… would this interaction still make players smile?*
-
-**Frozen:** Constitution · mechanics · Performance 1 content · no progression · no new systems
-
-**Paused:** Progressive Discovery layer invitations (P2+) until feel milestones prove delight
-
----
+*Updated 2026-06-29 — Phase 1 Craftsmanship complete.*
 
 ## Current phase
 
-**Craftsmanship C1 built · CEO review gate**
+**Phase 1 COMPLETE · Phase 2 Greenlight gate**
 
 | Item | Status |
 |---|---|
-| Craftsmanship philosophy | ✅ Locked |
-| C1 Interaction Feel | ✅ `vs-0.4.0-craftsmanship-c1` |
-| C2 Cascade Feel | 🔶 Partial (in C1 build) |
-| C3 Visual Language | 🔶 Partial (theme.css + lit/cold) |
-| C4 Audio | 🔶 Partial (UI + curtain sounds) |
-| C5 Mobile | 🔶 Partial (touch targets, long-press) |
-| Performance 2+ / progression | ⏸ Paused |
-| New gameplay systems | 🚫 Out of scope |
+| C1 Interaction Feel | ✅ |
+| C2 Cascade Feel | ✅ |
+| C3 Visual Language | ✅ |
+| C4 Audio | ✅ |
+| C5 Mobile | ✅ |
+| **Build** | **`vs-1.0.0-phase1`** |
+| Performance 2+ / progression | ⏸ Paused until Greenlight |
 
-**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/craftsmanship-c1-6013/glyph/index.html
+**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/phase1-complete-6013/glyph/index.html
 
 ---
 
-## Milestone queue
+## Phase 1 → Phase 2
 
-1. **C1** Interaction Feel — **awaiting CEO review**
-2. **C2** Cascade Feel — deepen travel, rhythm, hope, curtain
-3. **C3** Visual Language — complete one-board identity
-4. **C4** Audio — interaction + frontier + silence pass
-5. **C5** Mobile — one-thumb effortless pass
+Phase 1 proved **feel** on one board. Phase 2 proves **the Hope Contract with evidence**:
 
-Each milestone: playable build + build notes + targeted review questions ([protocol](./MILESTONE-REVIEW-PROTOCOL.md))
+1. CEO plays `vs-1.0.0-phase1` (phone + desktop, 10 min)
+2. Answers [review questions](../glyph/build-notes/phase1-complete-vs-1.0.0.md)
+3. Optional: 3–5 external playtests (Playtest Protocol v1)
+4. **Greenlight Review** → GREEN / YELLOW / RED
+
+---
+
+## Frozen
+
+Constitution · mechanics · Performance 1 content · no new systems until Greenlight
 
 ---
 
@@ -49,19 +41,11 @@ Each milestone: playable build + build notes + targeted review questions ([proto
 
 | Doc | Role |
 |---|---|
-| [CRAFTSMANSHIP.md](./CRAFTSMANSHIP.md) | **Production priority** |
+| [CRAFTSMANSHIP.md](./CRAFTSMANSHIP.md) | Phase 1 priority (complete) |
 | [VS-FEELING.md](./VS-FEELING.md) | Acceptance map |
-| [PROGRESSIVE-DISCOVERY.md](./PROGRESSIVE-DISCOVERY.md) | Learning philosophy (invites paused) |
-| [build-notes/craftsmanship-c1-vs-0.4.0.md](../glyph/build-notes/craftsmanship-c1-vs-0.4.0.md) | Latest build |
+| [phase1-complete build notes](../glyph/build-notes/phase1-complete-vs-1.0.0.md) | Latest build |
+| [PROGRESSIVE-DISCOVERY.md](./PROGRESSIVE-DISCOVERY.md) | Resumes after Greenlight |
 
 ---
 
-## Next gate
-
-**CEO plays C1** → answers review questions → authorize C2 or revise C1
-
-**Do not build** Performance 2, progression, or new systems until craftsmanship milestones pass
-
----
-
-*The Vertical Slice wins because it feels incredible.*
+*Phase 1: make it feel incredible. Phase 2: prove it.*

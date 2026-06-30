@@ -111,6 +111,7 @@ export function attachInteractions(opts) {
     longPressFired = false;
     removeGhost();
     clearDropTarget();
+    document.body.classList.remove("is-dragging");
   }
 
   /**
@@ -149,6 +150,7 @@ export function attachInteractions(opts) {
       if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
 
       dragging = true;
+      document.body.classList.add("is-dragging");
       opts.onSelect(dragHandIndex);
       opts.audio?.pick?.();
       showGhost(dragElement, e.clientX, e.clientY);

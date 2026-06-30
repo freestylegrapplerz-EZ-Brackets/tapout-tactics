@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   cellCenter,
   easeOutCubic,
+  frontierPitch,
   hopeLine,
   isArc,
   stepDelay,
@@ -16,7 +17,7 @@ describe("performance timing", () => {
     const early = stepDelay(0, total);
     const late = stepDelay(9, total);
     assert.ok(late < early);
-    assert.equal(early, 165);
+    assert.equal(early, 172);
     assert.equal(late, 60);
   });
 
@@ -50,5 +51,12 @@ describe("performance timing", () => {
     assert.equal(easeOutCubic(0), 0);
     assert.equal(easeOutCubic(1), 1);
     assert.ok(easeOutCubic(0.5) > 0.5);
+  });
+
+  it("frontierPitch rises with chain and arc hops", () => {
+    const adj = frontierPitch("F", 2, 8, false);
+    const arc = frontierPitch("L", 2, 8, true);
+    assert.ok(arc > adj);
+    assert.ok(frontierPitch("C", 5, 8, false) > frontierPitch("F", 5, 8, false));
   });
 });

@@ -1,26 +1,28 @@
 import { SIZE } from "./config.js";
 
+/** Grid gap in SVG viewBox units — must match theme.css --cell-gap rhythm. */
+export const BOARD_GAP = 7;
+
 /** @param {number} r @param {number} c */
 export function cellCenter(r, c) {
-  const gap = 8;
   const w = 100;
-  const cellW = (w - gap * (SIZE - 1)) / SIZE;
+  const cellW = (w - BOARD_GAP * (SIZE - 1)) / SIZE;
   return {
-    x: c * (cellW + gap) + cellW / 2,
-    y: r * (cellW + gap) + cellW / 2,
+    x: c * (cellW + BOARD_GAP) + cellW / 2,
+    y: r * (cellW + BOARD_GAP) + cellW / 2,
   };
 }
 
 /** @param {number} i @param {number} total */
 export function stepDelay(i, total) {
   const t = i / Math.max(1, total - 1);
-  return Math.round(165 - t * 105);
+  return Math.round(172 - t * 112);
 }
 
 /** @param {number} i @param {number} total @param {boolean} isArc */
 export function travelDuration(i, total, isArc) {
-  const base = stepDelay(i, total) * 0.45;
-  return isArc ? base * 1.35 : base;
+  const base = stepDelay(i, total) * 0.48;
+  return isArc ? base * 1.4 : base;
 }
 
 /** @param {number} fr @param {number} fc @param {number} tr @param {number} tc */
@@ -38,11 +40,24 @@ export function hopeLine(chain, total, combo) {
   return "Come on…";
 }
 
-/** Spark ignition beat before first step (Hope Pass parity). */
-export const SPARK_BEAT_MS = 85;
+/**
+ * Frontier pitch from step context — feel only, not scoring.
+ * @param {import("./config.js").Element} el
+ * @param {number} chain
+ * @param {number} total
+ * @param {boolean} arc
+ */
+export function frontierPitch(el, chain, total, arc) {
+  const base = { F: 240, L: 320, W: 280, C: 360 }[el] ?? 260;
+  const rise = chain * 38 + (chain / total) * 40;
+  return base + rise + (arc ? 35 : 0);
+}
+
+/** Spark ignition beat before first step. */
+export const SPARK_BEAT_MS = 95;
 
 /** Curtain hold before credits — breath after performance. */
-export const CURTAIN_HOLD_MS = 650;
+export const CURTAIN_HOLD_MS = 720;
 
 /** @param {number} t 0..1 */
 export function easeOutCubic(t) {

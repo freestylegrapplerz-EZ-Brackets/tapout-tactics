@@ -1,4 +1,4 @@
-import { SIZE } from "./config.js";
+import { SIZE, ELEMENT_LABELS } from "./config.js";
 import {
   computeTarget,
   createHand,
@@ -11,7 +11,7 @@ import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import { getActivePerformance, handFromElements } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-0.4.2-craftsmanship-c1";
+export const VERSION = "vs-1.0.0-phase1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -43,6 +43,7 @@ export function bootGame(root) {
 
   const boardEl = /** @type {HTMLDivElement} */ (root.querySelector("#board"));
   const handEl = /** @type {HTMLDivElement} */ (root.querySelector("#hand"));
+  const stageWrap = /** @type {HTMLDivElement} */ (root.querySelector(".stage-wrap"));
   const svgEl = /** @type {SVGSVGElement} */ (root.querySelector("#travelSvg"));
   const chainEl = /** @type {HTMLDivElement} */ (root.querySelector("#vChain"));
   const hopeEl = /** @type {HTMLDivElement} */ (root.querySelector("#vHope"));
@@ -67,6 +68,15 @@ export function bootGame(root) {
       handMode === "performance-1"
         ? "Opening hand · Fire + Water only"
         : "New hand · Fire · Lightning · Water · Crystal";
+  }
+
+  function setHope(text, hot) {
+    hopeEl.classList.remove("hope-shift");
+    // force reflow so animation retriggers
+    void hopeEl.offsetWidth;
+    hopeEl.textContent = text;
+    hopeEl.classList.toggle("hot", hot);
+    hopeEl.classList.add("hope-shift");
   }
 
   function loadPerformanceHand() {
@@ -106,11 +116,12 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = null;
     coldTaxonomy = null;
-    root.classList.remove("performance");
+    root.classList.remove("performance", "curtain-call");
+    stageWrap?.classList.remove("curtain-call");
     creditsEl.classList.remove("show");
     chainEl.textContent = "—";
-    hopeEl.textContent = "Place runes. Tap one to call Action.";
-    hopeEl.classList.remove("hot");
+    chainEl.classList.remove("live");
+    setHope("Place runes. Tap one to call Action.", false);
     scoreEl.textContent = "0";
     metaEl.textContent = "";
     svgEl.innerHTML = "";
@@ -124,6 +135,7 @@ export function bootGame(root) {
       const d = document.createElement("div");
       d.className = `rune ${h.el}${h.used ? " used" : ""}${sel === i ? " sel" : ""}`;
       d.textContent = h.el;
+      d.setAttribute("aria-label", ELEMENT_LABELS[h.el]);
       handEl.appendChild(d);
     });
 
@@ -149,6 +161,7 @@ export function bootGame(root) {
         cell.className = cls;
         cell.id = `cell-${r}-${c}`;
         cell.textContent = v || "";
+        if (v) cell.setAttribute("aria-label", ELEMENT_LABELS[v]);
         boardEl.appendChild(cell);
       }
     }
@@ -182,7 +195,7 @@ export function bootGame(root) {
   function onEmptyTap(r, c) {
     if (phase !== "build" || grid[r][c]) return;
     if (sel === null) {
-      hopeEl.textContent = "Pick a rune from your hand first.";
+      setHope("Pick a rune from your hand first.", false);
       return;
     }
     if (placeFromHand(sel, r, c)) {
@@ -194,12 +207,14 @@ export function bootGame(root) {
     if (phase !== "build" || !grid[sr][sc]) return;
 
     audio.resume();
+    audio.startRoom();
     phase = "resolving";
     sel = null;
     root.classList.add("performance");
     creditsEl.classList.remove("show");
     litSet = new Set();
     sparkOriginKey = `${sr},${sc}`;
+    chainEl.classList.add("live");
     render();
 
     const { steps, finalScore, chainLength } = simulateCascade(grid, sr, sc);
@@ -217,8 +232,11 @@ export function bootGame(root) {
     });
 
     if (!chainLength) {
-      hopeEl.textContent = "Nothing connected.";
+      setHope("Nothing connected.", false);
       phase = "done";
+      root.classList.remove("performance");
+      chainEl.classList.remove("live");
+      audio.stopRoom();
       showCredits(finalScore, chainLength);
       render();
       return;
@@ -226,6 +244,8 @@ export function bootGame(root) {
 
     activeCascade = playCascade(steps, {
       svgEl,
+      sparkRow: sr,
+      sparkCol: sc,
       getCell: (r, c) => document.getElementById(`cell-${r}-${c}`),
       onLitChange: (next) => {
         litSet = next;
@@ -234,20 +254,21 @@ export function bootGame(root) {
       onChainUpdate: (chain) => {
         chainEl.textContent = String(chain);
         chainEl.classList.add("bump");
-        window.setTimeout(() => chainEl.classList.remove("bump"), 120);
+        window.setTimeout(() => chainEl.classList.remove("bump"), 130);
       },
-      onHopeUpdate: (text, hot) => {
-        hopeEl.textContent = text;
-        hopeEl.classList.toggle("hot", hot);
-      },
+      onHopeUpdate: (text, hot) => setHope(text, hot),
       tone: audio.tone.bind(audio),
+      frontierHit: audio.frontierHit.bind(audio),
       curtain: audio.curtain.bind(audio),
       onCurtainCall: () => {
         phase = "curtain";
+        root.classList.add("curtain-call");
+        stageWrap?.classList.add("curtain-call");
         render();
       },
       onCredits: (final, chain) => {
         activeCascade = null;
+        chainEl.classList.remove("live");
         showCredits(final, chain);
         render();
       },
@@ -281,6 +302,7 @@ export function bootGame(root) {
 
   root.querySelector("#btnNew").addEventListener("click", () => {
     audio.resume();
+    audio.startRoom();
     newHand();
   });
   root.querySelector("#btnClear").addEventListener("click", () => {

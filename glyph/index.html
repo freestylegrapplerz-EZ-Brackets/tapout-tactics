@@ -3,20 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06080c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<!--
-  Vertical Slice · Craftsmanship C1 — Interaction Feel
-  Sim: src/simulation.js · Renderer: src/cascadeRenderer.js
-  Frontier = lead actor. Score hidden during performance. Curtain call before credits.
--->
-<link rel="stylesheet" href="./src/theme.css?v=vs-0.4.2">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.0.0-phase1">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Vertical Slice · Craftsmanship — feel first</p>
+  <p class="sub">Vertical Slice · Phase 1 complete</p>
   <p class="hand-mode" id="handMode">Opening hand · Fire + Water only</p>
   <p class="onboard">Place runes so they touch. Tap one to spark.</p>
 
@@ -50,7 +46,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-0.4.2";
+import { bootGame } from "./src/game.js?v=vs-1.0.0-phase1";
 bootGame(document.getElementById("root"));
 </script>
 </body>

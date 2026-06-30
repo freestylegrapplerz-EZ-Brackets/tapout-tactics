@@ -1,4 +1,4 @@
-/** Web Audio — interaction comfort + frontier hope. Mechanics unchanged. */
+/** Web Audio — room comfort + frontier hope. Mechanics unchanged. */
 
 /**
  * @returns {{
@@ -7,7 +7,10 @@
  *   drop: () => void,
  *   cancel: () => void,
  *   spark: () => void,
+ *   frontierHit: (el: string, chain: number, total: number, arc: boolean) => void,
  *   curtain: (strong: boolean) => void,
+ *   startRoom: () => void,
+ *   stopRoom: () => void,
  *   setMuted: (m: boolean) => void,
  *   isMuted: () => boolean,
  *   resume: () => void,
@@ -17,6 +20,10 @@ export function createAudio() {
   let soundOn = true;
   /** @type {AudioContext|null} */
   let actx = null;
+  /** @type {OscillatorNode|null} */
+  let roomOsc = null;
+  /** @type {GainNode|null} */
+  let roomGain = null;
 
   function ctx() {
     if (!actx) {
@@ -32,6 +39,34 @@ export function createAudio() {
       if (c.state === "suspended") c.resume();
     } catch {
       /* unavailable */
+    }
+  }
+
+  function stopRoom() {
+    try {
+      roomOsc?.stop();
+    } catch {
+      /* already stopped */
+    }
+    roomOsc = null;
+    roomGain = null;
+  }
+
+  function startRoom() {
+    if (!soundOn || roomOsc) return;
+    try {
+      resume();
+      const c = ctx();
+      roomOsc = c.createOscillator();
+      roomGain = c.createGain();
+      roomOsc.type = "sine";
+      roomOsc.frequency.value = 92;
+      roomGain.gain.value = 0.012;
+      roomOsc.connect(roomGain);
+      roomGain.connect(c.destination);
+      roomOsc.start();
+    } catch {
+      stopRoom();
     }
   }
 
@@ -62,32 +97,47 @@ export function createAudio() {
   }
 
   function pick() {
-    tone(520, 0.04, 0.06, "sine");
+    tone(540, 0.035, 0.05, "sine");
   }
 
   function drop() {
-    tone(380, 0.05, 0.07, "sine");
-    window.setTimeout(() => tone(480, 0.04, 0.05, "sine"), 30);
+    tone(400, 0.045, 0.06, "sine");
+    window.setTimeout(() => tone(500, 0.035, 0.04, "sine"), 28);
   }
 
   function cancel() {
-    tone(260, 0.05, 0.04, "sine");
+    tone(270, 0.045, 0.035, "sine");
   }
 
   function spark() {
-    tone(160, 0.1, 0.09, "triangle");
-    window.setTimeout(() => tone(220, 0.08, 0.07, "triangle"), 50);
+    tone(150, 0.11, 0.075, "triangle");
+    window.setTimeout(() => tone(210, 0.09, 0.06, "triangle"), 55);
+  }
+
+  /**
+   * @param {string} el
+   * @param {number} chain
+   * @param {number} total
+   * @param {boolean} arc
+   */
+  function frontierHit(el, chain, total, arc) {
+    const types = { F: "triangle", L: "square", W: "sine", C: "sawtooth" };
+    const base = { F: 255, L: 340, W: 290, C: 375 }[el] ?? 280;
+    const pitch = base + chain * 36 + (arc ? 28 : 0);
+    const vol = 0.045 + (chain / total) * 0.05;
+    tone(pitch, 0.085, vol, /** @type {OscillatorType} */ (types[el] ?? "triangle"));
   }
 
   /** @param {boolean} strong */
   function curtain(strong) {
     if (strong) {
-      tone(392, 0.14, 0.1, "sine");
-      window.setTimeout(() => tone(587, 0.18, 0.08, "sine"), 90);
-      window.setTimeout(() => tone(784, 0.22, 0.06, "sine"), 180);
+      tone(392, 0.16, 0.08, "sine");
+      window.setTimeout(() => tone(523, 0.2, 0.065, "sine"), 100);
+      window.setTimeout(() => tone(659, 0.28, 0.05, "sine"), 200);
     } else {
-      tone(330, 0.1, 0.06, "sine");
+      tone(330, 0.12, 0.045, "sine");
     }
+    window.setTimeout(() => stopRoom(), 400);
   }
 
   return {
@@ -96,10 +146,14 @@ export function createAudio() {
     drop,
     cancel,
     spark,
+    frontierHit,
     curtain,
+    startRoom,
+    stopRoom,
     resume,
     setMuted(m) {
       soundOn = !m;
+      if (!soundOn) stopRoom();
     },
     isMuted() {
       return !soundOn;

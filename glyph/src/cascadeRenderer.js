@@ -1,6 +1,7 @@
 import {
   cellCenter,
   easeOutCubic,
+  frontierPitch,
   hopeLine,
   isArc,
   SPARK_BEAT_MS,
@@ -10,6 +11,7 @@ import {
 } from "./performance.js";
 
 /** @typedef {import("./simulation.js").CascadeStep} CascadeStep */
+/** @typedef {import("./config.js").Element} Element */
 
 /** Element stroke colors for travel lines */
 const EL_STROKE = { F: "#ff5638", L: "#ffd033", W: "#38a8ff", C: "#c05cff" };
@@ -17,13 +19,16 @@ const EL_STROKE = { F: "#ff5638", L: "#ffd033", W: "#38a8ff", C: "#c05cff" };
 /**
  * @typedef {Object} CascadeRendererOptions
  * @property {SVGSVGElement} svgEl
+ * @property {number} sparkRow
+ * @property {number} sparkCol
  * @property {(r: number, c: number) => HTMLElement|null} getCell
  * @property {(litKeys: Set<string>) => void} onLitChange
  * @property {(chain: number) => void} onChainUpdate
  * @property {(text: string, hot: boolean) => void} onHopeUpdate
  * @property {(freq: number, dur?: number, vol?: number) => void} [tone]
+ * @property {(el: Element, chain: number, total: number, arc: boolean) => void} [frontierHit]
  * @property {(strong: boolean) => void} [curtain]
- * @property {(steps: CascadeStep[]) => void} onCurtainCall
+ * @property {() => void} onCurtainCall
  * @property {(finalScore: number, chainLength: number) => void} onCredits
  */
 
@@ -56,7 +61,7 @@ export function playCascade(steps, opts) {
   }
 
   opts.onHopeUpdate("Action!", false);
-  opts.tone?.(180, 0.1, 0.07);
+  opts.tone?.(180, 0.12, 0.06);
 
   let i = 0;
 
@@ -84,21 +89,22 @@ export function playCascade(steps, opts) {
       if (cell) {
         cell.classList.remove("cold", "approaching");
         cell.classList.add("hit", "lit");
-        window.setTimeout(() => cell.classList.remove("hit"), 320);
+        window.setTimeout(() => cell.classList.remove("hit"), 340);
       }
 
       opts.onLitChange(new Set(litSet));
       opts.onChainUpdate(s.chain);
 
-      const pitch = 260 + s.chain * 42 + (s.el === "C" ? 85 : 0) + (arc ? 30 : 0);
-      const vol = 0.07 + (s.chain / total) * 0.07;
-      opts.tone?.(pitch, 0.08, vol);
+      const pitch = frontierPitch(s.el, s.chain, total, arc);
+      const vol = 0.055 + (s.chain / total) * 0.065;
+      opts.frontierHit?.(s.el, s.chain, total, arc);
+      opts.tone?.(pitch, 0.09, vol);
       if (s.combo === "steam") {
-        window.setTimeout(() => opts.tone?.(pitch * 1.35, 0.06, vol * 0.85), 45);
+        window.setTimeout(() => opts.tone?.(pitch * 1.32, 0.07, vol * 0.8), 50);
       }
 
       i++;
-      const pause = Math.max(32, stepDelay(i - 1, total) - travel);
+      const pause = Math.max(36, stepDelay(i - 1, total) - travel);
       timeoutId = window.setTimeout(playStep, pause);
     });
   }
@@ -116,7 +122,7 @@ export function playCascade(steps, opts) {
     opts.onHopeUpdate(strong ? "YES!" : chain ? "Connected." : "", strong);
     opts.curtain?.(strong);
     opts.onChainUpdate(chain);
-    opts.onCurtainCall(steps);
+    opts.onCurtainCall();
 
     timeoutId = window.setTimeout(() => {
       if (!cancelled) opts.onCredits(final, chain);
@@ -132,12 +138,8 @@ export function playCascade(steps, opts) {
     opts.svgEl.innerHTML = "";
     const { fromRow: fr, fromCol: fc, r: tr, c: tc, el } = step;
 
-    if (fr < 0) {
-      onDone();
-      return;
-    }
-
-    const a = cellCenter(fr, fc);
+    const a =
+      fr < 0 ? cellCenter(opts.sparkRow, opts.sparkCol) : cellCenter(fr, fc);
     const b = cellCenter(tr, tc);
     const stroke = EL_STROKE[el] ?? "#fff";
 
@@ -147,9 +149,9 @@ export function playCascade(steps, opts) {
     line.setAttribute("x2", String(a.x));
     line.setAttribute("y2", String(a.y));
     line.setAttribute("stroke", stroke);
-    line.setAttribute("stroke-width", "1.6");
+    line.setAttribute("stroke-width", "2");
     line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("opacity", "0.92");
+    line.setAttribute("opacity", "0.9");
     opts.svgEl.appendChild(line);
 
     const glow = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -158,10 +160,18 @@ export function playCascade(steps, opts) {
     glow.setAttribute("x2", String(a.x));
     glow.setAttribute("y2", String(a.y));
     glow.setAttribute("stroke", "#ffffff");
-    glow.setAttribute("stroke-width", "0.6");
+    glow.setAttribute("stroke-width", "0.8");
     glow.setAttribute("stroke-linecap", "round");
-    glow.setAttribute("opacity", "0.55");
+    glow.setAttribute("opacity", "0.5");
     opts.svgEl.appendChild(glow);
+
+    const head = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    head.setAttribute("cx", String(a.x));
+    head.setAttribute("cy", String(a.y));
+    head.setAttribute("r", "1.8");
+    head.setAttribute("fill", "#fff");
+    head.setAttribute("opacity", "0.95");
+    opts.svgEl.appendChild(head);
 
     const cell = opts.getCell(tr, tc);
     cell?.classList.add("approaching");
@@ -178,6 +188,8 @@ export function playCascade(steps, opts) {
       line.setAttribute("y2", String(y));
       glow.setAttribute("x2", String(x));
       glow.setAttribute("y2", String(y));
+      head.setAttribute("cx", String(x));
+      head.setAttribute("cy", String(y));
       if (raw < 1) {
         rafId = requestAnimationFrame(frame);
       } else {
