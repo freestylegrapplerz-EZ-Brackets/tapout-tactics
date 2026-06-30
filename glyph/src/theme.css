@@ -84,10 +84,10 @@ body.is-dragging {
   padding-top: max(var(--space-lg), env(safe-area-inset-top));
 }
 
-.wrap.performance .controls,
-.wrap.performance #hand,
-.wrap.performance .onboard,
-.wrap.performance #msg {
+.wrap.cascade-active .controls,
+.wrap.cascade-active #hand,
+.wrap.cascade-active .onboard,
+.wrap.cascade-active #msg {
   opacity: 0.55;
   pointer-events: none;
   transition: opacity var(--dur-med) var(--ease-out);
@@ -546,7 +546,7 @@ button.primary {
   display: none;
 }
 
-.perf-mode.performance .credits {
+.perf-mode .credits.show {
   display: block;
 }
 

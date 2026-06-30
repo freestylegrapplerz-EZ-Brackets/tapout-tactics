@@ -11,7 +11,7 @@ import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import { getActivePerformance, handFromElements } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.0.0-phase1";
+export const VERSION = "vs-1.0.1-phase1";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
@@ -116,7 +116,7 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = null;
     coldTaxonomy = null;
-    root.classList.remove("performance", "curtain-call");
+    root.classList.remove("performance", "curtain-call", "cascade-active");
     stageWrap?.classList.remove("curtain-call");
     creditsEl.classList.remove("show");
     chainEl.textContent = "—";
@@ -210,7 +210,7 @@ export function bootGame(root) {
     audio.startRoom();
     phase = "resolving";
     sel = null;
-    root.classList.add("performance");
+    root.classList.add("performance", "cascade-active");
     creditsEl.classList.remove("show");
     litSet = new Set();
     sparkOriginKey = `${sr},${sc}`;
@@ -277,6 +277,8 @@ export function bootGame(root) {
 
   function showCredits(final, chain) {
     phase = "done";
+    root.classList.remove("cascade-active", "curtain-call");
+    stageWrap?.classList.remove("curtain-call");
     if (final > best) best = final;
     scoreEl.textContent = String(final);
     const hit = final >= target;
