@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.3.0-training-levels">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.4.0-encounter-run">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Training · Basics → Real Game</p>
+  <p class="sub">Training · Encounters · Random Hand</p>
   <p class="path-step" id="pathStep">Level 1 of 12 · Basics</p>
   <p class="hand-mode" id="handMode">Connection · build a chain</p>
   <p class="onboard">Fill the gap between the Fires — then spark the left one.</p>
@@ -33,7 +33,8 @@
   <div id="hand"></div>
 
   <div class="controls">
-    <button class="primary" id="btnPath">Restart Training</button>
+    <button class="primary" id="btnPath">Training</button>
+    <button class="primary" id="btnCampaign">Encounter Run</button>
     <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
     <button id="btnMute" aria-label="Toggle sound">🔊 Sound</button>
@@ -52,7 +53,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.3.0-training-levels";
+import { bootGame } from "./src/game.js?v=vs-1.4.0-encounter-run";
 bootGame(document.getElementById("root"));
 </script>
 </body>

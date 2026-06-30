@@ -19,13 +19,26 @@ import {
   targetForPerformance,
   trainingLevelIndex,
 } from "./performances.js";
+import {
+  ENCOUNTER_RUN,
+  applyEncounterPreset,
+  anchorKeyForEncounter,
+  blockedKeysForEncounter,
+  evaluateEncounter,
+  lockedKeysForEncounter,
+  nextEncounter,
+  encounterIndex,
+} from "./encounters.js";
+
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.3.0-training-levels";
+export const VERSION = "vs-1.4.0-encounter-run";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
+const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
 
 /** @typedef {import("./config.js").Element} Element */
+/** @typedef {import("./encounters.js").Encounter} Encounter */
 /** @typedef {import("./performances.js").Performance} Performance */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
 
@@ -46,6 +59,18 @@ export function bootGame(root) {
   /** @type {Performance|null} */
   let currentPerformance = TRAINING_LEVELS[0];
   let trainingMode = true;
+  let encounterMode = false;
+  /** @type {Encounter|null} */
+  let currentEncounter = null;
+  /** @type {Set<string>} */
+  let blockedKeys = new Set();
+  /** @type {string|null} */
+  let anchorKey = null;
+  /** @type {(Element|null)[][]|null} */
+  let gridAtSpark = null;
+  /** @type {import("./simulation.js").CascadeResult|null} */
+  let lastCascadeResult = null;
+  let lastEncounterWon = false;
   /** @type {Set<string>} */
   let lockedKeys = new Set();
   /** @type {Set<string>} */
@@ -102,6 +127,31 @@ export function bootGame(root) {
     }
   }
 
+  function loadCampaignProgress() {
+    try {
+      const raw = localStorage.getItem(CAMPAIGN_PROGRESS_KEY);
+      if (raw == null) return 0;
+      const idx = parseInt(raw, 10);
+      if (!Number.isFinite(idx) || idx < 0) return 0;
+      return Math.min(idx, ENCOUNTER_RUN.length);
+    } catch {
+      return 0;
+    }
+  }
+
+  function saveCampaignProgress(index) {
+    try {
+      localStorage.setItem(CAMPAIGN_PROGRESS_KEY, String(index));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function persistCampaignProgress() {
+    if (!encounterMode || !currentEncounter) return;
+    saveCampaignProgress(encounterIndex(currentEncounter.id));
+  }
+
   function persistCurrentLevel() {
     if (!trainingMode || !currentPerformance) return;
     saveTrainingProgress(trainingLevelIndex(currentPerformance.id));
@@ -111,23 +161,45 @@ export function bootGame(root) {
 
   function updateTargetDisplay() {
     if (!targetEl) return;
-    targetEl.textContent =
-      phase === "build" || phase === "done" ? `Target ${target}` : "";
+    if (phase !== "build" && phase !== "done") {
+      targetEl.textContent = "";
+      return;
+    }
+    if (encounterMode && currentEncounter) {
+      targetEl.textContent = currentEncounter.objectiveLabel;
+      return;
+    }
+    targetEl.textContent = phase === "build" || phase === "done" ? `Target ${target}` : "";
   }
 
   function updateModeCopy() {
     if (handModeEl) {
-      handModeEl.textContent = currentPerformance
-        ? currentPerformance.label
-        : "Random hand · all four elements";
+      if (encounterMode && currentEncounter) {
+        handModeEl.textContent = currentEncounter.boss
+          ? `Boss · ${currentEncounter.name}`
+          : `Encounter · ${currentEncounter.name}`;
+      } else {
+        handModeEl.textContent = currentPerformance
+          ? currentPerformance.label
+          : "Random hand · all four elements";
+      }
     }
     if (pathStepEl) {
-      if (trainingMode && currentPerformance) {
-        const idx = trainingLevelIndex(currentPerformance.id);
-        const phase = phaseLabel(currentPerformance.phase);
+      if (encounterMode && currentEncounter) {
+        const idx = encounterIndex(currentEncounter.id);
         pathStepEl.textContent =
           idx >= 0
-            ? `Level ${idx + 1} of ${TRAINING_LEVELS.length} · ${phase}`
+            ? `Encounter ${idx + 1} of ${ENCOUNTER_RUN.length}${
+                currentEncounter.boss ? " · Boss" : ""
+              }`
+            : "";
+        pathStepEl.hidden = idx < 0;
+      } else if (trainingMode && currentPerformance) {
+        const idx = trainingLevelIndex(currentPerformance.id);
+        const phaseName = phaseLabel(currentPerformance.phase);
+        pathStepEl.textContent =
+          idx >= 0
+            ? `Level ${idx + 1} of ${TRAINING_LEVELS.length} · ${phaseName}`
             : "";
         pathStepEl.hidden = idx < 0;
       } else {
@@ -136,16 +208,24 @@ export function bootGame(root) {
       }
     }
     if (onboardEl) {
-      onboardEl.textContent = currentPerformance
-        ? currentPerformance.invite
-        : "Place runes so they touch. Beat the target. Tap one to spark.";
+      if (encounterMode && currentEncounter) {
+        onboardEl.textContent = currentEncounter.invite;
+      } else {
+        onboardEl.textContent = currentPerformance
+          ? currentPerformance.invite
+          : "Place runes so they touch. Beat the target. Tap one to spark.";
+      }
     }
   }
 
   function updateCreditsActions() {
     if (synergyTipEl) {
-      if (trainingMode && currentPerformance?.synergyTip) {
-        synergyTipEl.textContent = currentPerformance.synergyTip;
+      const tip =
+        (encounterMode && currentEncounter?.tip) ||
+        (trainingMode && currentPerformance?.synergyTip) ||
+        "";
+      if (tip) {
+        synergyTipEl.textContent = tip;
         synergyTipEl.hidden = false;
       } else {
         synergyTipEl.textContent = "";
@@ -153,14 +233,22 @@ export function bootGame(root) {
       }
     }
     if (btnNextLesson) {
-      const next =
-        trainingMode && currentPerformance
-          ? nextTrainingLevel(currentPerformance.id)
-          : null;
-      const graduating =
-        trainingMode && currentPerformance && isGraduationLevel(currentPerformance);
-      btnNextLesson.hidden = !next && !graduating;
-      btnNextLesson.textContent = graduating ? "Play for real →" : "Next level →";
+      if (encounterMode && currentEncounter) {
+        const next = nextEncounter(currentEncounter.id);
+        const showAdvance =
+          lastEncounterWon && (next != null || currentEncounter.boss);
+        btnNextLesson.hidden = !showAdvance;
+        btnNextLesson.textContent = currentEncounter.boss
+          ? "Continue to Random Hand →"
+          : "Next encounter →";
+      } else if (trainingMode && currentPerformance) {
+        const next = nextTrainingLevel(currentPerformance.id);
+        const graduating = isGraduationLevel(currentPerformance);
+        btnNextLesson.hidden = !next && !graduating;
+        btnNextLesson.textContent = graduating ? "Play for real →" : "Next level →";
+      } else {
+        btnNextLesson.hidden = true;
+      }
     }
   }
 
@@ -174,6 +262,10 @@ export function bootGame(root) {
 
   /** @param {Performance} perf @param {{ resetBest?: boolean }} [opts] */
   function loadPerformance(perf, opts = {}) {
+    encounterMode = false;
+    currentEncounter = null;
+    blockedKeys = new Set();
+    anchorKey = null;
     currentPerformance = perf;
     hand = handFromElements(perf.handElements);
     target = targetForPerformance(perf);
@@ -221,10 +313,72 @@ export function bootGame(root) {
     });
   }
 
+  /** @param {Encounter} enc @param {{ resetBest?: boolean }} [opts] */
+  function loadEncounter(enc, opts = {}) {
+    trainingMode = false;
+    encounterMode = true;
+    currentPerformance = null;
+    currentEncounter = enc;
+    hand = handFromElements(enc.handElements);
+    target = enc.objective.value ?? 0;
+    if (opts.resetBest !== false) best = 0;
+    lockedKeys = lockedKeysForEncounter(enc);
+    blockedKeys = blockedKeysForEncounter(enc);
+    anchorKey = anchorKeyForEncounter(enc);
+
+    activeCascade?.cancel();
+    activeCascade = null;
+    grid = emptyGrid();
+    applyEncounterPreset(enc, grid);
+    hand.forEach((h) => (h.used = false));
+    sel = null;
+    phase = "build";
+    litSet = new Set();
+    sparkOriginKey = null;
+    coldTaxonomy = null;
+    gridAtSpark = null;
+    lastCascadeResult = null;
+    root.classList.remove("performance", "curtain-call", "cascade-active");
+    stageWrap?.classList.remove("curtain-call");
+    creditsEl.classList.remove("show");
+    if (synergyTipEl) synergyTipEl.hidden = true;
+    if (btnNextLesson) btnNextLesson.hidden = true;
+    chainEl.textContent = "—";
+    chainEl.classList.remove("live");
+    scoreEl.textContent = "0";
+    metaEl.textContent = "";
+    svgEl.innerHTML = "";
+
+    if (enc.handElements.length === 0) {
+      setHope(
+        enc.boss ? "The Warden waits — tap a rune to strike." : "Board is ready — tap a rune to spark.",
+        false,
+      );
+      msgEl.textContent = "Tap a rune on the board to start the chain.";
+    } else {
+      setHope("Place runes. Tap one to call Action.", false);
+      msgEl.textContent =
+        "Drag a rune onto the board — or hold a placed rune to pick it up.";
+    }
+
+    updateModeCopy();
+    updateTargetDisplay();
+    render();
+    persistCampaignProgress();
+    console.info("[glyph:encounter]", {
+      version: VERSION,
+      encounterId: enc.id,
+      boss: !!enc.boss,
+    });
+  }
+
   function newHand() {
     currentPerformance = null;
+    currentEncounter = null;
     trainingMode = false;
-    lockedKeys = new Set();
+    encounterMode = false;
+    blockedKeys = new Set();
+    anchorKey = null;
     hand = createHand();
     target = computeTarget(hand);
     best = 0;
@@ -264,6 +418,10 @@ export function bootGame(root) {
   }
 
   function clearBoard() {
+    if (currentEncounter) {
+      loadEncounter(currentEncounter, { resetBest: false });
+      return;
+    }
     if (currentPerformance) {
       loadPerformance(currentPerformance, { resetBest: false });
       return;
@@ -286,10 +444,12 @@ export function bootGame(root) {
     for (let r = 0; r < SIZE; r++) {
       for (let c = 0; c < SIZE; c++) {
         const cell = document.createElement("div");
-        const v = grid[r][c];
         const k = `${r},${c}`;
-        let cls = `cell ${v || "empty"}`;
+        const blocked = blockedKeys.has(k);
+        const v = blocked ? null : grid[r][c];
+        let cls = blocked ? "cell blocked" : `cell ${v || "empty"}`;
         if (lockedKeys.has(k)) cls += " locked";
+        if (anchorKey === k && phase === "build") cls += " anchor";
         if (v && phase === "build") cls += " spark-ready";
         if (sparkOriginKey === k) cls += " spark-origin";
         if (litSet.has(k)) {
@@ -304,8 +464,10 @@ export function bootGame(root) {
         }
         cell.className = cls;
         cell.id = `cell-${r}-${c}`;
-        cell.textContent = v || "";
+        cell.textContent = blocked ? "▪" : v || "";
         if (v) cell.setAttribute("aria-label", ELEMENT_LABELS[v]);
+        else if (blocked) cell.setAttribute("aria-label", "Blocked stone");
+        else if (anchorKey === k) cell.setAttribute("aria-label", "Objective anchor");
         boardEl.appendChild(cell);
       }
     }
@@ -314,7 +476,7 @@ export function bootGame(root) {
 
   function placeFromHand(handIndex, r, c) {
     if (phase !== "build" || hand[handIndex]?.used || grid[r][c]) return false;
-    if (lockedKeys.has(`${r},${c}`)) return false;
+    if (lockedKeys.has(`${r},${c}`) || blockedKeys.has(`${r},${c}`)) return false;
     grid[r][c] = hand[handIndex].el;
     hand[handIndex].used = true;
     sel = null;
@@ -340,7 +502,7 @@ export function bootGame(root) {
   }
 
   function onEmptyTap(r, c) {
-    if (phase !== "build" || grid[r][c]) return;
+    if (phase !== "build" || grid[r][c] || blockedKeys.has(`${r},${c}`)) return;
     if (sel === null) {
       setHope("Pick a rune from your hand first.", false);
       return;
@@ -362,15 +524,19 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = `${sr},${sc}`;
     chainEl.classList.add("live");
+    gridAtSpark = grid.map((row) => row.slice());
     render();
 
-    const { steps, finalScore, chainLength } = simulateCascade(grid, sr, sc);
+    const cascadeResult = simulateCascade(grid, sr, sc);
+    lastCascadeResult = cascadeResult;
+    const { steps, finalScore, chainLength } = cascadeResult;
     const aftermath = analyzeAftermath(grid, sr, sc, steps);
     coldTaxonomy = aftermath.coldTaxonomy;
 
     console.info("[glyph:spark]", {
       version: VERSION,
       performanceId: currentPerformance?.id ?? "random",
+      encounterId: currentEncounter?.id ?? null,
       sparkOrigin: [sr, sc],
       chainLength,
       litCount: steps.length,
@@ -428,6 +594,21 @@ export function bootGame(root) {
     stageWrap?.classList.remove("curtain-call");
     if (final > best) best = final;
     scoreEl.textContent = String(final);
+
+    if (encounterMode && currentEncounter && lastCascadeResult && gridAtSpark) {
+      const won = evaluateEncounter(currentEncounter, lastCascadeResult, gridAtSpark);
+      lastEncounterWon = won;
+      metaEl.textContent =
+        (won ? currentEncounter.victoryLine : currentEncounter.defeatLine) +
+        ` · ${chain}-rune chain · Scored ${final}`;
+      creditsEl.classList.add("show");
+      persistCampaignProgress();
+      updateCreditsActions();
+      updateTargetDisplay();
+      return;
+    }
+
+    lastEncounterWon = false;
     const hit = final >= target;
     if (trainingMode) {
       metaEl.textContent =
@@ -460,6 +641,33 @@ export function bootGame(root) {
       return;
     }
     loadPerformance(TRAINING_LEVELS[idx]);
+  }
+
+  function startEncounterRun(reset = false) {
+    if (reset) saveCampaignProgress(0);
+    const idx = reset ? 0 : loadCampaignProgress();
+    if (idx >= ENCOUNTER_RUN.length) {
+      newHand();
+      msgEl.textContent = "Campaign complete — Random Hand awaits.";
+      return;
+    }
+    loadEncounter(ENCOUNTER_RUN[idx]);
+  }
+
+  function advanceEncounter() {
+    if (!currentEncounter) return;
+    if (currentEncounter.boss) {
+      saveCampaignProgress(ENCOUNTER_RUN.length);
+      newHand();
+      setHope("The stage is yours.", false);
+      msgEl.textContent =
+        "Campaign complete — you broke the Warden. Random Hand is where the run continues.";
+      return;
+    }
+    const next = nextEncounter(currentEncounter.id);
+    if (!next) return;
+    loadEncounter(next);
+    saveCampaignProgress(encounterIndex(next.id));
   }
 
   function advanceTraining() {
@@ -518,7 +726,12 @@ export function bootGame(root) {
   });
   btnNextLesson?.addEventListener("click", () => {
     audio.resume();
-    advanceTraining();
+    if (encounterMode) advanceEncounter();
+    else advanceTraining();
+  });
+  root.querySelector("#btnCampaign")?.addEventListener("click", () => {
+    audio.resume();
+    startEncounterRun(false);
   });
 
   muteBtn.addEventListener("click", () => {
