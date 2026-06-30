@@ -2,13 +2,21 @@
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {"good"|"great"|"excellent"} PopTier */
 
+const GRID = 5;
+
 /**
- * Score pop color tier — green good, orange great, yellow excellent.
- * @param {CascadeStep} step
- * @param {number} prevMult multiplier before this step
- * @param {number} total chain length
- * @returns {PopTier}
+ * @param {HTMLElement} fxLayer
+ * @param {number} row
+ * @param {number} col
+ * @param {HTMLElement} el
+ * @param {number} [yOffsetPct]
  */
+export function placeOnGrid(fxLayer, row, col, el, yOffsetPct = 0) {
+  el.style.left = `${((col + 0.5) / GRID) * 100}%`;
+  el.style.top = `${((row + 0.5) / GRID) * 100 + yOffsetPct}%`;
+}
+
+/** @param {CascadeStep} step @param {number} prevMult @param {number} total @returns {PopTier} */
 export function popTier(step, prevMult, total) {
   if (step.el === "C") return "excellent";
   if (step.combo === "steam" && step.gain >= 28) return "excellent";
@@ -31,20 +39,6 @@ export function elementFxName(el) {
 }
 
 /**
- * @param {HTMLElement} fxLayer
- * @param {HTMLElement} cell
- * @param {HTMLElement} el
- * @param {number} [topOffset]
- */
-export function placeFxOnCell(fxLayer, cell, el, topOffset = 0) {
-  const lr = fxLayer.getBoundingClientRect();
-  const cr = cell.getBoundingClientRect();
-  el.style.left = `${cr.left - lr.left + cr.width / 2}px`;
-  el.style.top = `${cr.top - lr.top + topOffset}px`;
-}
-
-/**
- * Floating gain + multiplier feedback — rendered on #fxLayer so clip-path cells don't hide them.
  * @param {HTMLElement|null} fxLayer
  * @param {HTMLElement|null} cell
  * @param {CascadeStep} step
@@ -52,22 +46,21 @@ export function placeFxOnCell(fxLayer, cell, el, topOffset = 0) {
  * @param {number} total
  */
 export function spawnStepFeedback(fxLayer, cell, step, prevMult, total) {
-  if (!fxLayer || !cell) return;
+  if (!fxLayer) return;
 
+  const { r, c } = step;
   const fx = elementFxName(step.el);
 
   const burst = document.createElement("div");
   burst.className = `fx-burst burst-${fx}${step.combo === "steam" ? " burst-steam" : ""}`;
-  placeFxOnCell(fxLayer, cell, burst, cell.offsetHeight / 2);
+  placeOnGrid(fxLayer, r, c, burst);
   burst.style.transform = "translate(-50%, -50%)";
-  burst.style.width = `${cell.offsetWidth}px`;
-  burst.style.height = `${cell.offsetHeight}px`;
   fxLayer.appendChild(burst);
-  window.setTimeout(() => burst.remove(), 720);
+  window.setTimeout(() => burst.remove(), 900);
 
-  if (step.combo === "steam") {
+  if (cell && step.combo === "steam") {
     cell.classList.add("fx-steam");
-    window.setTimeout(() => cell.classList.remove("fx-steam"), 620);
+    window.setTimeout(() => cell.classList.remove("fx-steam"), 700);
   }
 
   const tier = popTier(step, prevMult, total);
@@ -75,18 +68,18 @@ export function spawnStepFeedback(fxLayer, cell, step, prevMult, total) {
   pop.className = `cascade-pop pop-${tier}`;
   pop.textContent = `+${step.gain}`;
   pop.setAttribute("aria-hidden", "true");
-  placeFxOnCell(fxLayer, cell, pop, -4);
+  placeOnGrid(fxLayer, r, c, pop, -6);
   fxLayer.appendChild(pop);
-  window.setTimeout(() => pop.remove(), 1100);
+  window.setTimeout(() => pop.remove(), 1400);
 
   if (shouldShowMultPop(step, prevMult)) {
     const mult = document.createElement("span");
     mult.className = "cascade-mult";
     mult.textContent = `×${step.mult.toFixed(2)}`;
     mult.setAttribute("aria-hidden", "true");
-    placeFxOnCell(fxLayer, cell, mult, cell.offsetHeight * 0.38);
+    placeOnGrid(fxLayer, r, c, mult, 5);
     fxLayer.appendChild(mult);
-    window.setTimeout(() => mult.remove(), 1300);
+    window.setTimeout(() => mult.remove(), 1600);
   }
 
   if (step.combo === "steam") {
@@ -94,9 +87,9 @@ export function spawnStepFeedback(fxLayer, cell, step, prevMult, total) {
     tag.className = "cascade-tag tag-steam";
     tag.textContent = "STEAM";
     tag.setAttribute("aria-hidden", "true");
-    placeFxOnCell(fxLayer, cell, tag, -18);
+    placeOnGrid(fxLayer, r, c, tag, -12);
     fxLayer.appendChild(tag);
-    window.setTimeout(() => tag.remove(), 1000);
+    window.setTimeout(() => tag.remove(), 1200);
   }
 
   if (step.el === "C") {
@@ -104,9 +97,9 @@ export function spawnStepFeedback(fxLayer, cell, step, prevMult, total) {
     tag.className = "cascade-tag tag-crystal";
     tag.textContent = "SURGE";
     tag.setAttribute("aria-hidden", "true");
-    placeFxOnCell(fxLayer, cell, tag, -18);
+    placeOnGrid(fxLayer, r, c, tag, -12);
     fxLayer.appendChild(tag);
-    window.setTimeout(() => tag.remove(), 1000);
+    window.setTimeout(() => tag.remove(), 1200);
   }
 }
 
@@ -116,11 +109,7 @@ export function clearFxLayer(fxLayer) {
   fxLayer.innerHTML = "";
 }
 
-/**
- * Deterministic zigzag for lightning travel (no RNG at Spark).
- * @param {number} x1 @param {number} y1 @param {number} x2 @param {number} y2
- * @param {number} seed
- */
+/** @param {number} x1 @param {number} y1 @param {number} x2 @param {number} y2 @param {number} seed */
 export function lightningPoints(x1, y1, x2, y2, seed) {
   const segments = 5;
   /** @type {[number, number][]} */
@@ -132,4 +121,16 @@ export function lightningPoints(x1, y1, x2, y2, seed) {
   }
   pts.push([x2, y2]);
   return pts;
+}
+
+/** Re-export for game boot — creates layer if cached HTML is stale. */
+export function ensureFxLayer(stageWrap) {
+  let el = stageWrap.querySelector("#fxLayer");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "fxLayer";
+    el.setAttribute("aria-hidden", "true");
+    stageWrap.appendChild(el);
+  }
+  return /** @type {HTMLDivElement} */ (el);
 }

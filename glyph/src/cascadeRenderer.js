@@ -8,13 +8,15 @@ import {
   CURTAIN_HOLD_MS,
   stepDelay,
   travelDuration,
-} from "./performance.js?v=vs-1.4.2-cascade-fx";
+} from "./performance.js";
 import {
   clearFxLayer,
   elementFxName,
   lightningPoints,
   spawnStepFeedback,
-} from "./cascadeFx.js?v=vs-1.4.2-cascade-fx";
+} from "./cascadeFx.js";
+
+export { clearFxLayer, ensureFxLayer } from "./cascadeFx.js";
 
 /** @typedef {import("./simulation.js").CascadeStep} CascadeStep */
 /** @typedef {import("./config.js").Element} Element */
@@ -205,7 +207,7 @@ export function playCascade(steps, opts) {
       line.setAttribute("x2", String(a.x));
       line.setAttribute("y2", String(a.y));
       line.setAttribute("stroke", stroke);
-      line.setAttribute("stroke-width", el === "F" ? "2.6" : el === "C" ? "2.2" : "2");
+      line.setAttribute("stroke-width", el === "F" ? "3.8" : el === "C" ? "3.2" : el === "L" ? "3" : "2.6");
       line.setAttribute("stroke-linecap", "round");
       line.setAttribute("opacity", "0.92");
       if (el === "F") line.classList.add("travel-fire");

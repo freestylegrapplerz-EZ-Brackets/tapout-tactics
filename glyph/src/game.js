@@ -5,7 +5,7 @@ import {
   emptyGrid,
   simulateCascade,
 } from "./simulation.js";
-import { playCascade } from "./cascadeRenderer.js?v=vs-1.4.2-cascade-fx";
+import { playCascade, clearFxLayer, ensureFxLayer } from "./cascadeRenderer.js?v=vs-1.5.0-cascade-fx";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import {
@@ -29,10 +29,9 @@ import {
   nextEncounter,
   encounterIndex,
 } from "./encounters.js";
+import { attachInteractions } from "./interaction.js";
 
-import { clearFxLayer } from "./cascadeFx.js?v=vs-1.4.2-cascade-fx";
-
-export const VERSION = "vs-1.4.2-cascade-fx";
+export const VERSION = "vs-1.5.0-cascade-fx";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -87,8 +86,8 @@ export function bootGame(root) {
   const boardEl = /** @type {HTMLDivElement} */ (root.querySelector("#board"));
   const handEl = /** @type {HTMLDivElement} */ (root.querySelector("#hand"));
   const stageWrap = /** @type {HTMLDivElement} */ (root.querySelector(".stage-wrap"));
+  const fxLayerEl = ensureFxLayer(stageWrap);
   const svgEl = /** @type {SVGSVGElement} */ (root.querySelector("#travelSvg"));
-  const fxLayerEl = /** @type {HTMLDivElement} */ (root.querySelector("#fxLayer"));
   const chainEl = /** @type {HTMLDivElement} */ (root.querySelector("#vChain"));
   const hopeEl = /** @type {HTMLDivElement} */ (root.querySelector("#vHope"));
   const targetEl = /** @type {HTMLDivElement|null} */ (root.querySelector("#vTarget"));
