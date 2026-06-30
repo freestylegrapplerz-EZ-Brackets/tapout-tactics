@@ -9,6 +9,11 @@ import {
   stepDelay,
   travelDuration,
 } from "./performance.js";
+import {
+  elementFxName,
+  lightningPoints,
+  spawnStepFeedback,
+} from "./cascadeFx.js";
 
 /** @typedef {import("./simulation.js").CascadeStep} CascadeStep */
 /** @typedef {import("./config.js").Element} Element */
@@ -52,6 +57,7 @@ export function playCascade(steps, opts) {
     if (timeoutId) clearTimeout(timeoutId);
     if (rafId != null) cancelAnimationFrame(rafId);
     opts.svgEl.innerHTML = "";
+    document.querySelectorAll(".cascade-pop, .cascade-mult, .cascade-tag").forEach((el) => el.remove());
   }
 
   if (!total) {
@@ -78,10 +84,11 @@ export function playCascade(steps, opts) {
     const arc = isArc(s.fromRow, s.fromCol, s.r, s.c);
     const travel = travelDuration(i, total, arc);
     const hot = s.chain >= 2;
+    const prevMult = i > 0 ? steps[i - 1].mult : 1;
 
     opts.onHopeUpdate(hopeLine(s.chain, total, s.combo, s.el), hot);
 
-    drawTravel(s, travel, () => {
+    drawTravel(s, travel, arc, () => {
       if (cancelled) return;
 
       litSet.add(`${s.r},${s.c}`);
@@ -89,6 +96,7 @@ export function playCascade(steps, opts) {
       if (cell) {
         cell.classList.remove("cold", "approaching");
         cell.classList.add("hit", "lit");
+        spawnStepFeedback(cell, s, prevMult, total);
         window.setTimeout(() => cell.classList.remove("hit"), 340);
       }
 
@@ -101,6 +109,9 @@ export function playCascade(steps, opts) {
       opts.tone?.(pitch, 0.09, vol);
       if (s.combo === "steam") {
         window.setTimeout(() => opts.tone?.(pitch * 1.32, 0.07, vol * 0.8), 50);
+      }
+      if (s.el === "C") {
+        window.setTimeout(() => opts.tone?.(pitch * 1.18, 0.08, vol * 0.9), 40);
       }
 
       i++;
@@ -132,9 +143,10 @@ export function playCascade(steps, opts) {
   /**
    * @param {CascadeStep} step
    * @param {number} dur
+   * @param {boolean} arc
    * @param {() => void} onDone
    */
-  function drawTravel(step, dur, onDone) {
+  function drawTravel(step, dur, arc, onDone) {
     opts.svgEl.innerHTML = "";
     const { fromRow: fr, fromCol: fc, r: tr, c: tc, el } = step;
 
@@ -142,17 +154,10 @@ export function playCascade(steps, opts) {
       fr < 0 ? cellCenter(opts.sparkRow, opts.sparkCol) : cellCenter(fr, fc);
     const b = cellCenter(tr, tc);
     const stroke = EL_STROKE[el] ?? "#fff";
+    const fx = elementFxName(el);
 
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", String(a.x));
-    line.setAttribute("y1", String(a.y));
-    line.setAttribute("x2", String(a.x));
-    line.setAttribute("y2", String(a.y));
-    line.setAttribute("stroke", stroke);
-    line.setAttribute("stroke-width", "2");
-    line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("opacity", "0.9");
-    opts.svgEl.appendChild(line);
+    /** @type {SVGElement|null} */
+    let travelShape = null;
 
     const glow = document.createElementNS("http://www.w3.org/2000/svg", "line");
     glow.setAttribute("x1", String(a.x));
@@ -160,21 +165,77 @@ export function playCascade(steps, opts) {
     glow.setAttribute("x2", String(a.x));
     glow.setAttribute("y2", String(a.y));
     glow.setAttribute("stroke", "#ffffff");
-    glow.setAttribute("stroke-width", "0.8");
+    glow.setAttribute("stroke-width", "0.7");
     glow.setAttribute("stroke-linecap", "round");
-    glow.setAttribute("opacity", "0.5");
-    opts.svgEl.appendChild(glow);
+    glow.setAttribute("opacity", "0.45");
+
+    if (el === "L" && arc) {
+      const pts = lightningPoints(a.x, a.y, a.x, a.y, tr * 5 + tc);
+      const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      poly.setAttribute("points", pts.map(([x, y]) => `${x},${y}`).join(" "));
+      poly.setAttribute("fill", "none");
+      poly.setAttribute("stroke", stroke);
+      poly.setAttribute("stroke-width", "2.2");
+      poly.setAttribute("stroke-linecap", "round");
+      poly.setAttribute("stroke-linejoin", "round");
+      poly.setAttribute("opacity", "0.95");
+      poly.classList.add("travel-lightning");
+      travelShape = poly;
+      opts.svgEl.appendChild(travelShape);
+      opts.svgEl.appendChild(glow);
+    } else if (el === "W") {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", String(a.x));
+      line.setAttribute("y1", String(a.y));
+      line.setAttribute("x2", String(a.x));
+      line.setAttribute("y2", String(a.y));
+      line.setAttribute("stroke", stroke);
+      line.setAttribute("stroke-width", "1.4");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("opacity", "0.55");
+      travelShape = line;
+      opts.svgEl.appendChild(travelShape);
+      opts.svgEl.appendChild(glow);
+    } else {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", String(a.x));
+      line.setAttribute("y1", String(a.y));
+      line.setAttribute("x2", String(a.x));
+      line.setAttribute("y2", String(a.y));
+      line.setAttribute("stroke", stroke);
+      line.setAttribute("stroke-width", el === "F" ? "2.6" : el === "C" ? "2.2" : "2");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("opacity", "0.92");
+      if (el === "F") line.classList.add("travel-fire");
+      if (el === "C") line.classList.add("travel-crystal");
+      travelShape = line;
+      opts.svgEl.appendChild(travelShape);
+      opts.svgEl.appendChild(glow);
+    }
 
     const head = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     head.setAttribute("cx", String(a.x));
     head.setAttribute("cy", String(a.y));
-    head.setAttribute("r", "1.8");
-    head.setAttribute("fill", "#fff");
+    head.setAttribute("r", el === "F" ? "2.2" : "1.8");
+    head.setAttribute("fill", el === "F" ? "#ff8844" : "#fff");
     head.setAttribute("opacity", "0.95");
     opts.svgEl.appendChild(head);
 
+    if (el === "F") {
+      for (let p = 0; p < 3; p++) {
+        const ember = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        ember.setAttribute("cx", String(a.x));
+        ember.setAttribute("cy", String(a.y));
+        ember.setAttribute("r", "0.9");
+        ember.setAttribute("fill", "#ffaa55");
+        ember.setAttribute("opacity", "0.7");
+        ember.classList.add("travel-ember");
+        opts.svgEl.appendChild(ember);
+      }
+    }
+
     const cell = opts.getCell(tr, tc);
-    cell?.classList.add("approaching");
+    cell?.classList.add("approaching", `approach-${fx}`);
 
     const t0 = performance.now();
 
@@ -184,16 +245,40 @@ export function playCascade(steps, opts) {
       const t = easeOutCubic(raw);
       const x = a.x + (b.x - a.x) * t;
       const y = a.y + (b.y - a.y) * t;
-      line.setAttribute("x2", String(x));
-      line.setAttribute("y2", String(y));
-      glow.setAttribute("x2", String(x));
-      glow.setAttribute("y2", String(y));
+
+      if (travelShape instanceof SVGLineElement) {
+        travelShape.setAttribute("x2", String(x));
+        travelShape.setAttribute("y2", String(y));
+        glow.setAttribute("x2", String(x));
+        glow.setAttribute("y2", String(y));
+      } else if (travelShape instanceof SVGPolylineElement) {
+        const pts = lightningPoints(a.x, a.y, x, y, tr * 5 + tc + Math.floor(t * 3));
+        travelShape.setAttribute("points", pts.map(([px, py]) => `${px},${py}`).join(" "));
+        glow.setAttribute("x2", String(x));
+        glow.setAttribute("y2", String(y));
+      }
+
       head.setAttribute("cx", String(x));
       head.setAttribute("cy", String(y));
+
+      document.querySelectorAll(".travel-ember").forEach((ember, idx) => {
+        const lag = (idx + 1) * 0.08;
+        const et = Math.max(0, t - lag);
+        ember.setAttribute("cx", String(a.x + (b.x - a.x) * et));
+        ember.setAttribute("cy", String(a.y + (b.y - a.y) * et - et * 2));
+        ember.setAttribute("opacity", String(0.75 * (1 - et)));
+      });
+
       if (raw < 1) {
         rafId = requestAnimationFrame(frame);
       } else {
-        cell?.classList.remove("approaching");
+        cell?.classList.remove(
+          "approaching",
+          "approach-fire",
+          "approach-lightning",
+          "approach-water",
+          "approach-crystal",
+        );
         opts.svgEl.innerHTML = "";
         onDone();
       }

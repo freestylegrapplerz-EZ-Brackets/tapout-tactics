@@ -5,6 +5,6 @@
   "type": "module",
   "description": "GLYPH Vertical Slice — Hope Contract production build",
   "scripts": {
-    "test": "node --test src/simulation.test.js src/performance.test.js src/aftermath.test.js src/performances.test.js src/encounters.test.js"
+    "test": "node --test src/simulation.test.js src/performance.test.js src/aftermath.test.js src/performances.test.js src/encounters.test.js src/cascadeFx.test.js"
   }
 }

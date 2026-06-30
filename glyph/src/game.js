@@ -32,7 +32,7 @@ import {
 
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.4.0-encounter-run";
+export const VERSION = "vs-1.4.1-cascade-fx";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
