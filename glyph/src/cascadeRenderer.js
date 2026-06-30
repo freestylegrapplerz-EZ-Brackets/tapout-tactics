@@ -79,7 +79,7 @@ export function playCascade(steps, opts) {
     const travel = travelDuration(i, total, arc);
     const hot = s.chain >= 2;
 
-    opts.onHopeUpdate(hopeLine(s.chain, total, s.combo), hot);
+    opts.onHopeUpdate(hopeLine(s.chain, total, s.combo, s.el), hot);
 
     drawTravel(s, travel, () => {
       if (cancelled) return;

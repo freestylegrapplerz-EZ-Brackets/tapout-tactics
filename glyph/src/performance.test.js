@@ -37,7 +37,8 @@ describe("performance timing", () => {
     assert.equal(hopeLine(1, 5, ""), "It's spreading…");
     assert.equal(hopeLine(4, 5, ""), "One more…");
     assert.equal(hopeLine(5, 5, ""), "…");
-    assert.equal(hopeLine(3, 5, "steam"), "Come on…");
+    assert.equal(hopeLine(3, 5, "steam"), "Steam!");
+    assert.equal(hopeLine(5, 5, "", "C"), "Crystal surge!");
   });
 
   it("cellCenter maps grid coords into 100x100 viewBox", () => {

@@ -30,11 +30,12 @@ export function isArc(fr, fc, tr, tc) {
   return Math.abs(fr - tr) + Math.abs(fc - tc) > 1;
 }
 
-/** @param {number} chain @param {number} total @param {string} combo */
-export function hopeLine(chain, total, combo) {
+/** @param {number} chain @param {number} total @param {string} combo @param {import("./config.js").Element} [el] */
+export function hopeLine(chain, total, combo, el) {
+  if (combo === "steam") return "Steam!";
+  if (el === "C") return "Crystal surge!";
   if (chain <= 1) return "It's spreading…";
   if (chain === total) return "…";
-  if (combo === "steam") return "Come on…";
   if (chain >= total - 1) return "One more…";
   if (chain >= Math.floor(total * 0.6)) return "Keep going…";
   return "Come on…";

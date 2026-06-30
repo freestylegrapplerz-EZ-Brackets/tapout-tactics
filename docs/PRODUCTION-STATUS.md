@@ -1,22 +1,19 @@
 # GLYPH — Production Status
 
-*Updated 2026-06-29 — Phase 1 Craftsmanship complete.*
+*Updated 2026-06-29 — Synergy Path (`vs-1.2.0-synergy-path`).*
 
 ## Current phase
 
-**Phase 1 COMPLETE · Phase 2 Greenlight gate**
+**Phase 1 COMPLETE · Synergy Path shipped · Phase 2 Greenlight gate**
 
 | Item | Status |
 |---|---|
-| C1 Interaction Feel | ✅ |
-| C2 Cascade Feel | ✅ |
-| C3 Visual Language | ✅ |
-| C4 Audio | ✅ |
-| C5 Mobile | ✅ |
-| **Build** | **`vs-1.0.0-phase1`** |
-| Performance 2+ / progression | ⏸ Paused until Greenlight |
+| C1–C5 Craftsmanship | ✅ |
+| Performance 2 (connect clusters) | ✅ |
+| **Synergy Path** (6 guided lessons) | ✅ **`vs-1.2.0-synergy-path`** |
+| Greenlight playtest | ⏸ Next |
 
-**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/phase1-complete-6013/glyph/index.html
+**Play:** https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/synergy-path-6013/glyph/index.html
 
 ---
 

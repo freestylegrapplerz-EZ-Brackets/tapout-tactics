@@ -7,13 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.1.0-performance-2">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.2.0-synergy-path">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Vertical Slice · Phase 1 complete</p>
-  <p class="hand-mode" id="handMode">Opening hand · Fire + Water only</p>
+  <p class="sub">Vertical Slice · Synergy Path</p>
+  <p class="path-step" id="pathStep">Step 1 of 6</p>
+  <p class="hand-mode" id="handMode">Connection · Fire + Water only</p>
   <p class="onboard">Place runes so they touch. Tap one to spark.</p>
 
   <div class="target-line" id="vTarget">Target —</div>
@@ -32,8 +33,7 @@
   <div id="hand"></div>
 
   <div class="controls">
-    <button id="btnP1">Performance 1</button>
-    <button class="primary" id="btnP2">Performance 2</button>
+    <button class="primary" id="btnPath">Synergy Path</button>
     <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
     <button id="btnMute" aria-label="Toggle sound">🔊 Sound</button>
@@ -43,6 +43,8 @@
     <div class="k">After the performance</div>
     <div class="score" id="vScore">0</div>
     <div class="meta" id="vMeta"></div>
+    <p class="synergy-tip" id="synergyTip" hidden></p>
+    <button class="next-lesson" id="btnNextLesson" hidden>Next lesson →</button>
   </div>
 
   <div id="msg">Drag a rune onto the board — or hold a placed rune to pick it up.</div>
@@ -50,7 +52,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.1.0-performance-2";
+import { bootGame } from "./src/game.js?v=vs-1.2.0-synergy-path";
 bootGame(document.getElementById("root"));
 </script>
 </body>

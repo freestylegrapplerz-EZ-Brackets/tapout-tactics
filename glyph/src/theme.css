@@ -113,8 +113,19 @@ h1 {
   color: var(--dim);
   font-size: 12px;
   font-weight: 600;
-  margin: 0 0 var(--space-md);
+  margin: 0 0 var(--space-xs);
   line-height: 1.45;
+  text-align: center;
+}
+
+.path-step {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: #6b8fd4;
+  margin: 0 0 var(--space-sm);
+  text-align: center;
 }
 
 .onboard {
@@ -453,6 +464,22 @@ h1 {
   font-size: 13px;
   color: var(--dim);
   line-height: 1.45;
+}
+
+.credits .synergy-tip {
+  font-size: 14px;
+  color: #b8cce4;
+  line-height: 1.5;
+  margin: var(--space-md) 0 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--line);
+}
+
+.credits .next-lesson {
+  width: 100%;
+  margin-top: var(--space-md);
+  background: #2a5fd4;
+  border-color: #3a6fe4;
 }
 
 #hand {

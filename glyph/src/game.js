@@ -9,16 +9,17 @@ import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import {
-  PERFORMANCE_1,
-  PERFORMANCE_2,
+  SYNERGY_PATH,
   applyPreset,
   handFromElements,
   lockedKeysForPerformance,
+  nextInSynergyPath,
+  synergyPathIndex,
   targetForPerformance,
 } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.1.0-performance-2";
+export const VERSION = "vs-1.2.0-synergy-path";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {import("./performances.js").Performance} Performance */
@@ -39,7 +40,8 @@ export function bootGame(root) {
   let target = 0;
   let best = 0;
   /** @type {Performance|null} */
-  let currentPerformance = PERFORMANCE_1;
+  let currentPerformance = SYNERGY_PATH[0];
+  let synergyPathMode = true;
   /** @type {Set<string>} */
   let lockedKeys = new Set();
   /** @type {Set<string>} */
@@ -67,6 +69,13 @@ export function bootGame(root) {
   const msgEl = /** @type {HTMLDivElement} */ (root.querySelector("#msg"));
   const versionEl = /** @type {HTMLDivElement} */ (root.querySelector("#version"));
   const handModeEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector("#handMode"));
+  const pathStepEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector("#pathStep"));
+  const synergyTipEl = /** @type {HTMLParagraphElement|null} */ (
+    root.querySelector("#synergyTip")
+  );
+  const btnNextLesson = /** @type {HTMLButtonElement|null} */ (
+    root.querySelector("#btnNextLesson")
+  );
   const muteBtn = /** @type {HTMLButtonElement} */ (root.querySelector("#btnMute"));
 
   versionEl.textContent = VERSION;
@@ -83,10 +92,43 @@ export function bootGame(root) {
         ? currentPerformance.label
         : "Random hand · all four elements";
     }
+    if (pathStepEl) {
+      if (synergyPathMode && currentPerformance) {
+        const idx = synergyPathIndex(currentPerformance.id);
+        pathStepEl.textContent =
+          idx >= 0
+            ? `Step ${idx + 1} of ${SYNERGY_PATH.length}`
+            : "";
+        pathStepEl.hidden = idx < 0;
+      } else {
+        pathStepEl.textContent = "";
+        pathStepEl.hidden = true;
+      }
+    }
     if (onboardEl) {
       onboardEl.textContent = currentPerformance
         ? currentPerformance.invite
         : "Place runes so they touch. Beat the target. Tap one to spark.";
+    }
+  }
+
+  function updateCreditsActions() {
+    if (synergyTipEl) {
+      if (synergyPathMode && currentPerformance?.synergyTip) {
+        synergyTipEl.textContent = currentPerformance.synergyTip;
+        synergyTipEl.hidden = false;
+      } else {
+        synergyTipEl.textContent = "";
+        synergyTipEl.hidden = true;
+      }
+    }
+    if (btnNextLesson) {
+      const next =
+        synergyPathMode && currentPerformance
+          ? nextInSynergyPath(currentPerformance.id)
+          : null;
+      btnNextLesson.hidden = !next;
+      btnNextLesson.textContent = next ? "Next lesson →" : "Next lesson →";
     }
   }
 
@@ -117,6 +159,7 @@ export function bootGame(root) {
 
   function newHand() {
     currentPerformance = null;
+    synergyPathMode = false;
     lockedKeys = new Set();
     hand = createHand();
     target = computeTarget(hand);
@@ -144,6 +187,8 @@ export function bootGame(root) {
     root.classList.remove("performance", "curtain-call", "cascade-active");
     stageWrap?.classList.remove("curtain-call");
     creditsEl.classList.remove("show");
+    if (synergyTipEl) synergyTipEl.hidden = true;
+    if (btnNextLesson) btnNextLesson.hidden = true;
     chainEl.textContent = "—";
     chainEl.classList.remove("live");
     setHope("Place runes. Tap one to call Action.", false);
@@ -323,9 +368,25 @@ export function bootGame(root) {
     metaEl.textContent =
       `${chain}-rune chain · Target ${target}` +
       (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
-      (best ? ` · Best this session ${best}` : "");
+      (best ? ` · Best this session ${best}` : "") +
+      (synergyPathMode && currentPerformance && !nextInSynergyPath(currentPerformance.id)
+        ? " · Path complete"
+        : "");
     creditsEl.classList.add("show");
+    updateCreditsActions();
     updateTargetDisplay();
+  }
+
+  function startSynergyPath() {
+    synergyPathMode = true;
+    loadPerformance(SYNERGY_PATH[0]);
+  }
+
+  function advanceSynergyPath() {
+    if (!currentPerformance) return;
+    const next = nextInSynergyPath(currentPerformance.id);
+    if (!next) return;
+    loadPerformance(next);
   }
 
   attachInteractions({
@@ -349,13 +410,13 @@ export function bootGame(root) {
     audio.resume();
     clearBoard();
   });
-  root.querySelector("#btnP1")?.addEventListener("click", () => {
+  root.querySelector("#btnPath")?.addEventListener("click", () => {
     audio.resume();
-    loadPerformance(PERFORMANCE_1);
+    startSynergyPath();
   });
-  root.querySelector("#btnP2")?.addEventListener("click", () => {
+  btnNextLesson?.addEventListener("click", () => {
     audio.resume();
-    loadPerformance(PERFORMANCE_2);
+    advanceSynergyPath();
   });
 
   muteBtn.addEventListener("click", () => {
@@ -369,5 +430,5 @@ export function bootGame(root) {
     { once: false, passive: true },
   );
 
-  loadPerformance(PERFORMANCE_1);
+  startSynergyPath();
 }

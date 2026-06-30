@@ -7,12 +7,23 @@ import {
   PERFORMANCE_1_ID,
   PERFORMANCE_2,
   PERFORMANCE_2_ID,
+  PERFORMANCE_3,
+  PERFORMANCE_3_ID,
+  PERFORMANCE_4,
+  PERFORMANCE_4_ID,
+  PERFORMANCE_5,
+  PERFORMANCE_5_ID,
+  PERFORMANCE_6,
+  PERFORMANCE_6_ID,
+  SYNERGY_PATH,
   ALL_PERFORMANCES,
   applyPreset,
   getActivePerformance,
   getPerformance,
   handFromElements,
   lockedKeysForPerformance,
+  nextInSynergyPath,
+  synergyPathIndex,
   targetForPerformance,
 } from "./performances.js";
 import { HAND_SIZE } from "./config.js";
@@ -31,7 +42,7 @@ describe("performances", () => {
     assert.ok(hand.every((h) => h.used === false));
   });
 
-  it("getActivePerformance returns Performance 1", () => {
+  it("getActivePerformance returns first synergy path step", () => {
     const p = getActivePerformance();
     assert.equal(p.id, PERFORMANCE_1_ID);
     assert.deepEqual(p.handElements, PERFORMANCE_1_HAND);
@@ -72,7 +83,63 @@ describe("performances", () => {
     assert.ok(!keys.has("2,3"));
   });
 
-  it("ALL_PERFORMANCES lists P1 and P2", () => {
-    assert.equal(ALL_PERFORMANCES.length, 2);
+  it("SYNERGY_PATH orders connection then synergies", () => {
+    assert.equal(SYNERGY_PATH.length, 6);
+    assert.equal(SYNERGY_PATH[0].id, PERFORMANCE_1_ID);
+    assert.equal(SYNERGY_PATH[2].id, PERFORMANCE_3_ID);
+    assert.equal(SYNERGY_PATH[5].id, PERFORMANCE_6_ID);
+    assert.equal(ALL_PERFORMANCES.length, 6);
+  });
+
+  it("Performance 3 steam lesson scores from left Fire spark", () => {
+    assert.equal(targetForPerformance(PERFORMANCE_3), 53);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_3, grid);
+    const good = simulateCascade(grid, 2, 0);
+    const wrong = simulateCascade(grid, 2, 2);
+    assert.equal(good.finalScore, 53);
+    assert.ok(good.steps.some((s) => s.combo === "steam"));
+    assert.ok(wrong.finalScore < good.finalScore);
+  });
+
+  it("Performance 4 lightning lesson chains across gap", () => {
+    assert.equal(targetForPerformance(PERFORMANCE_4), 22);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_4, grid);
+    const { finalScore, chainLength } = simulateCascade(grid, 2, 1);
+    assert.equal(chainLength, 2);
+    assert.equal(finalScore, 22);
+  });
+
+  it("Performance 5 crystal lesson includes steam and crystal tail", () => {
+    assert.equal(targetForPerformance(PERFORMANCE_5), 82);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_5, grid);
+    const { finalScore, chainLength, steps } = simulateCascade(grid, 2, 0);
+    assert.equal(chainLength, 5);
+    assert.equal(finalScore, 82);
+    assert.ok(steps.some((s) => s.combo === "steam"));
+    assert.equal(steps[steps.length - 1].el, "C");
+  });
+
+  it("Performance 6 capstone uses all four elements", () => {
+    assert.equal(targetForPerformance(PERFORMANCE_6), 112);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_6, grid);
+    const { finalScore, chainLength, steps } = simulateCascade(grid, 0, 2);
+    assert.equal(chainLength, 6);
+    assert.equal(finalScore, 112);
+    const els = new Set(steps.map((s) => s.el));
+    assert.ok(els.has("F"));
+    assert.ok(els.has("L"));
+    assert.ok(els.has("W"));
+    assert.ok(els.has("C"));
+  });
+
+  it("nextInSynergyPath advances through lessons", () => {
+    assert.equal(synergyPathIndex(PERFORMANCE_1_ID), 0);
+    assert.equal(nextInSynergyPath(PERFORMANCE_1_ID)?.id, PERFORMANCE_2_ID);
+    assert.equal(nextInSynergyPath(PERFORMANCE_5_ID)?.id, PERFORMANCE_6_ID);
+    assert.equal(nextInSynergyPath(PERFORMANCE_6_ID), null);
   });
 });
