@@ -5,7 +5,7 @@ import {
   emptyGrid,
   simulateCascade,
 } from "./simulation.js";
-import { playCascade } from "./cascadeRenderer.js";
+import { playCascade } from "./cascadeRenderer.js?v=vs-1.4.2-cascade-fx";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import {
@@ -30,9 +30,9 @@ import {
   encounterIndex,
 } from "./encounters.js";
 
-import { attachInteractions } from "./interaction.js";
+import { clearFxLayer } from "./cascadeFx.js?v=vs-1.4.2-cascade-fx";
 
-export const VERSION = "vs-1.4.1-cascade-fx";
+export const VERSION = "vs-1.4.2-cascade-fx";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -88,6 +88,7 @@ export function bootGame(root) {
   const handEl = /** @type {HTMLDivElement} */ (root.querySelector("#hand"));
   const stageWrap = /** @type {HTMLDivElement} */ (root.querySelector(".stage-wrap"));
   const svgEl = /** @type {SVGSVGElement} */ (root.querySelector("#travelSvg"));
+  const fxLayerEl = /** @type {HTMLDivElement} */ (root.querySelector("#fxLayer"));
   const chainEl = /** @type {HTMLDivElement} */ (root.querySelector("#vChain"));
   const hopeEl = /** @type {HTMLDivElement} */ (root.querySelector("#vHope"));
   const targetEl = /** @type {HTMLDivElement|null} */ (root.querySelector("#vTarget"));
@@ -292,6 +293,7 @@ export function bootGame(root) {
     scoreEl.textContent = "0";
     metaEl.textContent = "";
     svgEl.innerHTML = "";
+    clearFxLayer(fxLayerEl);
 
     if (perf.handElements.length === 0 && perf.preset?.length) {
       setHope("Board is ready — tap a rune to spark.", false);
@@ -348,6 +350,7 @@ export function bootGame(root) {
     scoreEl.textContent = "0";
     metaEl.textContent = "";
     svgEl.innerHTML = "";
+    clearFxLayer(fxLayerEl);
 
     if (enc.handElements.length === 0) {
       setHope(
@@ -413,6 +416,7 @@ export function bootGame(root) {
     scoreEl.textContent = "0";
     metaEl.textContent = "";
     svgEl.innerHTML = "";
+    clearFxLayer(fxLayerEl);
     msgEl.textContent = "Drag a rune onto the board — or hold a placed rune to pick it up.";
     render();
   }
@@ -557,6 +561,7 @@ export function bootGame(root) {
 
     activeCascade = playCascade(steps, {
       svgEl,
+      fxLayer: fxLayerEl,
       sparkRow: sr,
       sparkCol: sc,
       getCell: (r, c) => document.getElementById(`cell-${r}-${c}`),

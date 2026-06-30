@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.4.1-cascade-fx">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.4.2-cascade-fx">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
@@ -28,6 +28,7 @@
   <div class="stage-wrap">
     <svg id="travelSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
     <div id="board"></div>
+    <div id="fxLayer" aria-hidden="true"></div>
   </div>
 
   <div id="hand"></div>
@@ -53,7 +54,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.4.1-cascade-fx";
+import { bootGame } from "./src/game.js?v=vs-1.4.2-cascade-fx";
 bootGame(document.getElementById("root"));
 </script>
 </body>

@@ -8,12 +8,13 @@ import {
   CURTAIN_HOLD_MS,
   stepDelay,
   travelDuration,
-} from "./performance.js";
+} from "./performance.js?v=vs-1.4.2-cascade-fx";
 import {
+  clearFxLayer,
   elementFxName,
   lightningPoints,
   spawnStepFeedback,
-} from "./cascadeFx.js";
+} from "./cascadeFx.js?v=vs-1.4.2-cascade-fx";
 
 /** @typedef {import("./simulation.js").CascadeStep} CascadeStep */
 /** @typedef {import("./config.js").Element} Element */
@@ -24,6 +25,7 @@ const EL_STROKE = { F: "#ff5638", L: "#ffd033", W: "#38a8ff", C: "#c05cff" };
 /**
  * @typedef {Object} CascadeRendererOptions
  * @property {SVGSVGElement} svgEl
+ * @property {HTMLElement} fxLayer
  * @property {number} sparkRow
  * @property {number} sparkCol
  * @property {(r: number, c: number) => HTMLElement|null} getCell
@@ -57,7 +59,7 @@ export function playCascade(steps, opts) {
     if (timeoutId) clearTimeout(timeoutId);
     if (rafId != null) cancelAnimationFrame(rafId);
     opts.svgEl.innerHTML = "";
-    document.querySelectorAll(".cascade-pop, .cascade-mult, .cascade-tag").forEach((el) => el.remove());
+    clearFxLayer(opts.fxLayer);
   }
 
   if (!total) {
@@ -96,7 +98,7 @@ export function playCascade(steps, opts) {
       if (cell) {
         cell.classList.remove("cold", "approaching");
         cell.classList.add("hit", "lit");
-        spawnStepFeedback(cell, s, prevMult, total);
+        spawnStepFeedback(opts.fxLayer, cell, s, prevMult, total);
         window.setTimeout(() => cell.classList.remove("hit"), 340);
       }
 
