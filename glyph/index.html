@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.0.1-phase1">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.1.0-performance-2">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
@@ -15,6 +15,8 @@
   <p class="sub">Vertical Slice · Phase 1 complete</p>
   <p class="hand-mode" id="handMode">Opening hand · Fire + Water only</p>
   <p class="onboard">Place runes so they touch. Tap one to spark.</p>
+
+  <div class="target-line" id="vTarget">Target —</div>
 
   <div class="frontier-hud" aria-live="polite">
     <div class="label">The frontier</div>
@@ -30,7 +32,9 @@
   <div id="hand"></div>
 
   <div class="controls">
-    <button class="primary" id="btnNew">New Hand</button>
+    <button id="btnP1">Performance 1</button>
+    <button class="primary" id="btnP2">Performance 2</button>
+    <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
     <button id="btnMute" aria-label="Toggle sound">🔊 Sound</button>
   </div>
@@ -46,7 +50,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.0.1-phase1";
+import { bootGame } from "./src/game.js?v=vs-1.1.0-performance-2";
 bootGame(document.getElementById("root"));
 </script>
 </body>

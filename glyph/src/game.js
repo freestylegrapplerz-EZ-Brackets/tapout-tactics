@@ -8,12 +8,20 @@ import {
 import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
-import { getActivePerformance, handFromElements } from "./performances.js";
+import {
+  PERFORMANCE_1,
+  PERFORMANCE_2,
+  applyPreset,
+  handFromElements,
+  lockedKeysForPerformance,
+  targetForPerformance,
+} from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.0.1-phase1";
+export const VERSION = "vs-1.1.0-performance-2";
 
 /** @typedef {import("./config.js").Element} Element */
+/** @typedef {import("./performances.js").Performance} Performance */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
 
 /**
@@ -30,6 +38,10 @@ export function bootGame(root) {
   let sel = null;
   let target = 0;
   let best = 0;
+  /** @type {Performance|null} */
+  let currentPerformance = PERFORMANCE_1;
+  /** @type {Set<string>} */
+  let lockedKeys = new Set();
   /** @type {Set<string>} */
   let litSet = new Set();
   /** @type {string|null} */
@@ -47,6 +59,8 @@ export function bootGame(root) {
   const svgEl = /** @type {SVGSVGElement} */ (root.querySelector("#travelSvg"));
   const chainEl = /** @type {HTMLDivElement} */ (root.querySelector("#vChain"));
   const hopeEl = /** @type {HTMLDivElement} */ (root.querySelector("#vHope"));
+  const targetEl = /** @type {HTMLDivElement|null} */ (root.querySelector("#vTarget"));
+  const onboardEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector(".onboard"));
   const creditsEl = /** @type {HTMLDivElement} */ (root.querySelector("#credits"));
   const scoreEl = /** @type {HTMLDivElement} */ (root.querySelector("#vScore"));
   const metaEl = /** @type {HTMLDivElement} */ (root.querySelector("#vMeta"));
@@ -55,50 +69,61 @@ export function bootGame(root) {
   const handModeEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector("#handMode"));
   const muteBtn = /** @type {HTMLButtonElement} */ (root.querySelector("#btnMute"));
 
-  const activePerformance = getActivePerformance();
-
-  /** @type {"performance-1"|"random"} */
-  let handMode = "performance-1";
-
   versionEl.textContent = VERSION;
 
-  function updateHandModeLabel() {
-    if (!handModeEl) return;
-    handModeEl.textContent =
-      handMode === "performance-1"
-        ? "Opening hand · Fire + Water only"
-        : "New hand · Fire · Lightning · Water · Crystal";
+  function updateTargetDisplay() {
+    if (!targetEl) return;
+    targetEl.textContent =
+      phase === "build" || phase === "done" ? `Target ${target}` : "";
+  }
+
+  function updateModeCopy() {
+    if (handModeEl) {
+      handModeEl.textContent = currentPerformance
+        ? currentPerformance.label
+        : "Random hand · all four elements";
+    }
+    if (onboardEl) {
+      onboardEl.textContent = currentPerformance
+        ? currentPerformance.invite
+        : "Place runes so they touch. Beat the target. Tap one to spark.";
+    }
   }
 
   function setHope(text, hot) {
     hopeEl.classList.remove("hope-shift");
-    // force reflow so animation retriggers
     void hopeEl.offsetWidth;
     hopeEl.textContent = text;
     hopeEl.classList.toggle("hot", hot);
     hopeEl.classList.add("hope-shift");
   }
 
-  function loadPerformanceHand() {
-    handMode = "performance-1";
-    hand = handFromElements(activePerformance.handElements);
-    target = computeTarget(hand);
-    best = 0;
-    clearBoard();
-    updateHandModeLabel();
+  /** @param {Performance} perf @param {{ resetBest?: boolean }} [opts] */
+  function loadPerformance(perf, opts = {}) {
+    currentPerformance = perf;
+    hand = handFromElements(perf.handElements);
+    target = targetForPerformance(perf);
+    if (opts.resetBest !== false) best = 0;
+    resetBoardState();
+    lockedKeys = lockedKeysForPerformance(perf);
+    applyPreset(perf, grid);
+    updateModeCopy();
+    updateTargetDisplay();
     console.info("[glyph:performance]", {
       version: VERSION,
-      performanceId: activePerformance.id,
+      performanceId: perf.id,
     });
   }
 
   function newHand() {
-    handMode = "random";
+    currentPerformance = null;
+    lockedKeys = new Set();
     hand = createHand();
     target = computeTarget(hand);
     best = 0;
-    clearBoard();
-    updateHandModeLabel();
+    resetBoardState();
+    updateModeCopy();
+    updateTargetDisplay();
     console.info("[glyph:hand]", {
       version: VERSION,
       mode: "random",
@@ -106,7 +131,7 @@ export function bootGame(root) {
     });
   }
 
-  function clearBoard() {
+  function resetBoardState() {
     activeCascade?.cancel();
     activeCascade = null;
     grid = emptyGrid();
@@ -129,6 +154,15 @@ export function bootGame(root) {
     render();
   }
 
+  function clearBoard() {
+    if (currentPerformance) {
+      loadPerformance(currentPerformance, { resetBest: false });
+      return;
+    }
+    resetBoardState();
+    updateTargetDisplay();
+  }
+
   function render() {
     handEl.innerHTML = "";
     hand.forEach((h, i) => {
@@ -146,6 +180,7 @@ export function bootGame(root) {
         const v = grid[r][c];
         const k = `${r},${c}`;
         let cls = `cell ${v || "empty"}`;
+        if (lockedKeys.has(k)) cls += " locked";
         if (v && phase === "build") cls += " spark-ready";
         if (sparkOriginKey === k) cls += " spark-origin";
         if (litSet.has(k)) {
@@ -165,10 +200,12 @@ export function bootGame(root) {
         boardEl.appendChild(cell);
       }
     }
+    updateTargetDisplay();
   }
 
   function placeFromHand(handIndex, r, c) {
     if (phase !== "build" || hand[handIndex]?.used || grid[r][c]) return false;
+    if (lockedKeys.has(`${r},${c}`)) return false;
     grid[r][c] = hand[handIndex].el;
     hand[handIndex].used = true;
     sel = null;
@@ -178,6 +215,7 @@ export function bootGame(root) {
 
   function pickupAt(r, c) {
     if (phase !== "build" || !grid[r][c]) return false;
+    if (lockedKeys.has(`${r},${c}`)) return false;
     const el = grid[r][c];
     const slot = hand.find((h) => h.used && h.el === el);
     if (slot) slot.used = false;
@@ -223,7 +261,7 @@ export function bootGame(root) {
 
     console.info("[glyph:spark]", {
       version: VERSION,
-      performanceId: activePerformance.id,
+      performanceId: currentPerformance?.id ?? "random",
       sparkOrigin: [sr, sc],
       chainLength,
       litCount: steps.length,
@@ -287,6 +325,7 @@ export function bootGame(root) {
       (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
       (best ? ` · Best this session ${best}` : "");
     creditsEl.classList.add("show");
+    updateTargetDisplay();
   }
 
   attachInteractions({
@@ -304,13 +343,21 @@ export function bootGame(root) {
 
   root.querySelector("#btnNew").addEventListener("click", () => {
     audio.resume();
-    audio.startRoom();
     newHand();
   });
   root.querySelector("#btnClear").addEventListener("click", () => {
     audio.resume();
     clearBoard();
   });
+  root.querySelector("#btnP1")?.addEventListener("click", () => {
+    audio.resume();
+    loadPerformance(PERFORMANCE_1);
+  });
+  root.querySelector("#btnP2")?.addEventListener("click", () => {
+    audio.resume();
+    loadPerformance(PERFORMANCE_2);
+  });
+
   muteBtn.addEventListener("click", () => {
     audio.setMuted(!audio.isMuted());
     muteBtn.textContent = audio.isMuted() ? "🔇 Muted" : "🔊 Sound";
@@ -322,5 +369,5 @@ export function bootGame(root) {
     { once: false, passive: true },
   );
 
-  loadPerformanceHand();
+  loadPerformance(PERFORMANCE_1);
 }
