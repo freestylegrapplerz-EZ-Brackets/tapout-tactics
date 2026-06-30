@@ -26,19 +26,26 @@ import {
   synergyPathIndex,
   targetForPerformance,
 } from "./performances.js";
-import { HAND_SIZE } from "./config.js";
 
 describe("performances", () => {
-  it("Performance 1 hand has correct size and composition", () => {
-    assert.equal(PERFORMANCE_1.handElements.length, HAND_SIZE);
-    assert.equal(PERFORMANCE_1_HAND.length, HAND_SIZE);
-    assert.ok(PERFORMANCE_1.handElements.filter((e) => e === "F").length >= 2);
-    assert.ok(PERFORMANCE_1.handElements.filter((e) => e === "W").length >= 1);
+  it("Performance 1 is a guided gap-fill lesson with achievable target", () => {
+    assert.equal(PERFORMANCE_1.handElements.length, 2);
+    assert.equal(PERFORMANCE_1_HAND.length, 2);
+    assert.equal(PERFORMANCE_1.preset?.length, 3);
+    assert.equal(targetForPerformance(PERFORMANCE_1), 88);
+
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_1, grid);
+    grid[2][2] = "W";
+    grid[2][3] = "F";
+    const { finalScore, chainLength } = simulateCascade(grid, 2, 0);
+    assert.equal(chainLength, 5);
+    assert.equal(finalScore, 88);
   });
 
   it("handFromElements marks all runes unused", () => {
     const hand = handFromElements(PERFORMANCE_1.handElements);
-    assert.equal(hand.length, HAND_SIZE);
+    assert.equal(hand.length, 2);
     assert.ok(hand.every((h) => h.used === false));
   });
 
@@ -89,6 +96,16 @@ describe("performances", () => {
     assert.equal(SYNERGY_PATH[2].id, PERFORMANCE_3_ID);
     assert.equal(SYNERGY_PATH[5].id, PERFORMANCE_6_ID);
     assert.equal(ALL_PERFORMANCES.length, 6);
+  });
+
+  it("Performance 3 preset fills the board for spark-only lesson", () => {
+    assert.equal(PERFORMANCE_3.handElements.length, 0);
+    assert.equal(PERFORMANCE_3.preset?.length, 3);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_3, grid);
+    assert.equal(grid[2][0], "F");
+    assert.equal(grid[2][1], "F");
+    assert.equal(grid[2][2], "W");
   });
 
   it("Performance 3 steam lesson scores from left Fire spark", () => {

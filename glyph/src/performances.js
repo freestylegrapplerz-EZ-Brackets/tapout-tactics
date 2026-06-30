@@ -23,15 +23,23 @@ export const PERFORMANCE_5_ID = "performance-5-crystal";
 export const PERFORMANCE_6_ID = "performance-6-capstone";
 
 /**
- * Performance 1 — "Will the lonely one fire?"
+ * Performance 1 — fill the gap to link the lonely Fire.
  * @type {Performance}
  */
 export const PERFORMANCE_1 = {
   id: PERFORMANCE_1_ID,
-  label: "Connection · Fire + Water only",
-  invite: "Place runes so they touch. Tap one to spark.",
-  handElements: ["F", "F", "W", "F", "F", "W", "F", "F"],
-  synergyTip: "Runes chain when they touch — Fire spreads to neighbors side-by-side.",
+  label: "Connection · build a chain",
+  invite:
+    "Fill the two empty cells between the Fires — Water in the middle is fine. Spark the left Fire.",
+  handElements: ["W", "F"],
+  preset: [
+    { row: 2, col: 0, el: "F" },
+    { row: 2, col: 1, el: "F" },
+    { row: 2, col: 4, el: "F" },
+  ],
+  targetScore: 88,
+  synergyTip:
+    "Runes chain when they touch side-by-side. Longer connected rows score higher.",
 };
 
 export const PERFORMANCE_1_HAND = PERFORMANCE_1.handElements;

@@ -19,7 +19,7 @@ import {
 } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.2.0-synergy-path";
+export const VERSION = "vs-1.2.1-synergy-path";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {import("./performances.js").Performance} Performance */
@@ -146,15 +146,45 @@ export function bootGame(root) {
     hand = handFromElements(perf.handElements);
     target = targetForPerformance(perf);
     if (opts.resetBest !== false) best = 0;
-    resetBoardState();
     lockedKeys = lockedKeysForPerformance(perf);
+
+    activeCascade?.cancel();
+    activeCascade = null;
+    grid = emptyGrid();
     applyPreset(perf, grid);
+    hand.forEach((h) => (h.used = false));
+    sel = null;
+    phase = "build";
+    litSet = new Set();
+    sparkOriginKey = null;
+    coldTaxonomy = null;
+    root.classList.remove("performance", "curtain-call", "cascade-active");
+    stageWrap?.classList.remove("curtain-call");
+    creditsEl.classList.remove("show");
+    if (synergyTipEl) synergyTipEl.hidden = true;
+    if (btnNextLesson) btnNextLesson.hidden = true;
+    chainEl.textContent = "—";
+    chainEl.classList.remove("live");
+    scoreEl.textContent = "0";
+    metaEl.textContent = "";
+    svgEl.innerHTML = "";
+
+    if (perf.handElements.length === 0 && perf.preset?.length) {
+      setHope("Board is ready — tap a rune to spark.", false);
+      msgEl.textContent = "Tap a rune on the board to start the chain.";
+    } else {
+      setHope("Place runes. Tap one to call Action.", false);
+      msgEl.textContent =
+        "Drag a rune onto the board — or hold a placed rune to pick it up.";
+    }
+
     updateModeCopy();
     updateTargetDisplay();
     render();
     console.info("[glyph:performance]", {
       version: VERSION,
       performanceId: perf.id,
+      presetCells: perf.preset?.length ?? 0,
     });
   }
 
@@ -366,13 +396,20 @@ export function bootGame(root) {
     if (final > best) best = final;
     scoreEl.textContent = String(final);
     const hit = final >= target;
-    metaEl.textContent =
-      `${chain}-rune chain · Target ${target}` +
-      (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
-      (best ? ` · Best this session ${best}` : "") +
-      (synergyPathMode && currentPerformance && !nextInSynergyPath(currentPerformance.id)
-        ? " · Path complete"
-        : "");
+    if (synergyPathMode) {
+      metaEl.textContent =
+        `${chain}-rune chain · Scored ${final}` +
+        (target ? ` · Target ${target}` : "") +
+        (hit ? " · Nice!" : " · Tap Next lesson when ready") +
+        (synergyPathMode && currentPerformance && !nextInSynergyPath(currentPerformance.id)
+          ? " · Path complete"
+          : "");
+    } else {
+      metaEl.textContent =
+        `${chain}-rune chain · Target ${target}` +
+        (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
+        (best ? ` · Best this session ${best}` : "");
+    }
     creditsEl.classList.add("show");
     updateCreditsActions();
     updateTargetDisplay();
