@@ -7,13 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.2.1-synergy-path">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.3.0-training-levels">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Vertical Slice · Synergy Path</p>
-  <p class="path-step" id="pathStep">Step 1 of 6</p>
+  <p class="sub">Training · Basics → Real Game</p>
+  <p class="path-step" id="pathStep">Level 1 of 12 · Basics</p>
   <p class="hand-mode" id="handMode">Connection · build a chain</p>
   <p class="onboard">Fill the gap between the Fires — then spark the left one.</p>
 
@@ -33,7 +33,7 @@
   <div id="hand"></div>
 
   <div class="controls">
-    <button class="primary" id="btnPath">Synergy Path</button>
+    <button class="primary" id="btnPath">Restart Training</button>
     <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
     <button id="btnMute" aria-label="Toggle sound">🔊 Sound</button>
@@ -44,7 +44,7 @@
     <div class="score" id="vScore">0</div>
     <div class="meta" id="vMeta"></div>
     <p class="synergy-tip" id="synergyTip" hidden></p>
-    <button class="next-lesson" id="btnNextLesson" hidden>Next lesson →</button>
+    <button class="next-lesson" id="btnNextLesson" hidden>Next level →</button>
   </div>
 
   <div id="msg">Drag a rune onto the board — or hold a placed rune to pick it up.</div>
@@ -52,7 +52,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.2.1-synergy-path";
+import { bootGame } from "./src/game.js?v=vs-1.3.0-training-levels";
 bootGame(document.getElementById("root"));
 </script>
 </body>

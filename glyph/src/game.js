@@ -9,17 +9,21 @@ import { playCascade } from "./cascadeRenderer.js";
 import { createAudio } from "./audio.js";
 import { analyzeAftermath, coldClassForKind } from "./aftermath.js";
 import {
-  SYNERGY_PATH,
+  TRAINING_LEVELS,
   applyPreset,
   handFromElements,
+  isGraduationLevel,
   lockedKeysForPerformance,
-  nextInSynergyPath,
-  synergyPathIndex,
+  nextTrainingLevel,
+  phaseLabel,
   targetForPerformance,
+  trainingLevelIndex,
 } from "./performances.js";
 import { attachInteractions } from "./interaction.js";
 
-export const VERSION = "vs-1.2.1-synergy-path";
+export const VERSION = "vs-1.3.0-training-levels";
+
+const TRAINING_PROGRESS_KEY = "glyph-training-level";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {import("./performances.js").Performance} Performance */
@@ -40,8 +44,8 @@ export function bootGame(root) {
   let target = 0;
   let best = 0;
   /** @type {Performance|null} */
-  let currentPerformance = SYNERGY_PATH[0];
-  let synergyPathMode = true;
+  let currentPerformance = TRAINING_LEVELS[0];
+  let trainingMode = true;
   /** @type {Set<string>} */
   let lockedKeys = new Set();
   /** @type {Set<string>} */
@@ -78,6 +82,31 @@ export function bootGame(root) {
   );
   const muteBtn = /** @type {HTMLButtonElement} */ (root.querySelector("#btnMute"));
 
+  function loadTrainingProgress() {
+    try {
+      const raw = localStorage.getItem(TRAINING_PROGRESS_KEY);
+      if (raw == null) return 0;
+      const idx = parseInt(raw, 10);
+      if (!Number.isFinite(idx) || idx < 0) return 0;
+      return Math.min(idx, TRAINING_LEVELS.length);
+    } catch {
+      return 0;
+    }
+  }
+
+  function saveTrainingProgress(index) {
+    try {
+      localStorage.setItem(TRAINING_PROGRESS_KEY, String(index));
+    } catch {
+      /* private browsing — ignore */
+    }
+  }
+
+  function persistCurrentLevel() {
+    if (!trainingMode || !currentPerformance) return;
+    saveTrainingProgress(trainingLevelIndex(currentPerformance.id));
+  }
+
   versionEl.textContent = VERSION;
 
   function updateTargetDisplay() {
@@ -93,11 +122,12 @@ export function bootGame(root) {
         : "Random hand · all four elements";
     }
     if (pathStepEl) {
-      if (synergyPathMode && currentPerformance) {
-        const idx = synergyPathIndex(currentPerformance.id);
+      if (trainingMode && currentPerformance) {
+        const idx = trainingLevelIndex(currentPerformance.id);
+        const phase = phaseLabel(currentPerformance.phase);
         pathStepEl.textContent =
           idx >= 0
-            ? `Step ${idx + 1} of ${SYNERGY_PATH.length}`
+            ? `Level ${idx + 1} of ${TRAINING_LEVELS.length} · ${phase}`
             : "";
         pathStepEl.hidden = idx < 0;
       } else {
@@ -114,7 +144,7 @@ export function bootGame(root) {
 
   function updateCreditsActions() {
     if (synergyTipEl) {
-      if (synergyPathMode && currentPerformance?.synergyTip) {
+      if (trainingMode && currentPerformance?.synergyTip) {
         synergyTipEl.textContent = currentPerformance.synergyTip;
         synergyTipEl.hidden = false;
       } else {
@@ -124,11 +154,13 @@ export function bootGame(root) {
     }
     if (btnNextLesson) {
       const next =
-        synergyPathMode && currentPerformance
-          ? nextInSynergyPath(currentPerformance.id)
+        trainingMode && currentPerformance
+          ? nextTrainingLevel(currentPerformance.id)
           : null;
-      btnNextLesson.hidden = !next;
-      btnNextLesson.textContent = next ? "Next lesson →" : "Next lesson →";
+      const graduating =
+        trainingMode && currentPerformance && isGraduationLevel(currentPerformance);
+      btnNextLesson.hidden = !next && !graduating;
+      btnNextLesson.textContent = graduating ? "Play for real →" : "Next level →";
     }
   }
 
@@ -181,6 +213,7 @@ export function bootGame(root) {
     updateModeCopy();
     updateTargetDisplay();
     render();
+    persistCurrentLevel();
     console.info("[glyph:performance]", {
       version: VERSION,
       performanceId: perf.id,
@@ -190,7 +223,7 @@ export function bootGame(root) {
 
   function newHand() {
     currentPerformance = null;
-    synergyPathMode = false;
+    trainingMode = false;
     lockedKeys = new Set();
     hand = createHand();
     target = computeTarget(hand);
@@ -396,13 +429,15 @@ export function bootGame(root) {
     if (final > best) best = final;
     scoreEl.textContent = String(final);
     const hit = final >= target;
-    if (synergyPathMode) {
+    if (trainingMode) {
       metaEl.textContent =
         `${chain}-rune chain · Scored ${final}` +
         (target ? ` · Target ${target}` : "") +
-        (hit ? " · Nice!" : " · Tap Next lesson when ready") +
-        (synergyPathMode && currentPerformance && !nextInSynergyPath(currentPerformance.id)
-          ? " · Path complete"
+        (hit ? " · Nice!" : " · Tap Next level when ready") +
+        (trainingMode && currentPerformance && !nextTrainingLevel(currentPerformance.id)
+          ? isGraduationLevel(currentPerformance)
+            ? " · Training complete"
+            : " · Level complete"
           : "");
     } else {
       metaEl.textContent =
@@ -411,20 +446,49 @@ export function bootGame(root) {
         (best ? ` · Best this session ${best}` : "");
     }
     creditsEl.classList.add("show");
+    persistCurrentLevel();
     updateCreditsActions();
     updateTargetDisplay();
   }
 
-  function startSynergyPath() {
-    synergyPathMode = true;
-    loadPerformance(SYNERGY_PATH[0]);
+  function startTraining(reset = false) {
+    trainingMode = true;
+    if (reset) saveTrainingProgress(0);
+    const idx = reset ? 0 : loadTrainingProgress();
+    if (idx >= TRAINING_LEVELS.length) {
+      graduate();
+      return;
+    }
+    loadPerformance(TRAINING_LEVELS[idx]);
   }
 
-  function advanceSynergyPath() {
+  function advanceTraining() {
     if (!currentPerformance) return;
-    const next = nextInSynergyPath(currentPerformance.id);
+    if (isGraduationLevel(currentPerformance)) {
+      graduate();
+      return;
+    }
+    const next = nextTrainingLevel(currentPerformance.id);
     if (!next) return;
     loadPerformance(next);
+    saveTrainingProgress(trainingLevelIndex(next.id));
+  }
+
+  function graduate() {
+    saveTrainingProgress(TRAINING_LEVELS.length);
+    trainingMode = false;
+    currentPerformance = null;
+    lockedKeys = new Set();
+    hand = createHand();
+    target = computeTarget(hand);
+    best = 0;
+    resetBoardState();
+    updateModeCopy();
+    updateTargetDisplay();
+    setHope("Your board. Your call.", false);
+    msgEl.textContent =
+      "Training complete — Random Hand is the real game. Build with everything you learned.";
+    console.info("[glyph:graduate]", { version: VERSION });
   }
 
   attachInteractions({
@@ -450,11 +514,11 @@ export function bootGame(root) {
   });
   root.querySelector("#btnPath")?.addEventListener("click", () => {
     audio.resume();
-    startSynergyPath();
+    startTraining(true);
   });
   btnNextLesson?.addEventListener("click", () => {
     audio.resume();
-    advanceSynergyPath();
+    advanceTraining();
   });
 
   muteBtn.addEventListener("click", () => {
@@ -468,5 +532,5 @@ export function bootGame(root) {
     { once: false, passive: true },
   );
 
-  startSynergyPath();
+  startTraining(false);
 }

@@ -15,6 +15,13 @@ import {
   PERFORMANCE_5_ID,
   PERFORMANCE_6,
   PERFORMANCE_6_ID,
+  PERFORMANCE_7,
+  PERFORMANCE_7_ID,
+  PERFORMANCE_9,
+  PERFORMANCE_11,
+  PERFORMANCE_12,
+  PERFORMANCE_12_ID,
+  TRAINING_LEVELS,
   SYNERGY_PATH,
   ALL_PERFORMANCES,
   applyPreset,
@@ -90,12 +97,15 @@ describe("performances", () => {
     assert.ok(!keys.has("2,3"));
   });
 
-  it("SYNERGY_PATH orders connection then synergies", () => {
-    assert.equal(SYNERGY_PATH.length, 6);
-    assert.equal(SYNERGY_PATH[0].id, PERFORMANCE_1_ID);
-    assert.equal(SYNERGY_PATH[2].id, PERFORMANCE_3_ID);
-    assert.equal(SYNERGY_PATH[5].id, PERFORMANCE_6_ID);
-    assert.equal(ALL_PERFORMANCES.length, 6);
+  it("SYNERGY_PATH orders basics → synergies → advanced → graduation", () => {
+    assert.equal(TRAINING_LEVELS.length, 12);
+    assert.equal(SYNERGY_PATH.length, 12);
+    assert.equal(TRAINING_LEVELS[0].id, PERFORMANCE_1_ID);
+    assert.equal(TRAINING_LEVELS[2].id, PERFORMANCE_3_ID);
+    assert.equal(TRAINING_LEVELS[5].id, PERFORMANCE_6_ID);
+    assert.equal(TRAINING_LEVELS[6].id, PERFORMANCE_7_ID);
+    assert.equal(TRAINING_LEVELS[11].id, PERFORMANCE_12_ID);
+    assert.equal(ALL_PERFORMANCES.length, 12);
   });
 
   it("Performance 3 preset fills the board for spark-only lesson", () => {
@@ -153,10 +163,49 @@ describe("performances", () => {
     assert.ok(els.has("C"));
   });
 
-  it("nextInSynergyPath advances through lessons", () => {
+  it("Performance 7 directorship lesson rewards left spark", () => {
+    assert.equal(targetForPerformance(PERFORMANCE_7), 88);
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_7, grid);
+    const left = simulateCascade(grid, 2, 0);
+    const mid = simulateCascade(grid, 2, 2);
+    assert.ok(left.finalScore > mid.finalScore);
+    assert.equal(left.finalScore, 88);
+  });
+
+  it("Performance 9 build-row lesson scores with L-W-F extension", () => {
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_9, grid);
+    grid[2][2] = "L";
+    grid[2][3] = "W";
+    grid[2][4] = "F";
+    const { finalScore, chainLength } = simulateCascade(grid, 2, 0);
+    assert.equal(chainLength, 5);
+    assert.equal(finalScore, 85);
+  });
+
+  it("Performance 11 compose lesson reaches advanced target", () => {
+    const grid = emptyGrid();
+    applyPreset(PERFORMANCE_11, grid);
+    grid[2][2] = "L";
+    grid[2][3] = "W";
+    grid[2][4] = "C";
+    grid[1][2] = "F";
+    grid[3][2] = "F";
+    const { finalScore } = simulateCascade(grid, 2, 0);
+    assert.equal(finalScore, 118);
+  });
+
+  it("Performance 12 is graduation with full curated hand", () => {
+    assert.equal(PERFORMANCE_12.handElements.length, 8);
+    assert.equal(PERFORMANCE_12.graduates, true);
+    assert.equal(PERFORMANCE_12.phase, "graduation");
+  });
+
+  it("nextInSynergyPath advances through all training levels", () => {
     assert.equal(synergyPathIndex(PERFORMANCE_1_ID), 0);
     assert.equal(nextInSynergyPath(PERFORMANCE_1_ID)?.id, PERFORMANCE_2_ID);
-    assert.equal(nextInSynergyPath(PERFORMANCE_5_ID)?.id, PERFORMANCE_6_ID);
-    assert.equal(nextInSynergyPath(PERFORMANCE_6_ID), null);
+    assert.equal(nextInSynergyPath(PERFORMANCE_11.id)?.id, PERFORMANCE_12_ID);
+    assert.equal(nextInSynergyPath(PERFORMANCE_12_ID), null);
   });
 });
