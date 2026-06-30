@@ -151,6 +151,7 @@ export function bootGame(root) {
     applyPreset(perf, grid);
     updateModeCopy();
     updateTargetDisplay();
+    render();
     console.info("[glyph:performance]", {
       version: VERSION,
       performanceId: perf.id,
