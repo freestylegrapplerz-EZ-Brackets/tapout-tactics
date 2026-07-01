@@ -33,11 +33,17 @@ npm test          # simulation kernel tests
 Open `index.html` in a browser (local server required for ES modules):
 
 ```bash
-npx --yes serve . -p 5173
+npm start
+# or: npx --yes serve . -p 5173
 ```
 
-**Live demo (branch):**  
-https://raw.githack.com/freestylegrapplerz-EZ-Brackets/tapout-tactics/cursor/next-game-strategy-6013/glyph/index.html
+**Play in browser (GitHub Pages — click and play):**  
+https://freestylegrapplerz-ez-brackets.github.io/tapout-tactics/
+
+**Play in StackBlitz (opens preview, not the code editor):**  
+https://stackblitz.com/github/freestylegrapplerz-EZ-Brackets/tapout-tactics/tree/cursor/encounter-run-6013/glyph?startScript=start&view=preview
+
+> **Note:** CDN links like `cdn.jsdelivr.net/.../index.html` show source code on purpose — they cannot run the game. Use GitHub Pages or StackBlitz above.
 
 **Smoke test (optional, requires Playwright):**
 

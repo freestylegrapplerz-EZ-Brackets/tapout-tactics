@@ -1,0 +1,33 @@
+name: Deploy GLYPH to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - cursor/encounter-run-6013
+      - cursor/playable-url-6013
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: glyph-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: glyph
+      - id: deployment
+        uses: actions/deploy-pages@v4
