@@ -18,6 +18,7 @@
  * @property {string} victoryLine
  * @property {string} defeatLine
  * @property {string} [tip]
+ * @property {{ row: number, col: number }} [requiredSpark]
  */
 
 /** @type {BoardMystery} */
@@ -40,21 +41,22 @@ export const MYSTERY_1 = {
 
 /** @type {BoardMystery} */
 export const MYSTERY_2 = {
-  id: "mystery-2-corner",
-  name: "The Corner",
-  question: "Can Fire at the edge reach Water trapped in the far corner?",
-  invite: "A spark in one corner. A prize in the opposite.",
+  id: "mystery-2-column",
+  name: "The Column",
+  question: "Can the corner Fire wake the Water straight below?",
+  invite: "One Fire at the top. Water waits at the bottom of the same column.",
   handElements: ["F", "F", "F"],
   preset: [
     { row: 0, col: 0, el: "F" },
-    { row: 4, col: 4, el: "W" },
+    { row: 4, col: 0, el: "W" },
   ],
-  anchor: { row: 4, col: 4 },
-  objective: { type: "break", value: 1 },
-  objectiveLabel: "Reach the Corner · awaken the Water",
-  victoryLine: "The corner steams awake — the long path was worth it.",
-  defeatLine: "The Water stays cold. Build a path Fire can walk.",
-  tip: "Fire moves in straight lines. Plan the route before you spark.",
+  anchor: { row: 4, col: 0 },
+  requiredSpark: { row: 0, col: 0 },
+  objective: { type: "break", value: 1, minChain: 5 },
+  objectiveLabel: "Descend the Column · chain from the corner Fire",
+  victoryLine: "Steam rises at the bottom — the corner Fire led the way.",
+  defeatLine: "The Water stays cold. Build the column and spark from the top.",
+  tip: "Fire walks in straight lines. Fill every step between.",
 };
 
 /** @type {BoardMystery} */
@@ -79,24 +81,25 @@ export const MYSTERY_3 = {
 
 /** @type {BoardMystery} */
 export const MYSTERY_4 = {
-  id: "mystery-4-origin",
-  name: "The First Spark",
-  question: "The board is complete — but which rune should wake first?",
-  invite: "Every rune is placed. Only the spark is yours to choose.",
+  id: "mystery-4-fork",
+  name: "The Fork",
+  question: "Two halves — which side holds the key to the Crystal?",
+  invite: "The board splits left and right. Only one half reaches the heart.",
   handElements: [],
   preset: [
-    { row: 1, col: 2, el: "F" },
+    { row: 2, col: 0, el: "F" },
     { row: 2, col: 1, el: "F" },
     { row: 2, col: 2, el: "C" },
-    { row: 2, col: 3, el: "W" },
-    { row: 3, col: 2, el: "F" },
+    { row: 2, col: 4, el: "F" },
+    { row: 3, col: 4, el: "F" },
+    { row: 4, col: 4, el: "F" },
   ],
   anchor: { row: 2, col: 2 },
-  objective: { type: "break", value: 1 },
-  objectiveLabel: "Wake the Heart · reach the Crystal",
-  victoryLine: "The Crystal sings — you chose the right first spark.",
-  defeatLine: "The heart stays dark. Try waking from a different rune.",
-  tip: "Same board, different spark — different chain.",
+  objective: { type: "break", value: 1, minChain: 3 },
+  objectiveLabel: "Choose the Fork · reach the Crystal from the left",
+  victoryLine: "The left path was true — the Crystal sings.",
+  defeatLine: "The right half goes nowhere. Spark from the side that touches the Crystal.",
+  tip: "Same board, different spark — only one half can reach the heart.",
 };
 
 /** @type {BoardMystery} */
@@ -134,7 +137,7 @@ export const MYSTERY_6 = {
     { row: 2, col: 4, el: "W" },
   ],
   anchor: { row: 2, col: 4 },
-  objective: { type: "break", value: 1 },
+  objective: { type: "break", value: 1, minChain: 5 },
   objectiveLabel: "Open the Steam Door · reach the Water",
   victoryLine: "Steam rises — the door opens.",
   defeatLine: "The Water stays cold. Fire must touch it through the gap.",
@@ -154,7 +157,7 @@ export const MYSTERY_7 = {
     { row: 0, col: 4, el: "W" },
   ],
   anchor: { row: 0, col: 4 },
-  objective: { type: "break", value: 1 },
+  objective: { type: "break", value: 1, minChain: 4 },
   objectiveLabel: "Reach the Island · awaken the distant Water",
   victoryLine: "The island rune wakes — the wave crossed open water.",
   defeatLine: "The island stays silent. Bridge the distance first.",

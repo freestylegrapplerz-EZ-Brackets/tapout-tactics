@@ -44,7 +44,7 @@ import {
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.9.0-board-mysteries";
+export const VERSION = "vs-1.9.1-board-quality";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -744,7 +744,14 @@ export function bootGame(root, options = {}) {
     scoreEl.textContent = String(final);
 
     if (boardMode && currentBoard && lastCascadeResult && gridAtSpark) {
-      const won = evaluateEncounter(asEncounter(currentBoard), lastCascadeResult, gridAtSpark);
+      const spark = sparkOriginKey?.split(",").map(Number) ?? [];
+      const won = evaluateEncounter(
+        asEncounter(currentBoard),
+        lastCascadeResult,
+        gridAtSpark,
+        spark[0],
+        spark[1],
+      );
       lastEncounterWon = won;
       metaEl.textContent =
         (won ? currentBoard.victoryLine : currentBoard.defeatLine) +
@@ -757,7 +764,14 @@ export function bootGame(root, options = {}) {
     }
 
     if (encounterMode && currentEncounter && lastCascadeResult && gridAtSpark) {
-      const won = evaluateEncounter(currentEncounter, lastCascadeResult, gridAtSpark);
+      const spark = sparkOriginKey?.split(",").map(Number) ?? [];
+      const won = evaluateEncounter(
+        currentEncounter,
+        lastCascadeResult,
+        gridAtSpark,
+        spark[0],
+        spark[1],
+      );
       lastEncounterWon = won;
       metaEl.textContent =
         (won ? currentEncounter.victoryLine : currentEncounter.defeatLine) +

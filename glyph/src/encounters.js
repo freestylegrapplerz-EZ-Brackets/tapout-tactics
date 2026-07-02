@@ -5,6 +5,7 @@
  * @typedef {Object} EncounterObjective
  * @property {"score"|"chain"|"break"|"full_lit"} type
  * @property {number} [value]
+ * @property {number} [minChain] - for break/full_lit: reject trivial anchor-only sparks
  */
 
 /**
@@ -22,6 +23,7 @@
  * @property {string} defeatLine
  * @property {string} [tip]
  * @property {boolean} [boss]
+ * @property {{ row: number, col: number }} [requiredSpark] - win only if spark starts here
  */
 
 /** @param {number} r @param {number} c */
@@ -182,9 +184,20 @@ export function anchorKeyForEncounter(enc) {
  * @param {Encounter} enc
  * @param {import("./simulation.js").CascadeResult} result
  * @param {(Element|null)[][]} gridAtSpark
+ * @param {number} [sparkRow]
+ * @param {number} [sparkCol]
  */
-export function evaluateEncounter(enc, result, gridAtSpark) {
+export function evaluateEncounter(enc, result, gridAtSpark, sparkRow, sparkCol) {
   const lit = new Set(result.steps.map((s) => cellKey(s.r, s.c)));
+  const minChain = enc.objective.minChain ?? 0;
+
+  if (minChain > 0 && result.chainLength < minChain) return false;
+
+  if (enc.requiredSpark != null && sparkRow != null && sparkCol != null) {
+    if (sparkRow !== enc.requiredSpark.row || sparkCol !== enc.requiredSpark.col) {
+      return false;
+    }
+  }
 
   switch (enc.objective.type) {
     case "score":
