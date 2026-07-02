@@ -44,7 +44,7 @@ import {
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.9.6-level5-heart";
+export const VERSION = "vs-1.9.6-next-button-fix";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -753,13 +753,25 @@ export function bootGame(root, options = {}) {
         spark[1],
       );
       lastEncounterWon = won;
-      metaEl.textContent =
+      let meta =
         (won ? currentBoard.victoryLine : currentBoard.defeatLine) +
         ` · ${chain}-rune chain · Scored ${final}`;
+      if (
+        !won &&
+        currentBoard.requiredSpark &&
+        (spark[0] !== currentBoard.requiredSpark.row ||
+          spark[1] !== currentBoard.requiredSpark.col)
+      ) {
+        meta += " · Spark the correct starting rune.";
+      }
+      metaEl.textContent = meta;
       creditsEl.classList.add("show");
       persistBoardProgress();
       updateCreditsActions();
       updateTargetDisplay();
+      if (won && btnNextLesson) {
+        btnNextLesson.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
       return;
     }
 

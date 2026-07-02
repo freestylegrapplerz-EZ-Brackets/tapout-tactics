@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.9.6-level5-heart">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.9.6-next-button-fix">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
@@ -34,6 +34,7 @@
   <div id="hand"></div>
 
   <div class="controls">
+    <button class="primary next-lesson" id="btnNextLesson" hidden>Next mystery →</button>
     <button class="primary" id="btnBoards">Board Mysteries</button>
     <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
@@ -47,7 +48,6 @@
     <div class="score" id="vScore">0</div>
     <div class="meta" id="vMeta"></div>
     <p class="synergy-tip" id="synergyTip" hidden></p>
-    <button class="next-lesson" id="btnNextLesson" hidden>Next mystery →</button>
   </div>
 
   <div id="msg">Drag a rune onto the board — or hold a placed rune to pick it up.</div>
@@ -55,7 +55,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.9.6-level5-heart";
+import { bootGame } from "./src/game.js?v=vs-1.9.6-next-button-fix";
 bootGame(document.getElementById("root"), { mode: "boards" });
 </script>
 </body>

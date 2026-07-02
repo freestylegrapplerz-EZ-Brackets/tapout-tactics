@@ -812,11 +812,20 @@ h1 {
   border-top: 1px solid var(--line);
 }
 
-.credits .next-lesson {
+.credits .next-lesson,
+.controls .next-lesson {
   width: 100%;
   margin-top: var(--space-md);
   background: #2a5fd4;
   border-color: #3a6fe4;
+}
+
+.controls .next-lesson {
+  flex: 1 1 100%;
+  margin-top: 0;
+  margin-bottom: var(--space-xs);
+  font-size: 15px;
+  box-shadow: 0 8px 24px #2a5fd466;
 }
 
 #hand {
