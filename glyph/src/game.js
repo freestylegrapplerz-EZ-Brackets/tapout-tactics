@@ -20,6 +20,12 @@ import {
   trainingLevelIndex,
 } from "./performances.js";
 import {
+  buildObjectiveLine,
+  parseRunPurpose,
+  purposeVerdict,
+  purposeVersionSuffix,
+} from "./runPurpose.js";
+import {
   ENCOUNTER_RUN,
   applyEncounterPreset,
   anchorKeyForEncounter,
@@ -32,7 +38,7 @@ import {
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.6.0-sprint1-placement";
+export const VERSION = "vs-1.8.0-exp";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -44,8 +50,12 @@ const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
 
 /**
  * @param {HTMLElement} root
+ * @param {{ purpose?: import("./runPurpose.js").RunPurposeMode }} [options]
  */
-export function bootGame(root) {
+export function bootGame(root, options = {}) {
+  const runPurposeMode =
+    options.purpose ??
+    parseRunPurpose(new URLSearchParams(window.location.search).get("pur"));
   /** @type {Phase} */
   let phase = "build";
   /** @type {(Element|null)[][]} */
@@ -158,7 +168,7 @@ export function bootGame(root) {
     saveTrainingProgress(trainingLevelIndex(currentPerformance.id));
   }
 
-  versionEl.textContent = VERSION;
+  versionEl.textContent = `${VERSION}-${purposeVersionSuffix(runPurposeMode)}`;
 
   function updateTargetDisplay() {
     if (!targetEl) return;
@@ -168,6 +178,11 @@ export function bootGame(root) {
     }
     if (encounterMode && currentEncounter) {
       targetEl.textContent = currentEncounter.objectiveLabel;
+      return;
+    }
+    if (!trainingMode && !encounterMode && runPurposeMode !== "current") {
+      targetEl.textContent =
+        phase === "build" || phase === "done" ? buildObjectiveLine(runPurposeMode) : "";
       return;
     }
     targetEl.textContent = phase === "build" || phase === "done" ? `Target ${target}` : "";
@@ -616,8 +631,17 @@ export function bootGame(root) {
     }
 
     lastEncounterWon = false;
+    const isRandomHand = !trainingMode && !encounterMode;
     const hit = final >= target;
-    if (trainingMode) {
+
+    if (isRandomHand && runPurposeMode !== "current") {
+      const litCount = lastCascadeResult?.steps.length ?? chain;
+      const gridForVerdict = gridAtSpark ?? grid;
+      const verdict = purposeVerdict(runPurposeMode, gridForVerdict, litSet, litCount);
+      scoreEl.textContent = String(final);
+      metaEl.textContent =
+        `${verdict.headline} · ${verdict.subline} · ${chain}-rune chain · score ${final}`;
+    } else if (trainingMode) {
       metaEl.textContent =
         `${chain}-rune chain · Scored ${final}` +
         (target ? ` · Target ${target}` : "") +
