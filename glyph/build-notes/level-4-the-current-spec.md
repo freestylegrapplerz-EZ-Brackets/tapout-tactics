@@ -24,6 +24,13 @@ Chain: F → W → L → F (4 runes)
 
 `requiredSpark` was removed. If W is at (2,2) and the full chain awakens, the puzzle passes — regardless of which Fire the player sparks.
 
+See [Level Bible](./level-bible.md) — Understanding Rule.
+
+## What almost works (Almost Rule)
+
+- **W in the wrong cell** (e.g. corner) — player sees how close placement is; chain doesn't fully connect.
+- **Diagonal / off-bridge placement** — energy stalls; Water isn't acting as connector.
+
 ## Cursor validation
 
 | Check | Result |
@@ -33,8 +40,4 @@ Chain: F → W → L → F (4 runes)
 | Only (2,2) placement wins | ✅ |
 | Corner / bypass placements fail | ✅ |
 
-## Permanent design rule (Chapter 1+)
-
-Every mystery must answer: **"What understanding are we testing?"**
-
-If multiple solutions demonstrate the same understanding, they should be accepted. Do not reject players who clearly learned the intended concept because of an exact move sequence (e.g. required spark origin) unless spark origin *is* the lesson.
+Design rules: [Level Bible](./level-bible.md)
