@@ -22,7 +22,7 @@ test("BOARD_MYSTERIES has eight question-first boards", () => {
 });
 
 test("nextBoard advances the sequence", () => {
-  assert.equal(nextBoard("mystery-1-gap")?.id, "mystery-2-column");
+  assert.equal(nextBoard("mystery-1-gap")?.id, "mystery-2-firestarter");
   assert.equal(nextBoard("mystery-8-heart"), null);
 });
 
@@ -35,15 +35,25 @@ test("Mystery 1: W in gap connects three runes", () => {
   assert.ok(evaluateEncounter(asEncounter(board), result, grid, 2, 1));
 });
 
-test("Mystery 2: column path from corner Fire", () => {
+test("Mystery 2 Firestarter: orthogonal path awakens all five Fires", () => {
   const grid = emptyGrid();
   applyEncounterPreset(asEncounter(MYSTERY_2), grid);
-  grid[1][0] = "F";
-  grid[2][0] = "F";
-  grid[3][0] = "F";
-  const result = simulateCascade(grid, 0, 0);
-  assert.ok(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 0, 0));
-  assert.equal(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 4, 0), false);
+  grid[1][2] = "F";
+  grid[2][2] = "F";
+  grid[3][2] = "F";
+  const result = simulateCascade(grid, 1, 1);
+  assert.ok(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 1, 1));
+  assert.equal(result.chainLength, 5);
+});
+
+test("Mystery 2 Firestarter: diagonal placement fails to reach both presets", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_2), grid);
+  grid[2][2] = "F";
+  grid[1][3] = "F";
+  grid[2][3] = "F";
+  const result = simulateCascade(grid, 1, 1);
+  assert.equal(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 1, 1), false);
 });
 
 test("Mystery 3: L leaps across open space to unite both shores", () => {
