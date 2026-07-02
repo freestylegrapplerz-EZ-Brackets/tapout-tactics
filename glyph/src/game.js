@@ -44,7 +44,7 @@ import {
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.9.3-level2-firestarter";
+export const VERSION = "vs-1.9.4-level3-jump";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";

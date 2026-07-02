@@ -61,20 +61,19 @@ export const MYSTERY_2 = {
 export const MYSTERY_3 = {
   id: "mystery-3-jump",
   name: "The Jump",
-  question: "Two shores across open space — can Lightning leap from one to the other?",
-  invite: "Upper-left Fires. Lower-right Fires. Open space between. Lightning must jump — not bridge.",
+  question: "Can Lightning cross a gap that Fire cannot?",
+  invite: "One space separates the two Fires. Find a way to unite them.",
   handElements: ["L"],
   preset: [
-    { row: 1, col: 1, el: "F" },
-    { row: 1, col: 2, el: "F" },
-    { row: 3, col: 3, el: "F" },
-    { row: 3, col: 4, el: "F" },
+    { row: 2, col: 0, el: "F" },
+    { row: 2, col: 4, el: "F" },
   ],
-  objective: { type: "chain", value: 5 },
-  objectiveLabel: "Make the Leap · 5-rune chain across open space",
-  victoryLine: "The bolt leapt — both shores share one frontier.",
-  defeatLine: "The shores stay split. Place Lightning where it can see both sides.",
-  tip: "Lightning skips empty cells. It jumps — it doesn't fill the gap.",
+  requiredSpark: { row: 2, col: 0 },
+  objective: { type: "chain", value: 3 },
+  objectiveLabel: "Awaken every Fire.",
+  victoryLine: "Lightning can bridge what Fire cannot.",
+  defeatLine: "The energy couldn't cross the gap.",
+  tip: "Some elements travel differently.",
 };
 
 /** @type {BoardMystery} */
