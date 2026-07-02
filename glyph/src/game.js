@@ -44,7 +44,7 @@ import {
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.9.6-next-button-fix";
+export const VERSION = "vs-1.9.7-spark-feedback";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -753,16 +753,23 @@ export function bootGame(root, options = {}) {
         spark[1],
       );
       lastEncounterWon = won;
-      let meta =
-        (won ? currentBoard.victoryLine : currentBoard.defeatLine) +
-        ` · ${chain}-rune chain · Scored ${final}`;
-      if (
+      const wrongSpark =
         !won &&
         currentBoard.requiredSpark &&
         (spark[0] !== currentBoard.requiredSpark.row ||
-          spark[1] !== currentBoard.requiredSpark.col)
-      ) {
-        meta += " · Spark the correct starting rune.";
+          spark[1] !== currentBoard.requiredSpark.col);
+      const chainMet =
+        lastCascadeResult.chainLength >= (currentBoard.objective.value ?? 0);
+      let headline = won ? currentBoard.victoryLine : currentBoard.defeatLine;
+      if (wrongSpark && chainMet) {
+        headline =
+          "The chain ran — but you sparked the wrong rune.";
+      }
+      let meta = headline + ` · ${chain}-rune chain · Scored ${final}`;
+      if (wrongSpark) {
+        meta += chainMet
+          ? " · Same runes lit — energy must start from the required rune."
+          : " · Spark the correct starting rune.";
       }
       metaEl.textContent = meta;
       creditsEl.classList.add("show");
