@@ -30,8 +30,9 @@ import {
   encounterIndex,
 } from "./encounters.js";
 import { attachInteractions } from "./interaction.js";
+import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.5.0-cascade-fx";
+export const VERSION = "vs-1.6.0-sprint1-placement";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -480,10 +481,12 @@ export function bootGame(root) {
   function placeFromHand(handIndex, r, c) {
     if (phase !== "build" || hand[handIndex]?.used || grid[r][c]) return false;
     if (lockedKeys.has(`${r},${c}`) || blockedKeys.has(`${r},${c}`)) return false;
-    grid[r][c] = hand[handIndex].el;
+    const el = hand[handIndex].el;
+    grid[r][c] = el;
     hand[handIndex].used = true;
     sel = null;
     render();
+    acknowledgePlacement(boardEl, stageWrap, r, c, el, grid, audio);
     return true;
   }
 
@@ -511,7 +514,7 @@ export function bootGame(root) {
       return;
     }
     if (placeFromHand(sel, r, c)) {
-      audio.drop();
+      /* audio + FX handled in placeFromHand */
     }
   }
 
@@ -703,11 +706,19 @@ export function bootGame(root) {
     console.info("[glyph:graduate]", { version: VERSION });
   }
 
+  function canDropAt(r, c) {
+    if (phase !== "build") return false;
+    if (grid[r][c]) return false;
+    const key = `${r},${c}`;
+    return !lockedKeys.has(key) && !blockedKeys.has(key);
+  }
+
   attachInteractions({
     handEl,
     boardEl,
     rootEl: root,
     canInteract: () => phase === "build",
+    canDropAt,
     onSelect,
     onPlace: placeFromHand,
     onPickup: pickupAt,
@@ -749,5 +760,5 @@ export function bootGame(root) {
     { once: false, passive: true },
   );
 
-  startTraining(false);
+  newHand();
 }

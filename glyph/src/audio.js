@@ -97,12 +97,36 @@ export function createAudio() {
   }
 
   function pick() {
-    tone(540, 0.035, 0.05, "sine");
+    tone(560, 0.032, 0.058, "sine");
+    window.setTimeout(() => tone(640, 0.022, 0.035, "sine"), 16);
   }
 
   function drop() {
-    tone(400, 0.045, 0.06, "sine");
-    window.setTimeout(() => tone(500, 0.035, 0.04, "sine"), 28);
+    place("F");
+  }
+
+  /** Element-weighted placement — each rune lands differently. @param {string} el */
+  function place(el) {
+    const profiles = {
+      F: () => {
+        tone(180, 0.055, 0.075, "triangle");
+        window.setTimeout(() => tone(240, 0.04, 0.05, "triangle"), 32);
+      },
+      L: () => {
+        tone(620, 0.028, 0.055, "square");
+        window.setTimeout(() => tone(780, 0.022, 0.038, "square"), 18);
+      },
+      W: () => {
+        tone(520, 0.05, 0.05, "sine");
+        window.setTimeout(() => tone(680, 0.035, 0.032, "sine"), 40);
+      },
+      C: () => {
+        tone(440, 0.04, 0.055, "sawtooth");
+        window.setTimeout(() => tone(580, 0.05, 0.045, "sine"), 45);
+        window.setTimeout(() => tone(720, 0.03, 0.028, "sine"), 90);
+      },
+    };
+    (profiles[el] ?? profiles.F)();
   }
 
   function cancel() {
@@ -144,6 +168,7 @@ export function createAudio() {
     tone,
     pick,
     drop,
+    place,
     cancel,
     spark,
     frontierHit,

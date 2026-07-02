@@ -573,8 +573,118 @@ h1 {
 }
 
 .cell.drop-target {
-  box-shadow: inset 0 0 0 2px #ffffffcc, 0 0 18px 3px #ffffff44;
-  transform: scale(1.04);
+  box-shadow:
+    inset 0 0 0 2px #ffffffee,
+    0 0 22px 6px #ffffff55,
+    inset 0 0 20px #ffffff18;
+  transform: scale(1.06);
+  z-index: 2;
+}
+
+.cell.drop-eligible {
+  box-shadow: inset 0 0 0 1px #ffffff44, inset 0 0 14px #ffffff0a;
+  background: #161c28;
+}
+
+.cell.drop-eligible.drop-target {
+  background: #1a2234;
+}
+
+.cell.place-land {
+  animation: place-land 0.42s var(--ease-snap) forwards;
+  z-index: 3;
+}
+
+.cell.place-F.place-land {
+  box-shadow:
+    0 0 0 2px #ffffffaa,
+    0 0 28px 8px #ff563866,
+    inset 0 0 12px #ffffff33;
+}
+
+.cell.place-L.place-land {
+  box-shadow:
+    0 0 0 2px #ffffffaa,
+    0 0 26px 8px #ffd03366,
+    inset 0 0 12px #ffffff33;
+}
+
+.cell.place-W.place-land {
+  box-shadow:
+    0 0 0 2px #ffffffaa,
+    0 0 26px 8px #38a8ff66,
+    inset 0 0 12px #ffffff33;
+}
+
+.cell.place-C.place-land {
+  box-shadow:
+    0 0 0 2px #ffffffaa,
+    0 0 30px 10px #c05cff77,
+    inset 0 0 14px #ffffff38;
+}
+
+@keyframes place-land {
+  0% {
+    transform: scale(0.72);
+    filter: brightness(1.35) saturate(1.2);
+  }
+  55% {
+    transform: scale(1.14);
+    filter: brightness(1.2) saturate(1.15);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+.cell.neighbor-pulse {
+  animation: neighbor-pulse 0.36s var(--ease-out) forwards;
+}
+
+@keyframes neighbor-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: inset 0 0 0 0 #ffffff00;
+  }
+  40% {
+    transform: scale(1.06);
+    box-shadow: inset 0 0 0 2px #ffffff88, 0 0 16px 4px #ffffff33;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+.stage-wrap.stage-settle {
+  animation: stage-settle 0.32s var(--ease-out);
+}
+
+@keyframes stage-settle {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.012); }
+  100% { transform: scale(1); }
+}
+
+.rune.pick-pop {
+  animation: pick-pop 0.26s var(--ease-snap);
+}
+
+@keyframes pick-pop {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-8px) scale(1.12); }
+  100% { transform: translateY(-5px) scale(1.07); }
+}
+
+.drag-ghost.ghost-invalid {
+  animation: ghost-invalid 0.28s var(--ease-out);
+}
+
+@keyframes ghost-invalid {
+  0%, 100% { transform: translate(-50%, -50%) scale(1.14) rotate(0deg); }
+  25% { transform: translate(calc(-50% - 4px), -50%) scale(1.1) rotate(-4deg); }
+  75% { transform: translate(calc(-50% + 4px), -50%) scale(1.1) rotate(4deg); }
 }
 
 .cell.spark-igniting {

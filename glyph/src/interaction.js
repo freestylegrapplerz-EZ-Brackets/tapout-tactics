@@ -1,5 +1,7 @@
 /** Crafted pointer interactions — feel only; game rules unchanged. */
 
+import { clearDropEligible, showDropEligible, wiggleGhost } from "./placementFx.js";
+
 const DRAG_THRESHOLD = 8;
 const LONG_PRESS_MS = 450;
 
@@ -14,6 +16,7 @@ const LONG_PRESS_MS = 450;
  * @property {(row: number, col: number) => boolean} onPickup
  * @property {(row: number, col: number) => void} onSpark
  * @property {(row: number, col: number) => void} onEmptyTap
+ * @property {(row: number, col: number) => boolean} [canDropAt]
  * @property {{ pick?: () => void, drop?: () => void, cancel?: () => void, spark?: () => void }} [audio]
  */
 
@@ -45,6 +48,11 @@ export function attachInteractions(opts) {
     const prev = opts.boardEl.querySelector(`#cell-${dropTargetKey.replace(",", "-")}`);
     prev?.classList.remove("drop-target");
     dropTargetKey = null;
+  }
+
+  function endDragVisuals() {
+    clearDropTarget();
+    clearDropEligible(opts.boardEl);
   }
 
   function setDropTarget(row, col) {
@@ -110,7 +118,7 @@ export function attachInteractions(opts) {
     pressCell = null;
     longPressFired = false;
     removeGhost();
-    clearDropTarget();
+    endDragVisuals();
     document.body.classList.remove("is-dragging");
   }
 
@@ -155,6 +163,7 @@ export function attachInteractions(opts) {
       opts.audio?.pick?.();
       showGhost(dragElement, e.clientX, e.clientY);
       rune?.classList.add("lift");
+      if (opts.canDropAt) showDropEligible(opts.boardEl, opts.canDropAt);
     }
 
     moveGhost(e.clientX, e.clientY);
@@ -178,13 +187,19 @@ export function attachInteractions(opts) {
     if (wasDragging && index != null && el) {
       const cell = cellAt(e.clientX, e.clientY);
       if (cell && opts.onPlace(index, cell.row, cell.col)) {
-        opts.audio?.drop?.();
+        /* placement FX + audio in game layer */
       } else {
+        wiggleGhost(ghost);
         opts.audio?.cancel?.();
       }
     } else if (index != null && !wasDragging) {
       opts.onSelect(index);
       opts.audio?.pick?.();
+      const rune = opts.handEl.querySelectorAll(".rune")[index];
+      rune?.classList.remove("pick-pop");
+      void rune?.offsetWidth;
+      rune?.classList.add("pick-pop");
+      window.setTimeout(() => rune?.classList.remove("pick-pop"), 260);
     }
 
     resetPointerState();
