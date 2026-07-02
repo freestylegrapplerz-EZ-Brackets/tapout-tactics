@@ -20,11 +20,11 @@ import {
   trainingLevelIndex,
 } from "./performances.js";
 import {
-  buildObjectiveLine,
-  parseRunPurpose,
-  purposeVerdict,
-  purposeVersionSuffix,
-} from "./runPurpose.js";
+  BOARD_MYSTERIES,
+  boardIndex,
+  nextBoard,
+  asEncounter,
+} from "./boardMysteries.js";
 import {
   ENCOUNTER_RUN,
   applyEncounterPreset,
@@ -35,27 +35,36 @@ import {
   nextEncounter,
   encounterIndex,
 } from "./encounters.js";
+import {
+  buildObjectiveLine,
+  parseRunPurpose,
+  purposeVerdict,
+  purposeVersionSuffix,
+} from "./runPurpose.js";
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
 
-export const VERSION = "vs-1.8.0-exp";
+export const VERSION = "vs-1.9.0-board-mysteries";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
+const BOARD_PROGRESS_KEY = "glyph-board-mystery";
 
 /** @typedef {import("./config.js").Element} Element */
 /** @typedef {import("./encounters.js").Encounter} Encounter */
 /** @typedef {import("./performances.js").Performance} Performance */
+/** @typedef {import("./boardMysteries.js").BoardMystery} BoardMystery */
 /** @typedef {"build"|"resolving"|"curtain"|"done"} Phase */
 
 /**
  * @param {HTMLElement} root
- * @param {{ purpose?: import("./runPurpose.js").RunPurposeMode }} [options]
+ * @param {{ purpose?: import("./runPurpose.js").RunPurposeMode, mode?: "boards"|"random" }} [options]
  */
 export function bootGame(root, options = {}) {
   const runPurposeMode =
     options.purpose ??
     parseRunPurpose(new URLSearchParams(window.location.search).get("pur"));
+  const bootMode = options.mode ?? (runPurposeMode === "current" ? "boards" : "random");
   /** @type {Phase} */
   let phase = "build";
   /** @type {(Element|null)[][]} */
@@ -68,10 +77,13 @@ export function bootGame(root, options = {}) {
   let best = 0;
   /** @type {Performance|null} */
   let currentPerformance = TRAINING_LEVELS[0];
-  let trainingMode = true;
+  let trainingMode = false;
   let encounterMode = false;
+  let boardMode = false;
   /** @type {Encounter|null} */
   let currentEncounter = null;
+  /** @type {BoardMystery|null} */
+  let currentBoard = null;
   /** @type {Set<string>} */
   let blockedKeys = new Set();
   /** @type {string|null} */
@@ -168,12 +180,42 @@ export function bootGame(root, options = {}) {
     saveTrainingProgress(trainingLevelIndex(currentPerformance.id));
   }
 
-  versionEl.textContent = `${VERSION}-${purposeVersionSuffix(runPurposeMode)}`;
+  function saveBoardProgress(index) {
+    try {
+      localStorage.setItem(BOARD_PROGRESS_KEY, String(index));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function loadBoardProgress() {
+    try {
+      const raw = localStorage.getItem(BOARD_PROGRESS_KEY);
+      if (raw == null) return 0;
+      const idx = parseInt(raw, 10);
+      if (!Number.isFinite(idx) || idx < 0) return 0;
+      return Math.min(idx, BOARD_MYSTERIES.length);
+    } catch {
+      return 0;
+    }
+  }
+
+  function persistBoardProgress() {
+    if (!boardMode || !currentBoard) return;
+    saveBoardProgress(boardIndex(currentBoard.id));
+  }
+
+  versionEl.textContent =
+    runPurposeMode !== "current" ? `${VERSION}-${purposeVersionSuffix(runPurposeMode)}` : VERSION;
 
   function updateTargetDisplay() {
     if (!targetEl) return;
     if (phase !== "build" && phase !== "done") {
       targetEl.textContent = "";
+      return;
+    }
+    if (boardMode && currentBoard) {
+      targetEl.textContent = currentBoard.objectiveLabel;
       return;
     }
     if (encounterMode && currentEncounter) {
@@ -190,7 +232,9 @@ export function bootGame(root, options = {}) {
 
   function updateModeCopy() {
     if (handModeEl) {
-      if (encounterMode && currentEncounter) {
+      if (boardMode && currentBoard) {
+        handModeEl.textContent = currentBoard.name;
+      } else if (encounterMode && currentEncounter) {
         handModeEl.textContent = currentEncounter.boss
           ? `Boss · ${currentEncounter.name}`
           : `Encounter · ${currentEncounter.name}`;
@@ -201,7 +245,12 @@ export function bootGame(root, options = {}) {
       }
     }
     if (pathStepEl) {
-      if (encounterMode && currentEncounter) {
+      if (boardMode && currentBoard) {
+        const idx = boardIndex(currentBoard.id);
+        pathStepEl.textContent =
+          idx >= 0 ? `Mystery ${idx + 1} of ${BOARD_MYSTERIES.length}` : "";
+        pathStepEl.hidden = idx < 0;
+      } else if (encounterMode && currentEncounter) {
         const idx = encounterIndex(currentEncounter.id);
         pathStepEl.textContent =
           idx >= 0
@@ -224,7 +273,9 @@ export function bootGame(root, options = {}) {
       }
     }
     if (onboardEl) {
-      if (encounterMode && currentEncounter) {
+      if (boardMode && currentBoard) {
+        onboardEl.textContent = currentBoard.question;
+      } else if (encounterMode && currentEncounter) {
         onboardEl.textContent = currentEncounter.invite;
       } else {
         onboardEl.textContent = currentPerformance
@@ -237,6 +288,7 @@ export function bootGame(root, options = {}) {
   function updateCreditsActions() {
     if (synergyTipEl) {
       const tip =
+        (boardMode && currentBoard?.tip) ||
         (encounterMode && currentEncounter?.tip) ||
         (trainingMode && currentPerformance?.synergyTip) ||
         "";
@@ -249,7 +301,11 @@ export function bootGame(root, options = {}) {
       }
     }
     if (btnNextLesson) {
-      if (encounterMode && currentEncounter) {
+      if (boardMode && currentBoard) {
+        const next = nextBoard(currentBoard.id);
+        btnNextLesson.hidden = !lastEncounterWon;
+        btnNextLesson.textContent = next ? "Next mystery →" : "Try Random Hand →";
+      } else if (encounterMode && currentEncounter) {
         const next = nextEncounter(currentEncounter.id);
         const showAdvance =
           lastEncounterWon && (next != null || currentEncounter.boss);
@@ -278,6 +334,8 @@ export function bootGame(root, options = {}) {
 
   /** @param {Performance} perf @param {{ resetBest?: boolean }} [opts] */
   function loadPerformance(perf, opts = {}) {
+    boardMode = false;
+    currentBoard = null;
     encounterMode = false;
     currentEncounter = null;
     blockedKeys = new Set();
@@ -332,6 +390,8 @@ export function bootGame(root, options = {}) {
 
   /** @param {Encounter} enc @param {{ resetBest?: boolean }} [opts] */
   function loadEncounter(enc, opts = {}) {
+    boardMode = false;
+    currentBoard = null;
     trainingMode = false;
     encounterMode = true;
     currentPerformance = null;
@@ -390,7 +450,69 @@ export function bootGame(root, options = {}) {
     });
   }
 
+  /** @param {BoardMystery} board @param {{ resetBest?: boolean }} [opts] */
+  function loadBoardMystery(board, opts = {}) {
+    trainingMode = false;
+    encounterMode = false;
+    boardMode = true;
+    currentPerformance = null;
+    currentEncounter = null;
+    currentBoard = board;
+    const enc = asEncounter(board);
+    hand = handFromElements(board.handElements);
+    target = board.objective.value ?? 0;
+    if (opts.resetBest !== false) best = 0;
+    lockedKeys = lockedKeysForEncounter(enc);
+    blockedKeys = blockedKeysForEncounter(enc);
+    anchorKey = anchorKeyForEncounter(enc);
+
+    activeCascade?.cancel();
+    activeCascade = null;
+    grid = emptyGrid();
+    applyEncounterPreset(enc, grid);
+    hand.forEach((h) => (h.used = false));
+    sel = null;
+    phase = "build";
+    litSet = new Set();
+    sparkOriginKey = null;
+    coldTaxonomy = null;
+    gridAtSpark = null;
+    lastCascadeResult = null;
+    lastEncounterWon = false;
+    root.classList.remove("performance", "curtain-call", "cascade-active");
+    stageWrap?.classList.remove("curtain-call");
+    creditsEl.classList.remove("show");
+    if (synergyTipEl) synergyTipEl.hidden = true;
+    if (btnNextLesson) btnNextLesson.hidden = true;
+    chainEl.textContent = "—";
+    chainEl.classList.remove("live");
+    scoreEl.textContent = "0";
+    metaEl.textContent = "";
+    svgEl.innerHTML = "";
+    clearFxLayer(fxLayerEl);
+
+    if (board.handElements.length === 0) {
+      setHope("The board holds the question — tap a rune to spark.", false);
+      msgEl.textContent = board.invite;
+    } else {
+      setHope("Read the question. Place runes. Spark when ready.", false);
+      msgEl.textContent = board.invite;
+    }
+
+    updateModeCopy();
+    updateTargetDisplay();
+    render();
+    persistBoardProgress();
+    console.info("[glyph:board]", {
+      version: VERSION,
+      boardId: board.id,
+      question: board.question,
+    });
+  }
+
   function newHand() {
+    boardMode = false;
+    currentBoard = null;
     currentPerformance = null;
     currentEncounter = null;
     trainingMode = false;
@@ -437,6 +559,10 @@ export function bootGame(root, options = {}) {
   }
 
   function clearBoard() {
+    if (boardMode && currentBoard) {
+      loadBoardMystery(currentBoard, { resetBest: false });
+      return;
+    }
     if (currentEncounter) {
       loadEncounter(currentEncounter, { resetBest: false });
       return;
@@ -617,6 +743,19 @@ export function bootGame(root, options = {}) {
     if (final > best) best = final;
     scoreEl.textContent = String(final);
 
+    if (boardMode && currentBoard && lastCascadeResult && gridAtSpark) {
+      const won = evaluateEncounter(asEncounter(currentBoard), lastCascadeResult, gridAtSpark);
+      lastEncounterWon = won;
+      metaEl.textContent =
+        (won ? currentBoard.victoryLine : currentBoard.defeatLine) +
+        ` · ${chain}-rune chain · Scored ${final}`;
+      creditsEl.classList.add("show");
+      persistBoardProgress();
+      updateCreditsActions();
+      updateTargetDisplay();
+      return;
+    }
+
     if (encounterMode && currentEncounter && lastCascadeResult && gridAtSpark) {
       const won = evaluateEncounter(currentEncounter, lastCascadeResult, gridAtSpark);
       lastEncounterWon = won;
@@ -631,7 +770,7 @@ export function bootGame(root, options = {}) {
     }
 
     lastEncounterWon = false;
-    const isRandomHand = !trainingMode && !encounterMode;
+    const isRandomHand = !trainingMode && !encounterMode && !boardMode;
     const hit = final >= target;
 
     if (isRandomHand && runPurposeMode !== "current") {
@@ -661,6 +800,29 @@ export function bootGame(root, options = {}) {
     persistCurrentLevel();
     updateCreditsActions();
     updateTargetDisplay();
+  }
+
+  function startBoardSequence(reset = false) {
+    if (reset) saveBoardProgress(0);
+    const idx = reset ? 0 : loadBoardProgress();
+    if (idx >= BOARD_MYSTERIES.length) {
+      loadBoardMystery(BOARD_MYSTERIES[0], { resetBest: true });
+      return;
+    }
+    loadBoardMystery(BOARD_MYSTERIES[idx]);
+  }
+
+  function advanceBoard() {
+    if (!currentBoard) return;
+    const next = nextBoard(currentBoard.id);
+    if (!next) {
+      newHand();
+      setHope("Every mystery solved — Random Hand awaits.", false);
+      msgEl.textContent = "Board sequence complete. Random Hand is the sandbox.";
+      return;
+    }
+    loadBoardMystery(next);
+    saveBoardProgress(boardIndex(next.id));
   }
 
   function startTraining(reset = false) {
@@ -751,6 +913,10 @@ export function bootGame(root, options = {}) {
     audio,
   });
 
+  root.querySelector("#btnBoards")?.addEventListener("click", () => {
+    audio.resume();
+    startBoardSequence(true);
+  });
   root.querySelector("#btnNew").addEventListener("click", () => {
     audio.resume();
     newHand();
@@ -765,7 +931,11 @@ export function bootGame(root, options = {}) {
   });
   btnNextLesson?.addEventListener("click", () => {
     audio.resume();
-    if (encounterMode) advanceEncounter();
+    if (boardMode) {
+      const next = currentBoard ? nextBoard(currentBoard.id) : null;
+      if (next) advanceBoard();
+      else newHand();
+    } else if (encounterMode) advanceEncounter();
     else advanceTraining();
   });
   root.querySelector("#btnCampaign")?.addEventListener("click", () => {
@@ -784,5 +954,9 @@ export function bootGame(root, options = {}) {
     { once: false, passive: true },
   );
 
-  newHand();
+  if (bootMode === "boards") {
+    startBoardSequence();
+  } else {
+    newHand();
+  }
 }
