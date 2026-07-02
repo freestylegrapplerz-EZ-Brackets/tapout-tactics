@@ -78,25 +78,22 @@ export const MYSTERY_3 = {
 
 /** @type {BoardMystery} */
 export const MYSTERY_4 = {
-  id: "mystery-4-fork",
-  name: "The Fork",
-  question: "Two halves — which side holds the key to the Crystal?",
-  invite: "The board splits left and right. Only one half reaches the heart.",
-  handElements: [],
+  id: "mystery-4-current",
+  name: "The Current",
+  question: "Where does Water belong?",
+  invite: "The Fires are ready. Place Water where it helps the entire chain flow.",
+  handElements: ["W"],
   preset: [
-    { row: 2, col: 0, el: "F" },
     { row: 2, col: 1, el: "F" },
-    { row: 2, col: 2, el: "C" },
-    { row: 2, col: 4, el: "F" },
-    { row: 3, col: 4, el: "F" },
-    { row: 4, col: 4, el: "F" },
+    { row: 2, col: 3, el: "F" },
+    { row: 1, col: 2, el: "L" },
   ],
-  anchor: { row: 2, col: 2 },
-  objective: { type: "break", value: 1, minChain: 3 },
-  objectiveLabel: "Choose the Fork · reach the Crystal from the left",
-  victoryLine: "The left path was true — the Crystal sings.",
-  defeatLine: "The right half goes nowhere. Spark from the side that touches the Crystal.",
-  tip: "Same board, different spark — only one half can reach the heart.",
+  requiredSpark: { row: 2, col: 1 },
+  objective: { type: "chain", value: 4 },
+  objectiveLabel: "Awaken every rune.",
+  victoryLine: "Water carried the energy through.",
+  defeatLine: "The current never reached the other side.",
+  tip: "Some elements are strongest when they support others.",
 };
 
 /** @type {BoardMystery} */

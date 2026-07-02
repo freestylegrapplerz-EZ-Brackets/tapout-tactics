@@ -88,13 +88,43 @@ test("Mystery 3 The Jump: L beside only right Fire fails", () => {
   assert.equal(evaluateEncounter(asEncounter(board), result, grid, 2, 0), false);
 });
 
-test("Mystery 4: left spark reaches Crystal, right spark fails", () => {
+test("Mystery 4 The Current: Water at (2,2) connects full chain", () => {
   const grid = emptyGrid();
   applyEncounterPreset(asEncounter(MYSTERY_4), grid);
-  const left = simulateCascade(grid, 2, 0);
-  const right = simulateCascade(grid, 4, 4);
-  assert.ok(evaluateEncounter(asEncounter(MYSTERY_4), left, grid, 2, 0));
-  assert.equal(evaluateEncounter(asEncounter(MYSTERY_4), right, grid, 4, 4), false);
+  grid[2][2] = "W";
+  const result = simulateCascade(grid, 2, 1);
+  assert.ok(evaluateEncounter(asEncounter(MYSTERY_4), result, grid, 2, 1));
+  assert.equal(result.chainLength, 4);
+  assert.deepEqual(
+    result.steps.map((s) => `${s.r},${s.c}:${s.el}`),
+    ["2,1:F", "2,2:W", "1,2:L", "2,3:F"],
+  );
+});
+
+test("Mystery 4 The Current: Water in corner fails", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_4), grid);
+  grid[0][0] = "W";
+  const result = simulateCascade(grid, 2, 1);
+  assert.equal(evaluateEncounter(asEncounter(MYSTERY_4), result, grid, 2, 1), false);
+});
+
+test("Mystery 4 The Current: only (2,2) placement wins", () => {
+  const preset = MYSTERY_4.preset ?? [];
+  const wins = [];
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if (preset.some((p) => p.row === r && p.col === c)) continue;
+      const grid = emptyGrid();
+      applyEncounterPreset(asEncounter(MYSTERY_4), grid);
+      grid[r][c] = "W";
+      const result = simulateCascade(grid, 2, 1);
+      if (evaluateEncounter(asEncounter(MYSTERY_4), result, grid, 2, 1)) {
+        wins.push(`${r},${c}`);
+      }
+    }
+  }
+  assert.deepEqual(wins, ["2,2"]);
 });
 
 test("Mystery 6: tapping Water alone fails", () => {
