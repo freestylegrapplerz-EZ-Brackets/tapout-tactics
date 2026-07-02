@@ -7,15 +7,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.8.0-exp">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.9.0-board-mysteries">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Run purpose experiment · Version A (current)</p>
-  <p class="path-step" id="pathStep">Level 1 of 12 · Basics</p>
-  <p class="hand-mode" id="handMode">Connection · build a chain</p>
-  <p class="onboard">Fill the gap between the Fires — then spark the left one.</p>
+  <p class="sub">Every board is a spatial mystery</p>
+  <p class="path-step" id="pathStep">Mystery 1 of 8</p>
+  <p class="hand-mode" id="handMode">The Gap</p>
+  <p class="onboard">What single rune bridges two Fires across one empty cell?</p>
 
   <div class="target-line" id="vTarget">Target —</div>
 
@@ -34,10 +34,11 @@
   <div id="hand"></div>
 
   <div class="controls">
-    <button class="primary" id="btnPath">Training</button>
-    <button class="primary" id="btnCampaign">Encounter Run</button>
+    <button class="primary" id="btnBoards">Board Mysteries</button>
     <button id="btnNew">Random Hand</button>
     <button id="btnClear">Clear Board</button>
+    <button id="btnPath">Training</button>
+    <button id="btnCampaign">Encounters</button>
     <button id="btnMute" aria-label="Toggle sound">🔊 Sound</button>
   </div>
 
@@ -46,7 +47,7 @@
     <div class="score" id="vScore">0</div>
     <div class="meta" id="vMeta"></div>
     <p class="synergy-tip" id="synergyTip" hidden></p>
-    <button class="next-lesson" id="btnNextLesson" hidden>Next level →</button>
+    <button class="next-lesson" id="btnNextLesson" hidden>Next mystery →</button>
   </div>
 
   <div id="msg">Drag a rune onto the board — or hold a placed rune to pick it up.</div>
@@ -54,8 +55,8 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.8.0-exp";
-bootGame(document.getElementById("root"), { purpose: "current" });
+import { bootGame } from "./src/game.js?v=vs-1.9.0-board-mysteries";
+bootGame(document.getElementById("root"), { mode: "boards" });
 </script>
 </body>
 </html>
