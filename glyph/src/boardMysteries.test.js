@@ -56,15 +56,36 @@ test("Mystery 2 Firestarter: diagonal placement fails to reach both presets", ()
   assert.equal(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 1, 1), false);
 });
 
-test("Mystery 3: L leaps across open space to unite both shores", () => {
+test("Mystery 3 The Jump: L at (2,1) bridges gap from spark (2,0)", () => {
   const board = BOARD_MYSTERIES[2];
   const grid = emptyGrid();
   applyEncounterPreset(asEncounter(board), grid);
-  grid[1][3] = "L";
-  const result = simulateCascade(grid, 1, 1);
-  assert.ok(evaluateEncounter(asEncounter(board), result, grid, 1, 1));
-  assert.equal(result.chainLength, 5);
-  assert.ok(result.steps.some((s) => s.r === 3 && s.c === 3));
+  grid[2][1] = "L";
+  const result = simulateCascade(grid, 2, 0);
+  assert.ok(evaluateEncounter(asEncounter(board), result, grid, 2, 0));
+  assert.equal(result.chainLength, 3);
+  assert.deepEqual(
+    result.steps.map((s) => `${s.r},${s.c}:${s.el}`),
+    ["2,0:F", "2,1:L", "2,4:F"],
+  );
+});
+
+test("Mystery 3 The Jump: L at (2,2) cannot chain from required spark (2,0)", () => {
+  const board = BOARD_MYSTERIES[2];
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(board), grid);
+  grid[2][2] = "L";
+  const result = simulateCascade(grid, 2, 0);
+  assert.equal(evaluateEncounter(asEncounter(board), result, grid, 2, 0), false);
+});
+
+test("Mystery 3 The Jump: L beside only right Fire fails", () => {
+  const board = BOARD_MYSTERIES[2];
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(board), grid);
+  grid[2][3] = "L";
+  const result = simulateCascade(grid, 2, 0);
+  assert.equal(evaluateEncounter(asEncounter(board), result, grid, 2, 0), false);
 });
 
 test("Mystery 4: left spark reaches Crystal, right spark fails", () => {
