@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>GLYPH</title>
-<link rel="stylesheet" href="./src/theme.css?v=vs-1.6.0-sprint1-placement">
+<link rel="stylesheet" href="./src/theme.css?v=vs-1.7.0-sprint2-verdict">
 </head>
 <body>
 <div class="wrap perf-mode" id="root">
   <h1>GLYPH</h1>
-  <p class="sub">Craftsmanship · Sprint 1 — placement feel</p>
+  <p class="sub">Phase 1 · Sprint 2 — the verdict</p>
   <p class="path-step" id="pathStep">Level 1 of 12 · Basics</p>
   <p class="hand-mode" id="handMode">Connection · build a chain</p>
   <p class="onboard">Fill the gap between the Fires — then spark the left one.</p>
@@ -42,7 +42,9 @@
   </div>
 
   <div class="credits" id="credits">
-    <div class="k">After the performance</div>
+    <div class="k">The verdict</div>
+    <div class="verdict" id="vVerdict"></div>
+    <p class="verdict-sub" id="vVerdictSub" hidden></p>
     <div class="score" id="vScore">0</div>
     <div class="meta" id="vMeta"></div>
     <p class="synergy-tip" id="synergyTip" hidden></p>
@@ -54,7 +56,7 @@
 </div>
 
 <script type="module">
-import { bootGame } from "./src/game.js?v=vs-1.6.0-sprint1-placement";
+import { bootGame } from "./src/game.js?v=vs-1.7.0-sprint2-verdict";
 bootGame(document.getElementById("root"));
 </script>
 </body>

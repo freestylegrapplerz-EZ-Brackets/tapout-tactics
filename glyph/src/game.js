@@ -31,8 +31,9 @@ import {
 } from "./encounters.js";
 import { attachInteractions } from "./interaction.js";
 import { acknowledgePlacement } from "./placementFx.js";
+import { runVerdict } from "./verdict.js";
 
-export const VERSION = "vs-1.6.0-sprint1-placement";
+export const VERSION = "vs-1.7.0-sprint2-verdict";
 
 const TRAINING_PROGRESS_KEY = "glyph-training-level";
 const CAMPAIGN_PROGRESS_KEY = "glyph-campaign-level";
@@ -79,6 +80,8 @@ export function bootGame(root) {
   let sparkOriginKey = null;
   /** @type {Map<string, import("./aftermath.js").ColdKind>|null} */
   let coldTaxonomy = null;
+  /** @type {string|null} */
+  let primaryGapKey = null;
   /** @type {{ cancel: () => void }|null} */
   let activeCascade = null;
 
@@ -95,6 +98,8 @@ export function bootGame(root) {
   const onboardEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector(".onboard"));
   const creditsEl = /** @type {HTMLDivElement} */ (root.querySelector("#credits"));
   const scoreEl = /** @type {HTMLDivElement} */ (root.querySelector("#vScore"));
+  const verdictEl = /** @type {HTMLDivElement|null} */ (root.querySelector("#vVerdict"));
+  const verdictSubEl = /** @type {HTMLParagraphElement|null} */ (root.querySelector("#vVerdictSub"));
   const metaEl = /** @type {HTMLDivElement} */ (root.querySelector("#vMeta"));
   const msgEl = /** @type {HTMLDivElement} */ (root.querySelector("#msg"));
   const versionEl = /** @type {HTMLDivElement} */ (root.querySelector("#version"));
@@ -170,7 +175,13 @@ export function bootGame(root) {
       targetEl.textContent = currentEncounter.objectiveLabel;
       return;
     }
-    targetEl.textContent = phase === "build" || phase === "done" ? `Target ${target}` : "";
+    if (trainingMode && currentPerformance) {
+      targetEl.textContent =
+        phase === "build" || phase === "done" ? `Target ${target}` : "";
+      return;
+    }
+    targetEl.textContent =
+      phase === "build" ? "Link runes · spark when ready" : "";
   }
 
   function updateModeCopy() {
@@ -283,6 +294,12 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = null;
     coldTaxonomy = null;
+    primaryGapKey = null;
+    if (verdictEl) verdictEl.textContent = "";
+    if (verdictSubEl) {
+      verdictSubEl.textContent = "";
+      verdictSubEl.hidden = true;
+    }
     root.classList.remove("performance", "curtain-call", "cascade-active");
     stageWrap?.classList.remove("curtain-call");
     creditsEl.classList.remove("show");
@@ -338,6 +355,12 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = null;
     coldTaxonomy = null;
+    primaryGapKey = null;
+    if (verdictEl) verdictEl.textContent = "";
+    if (verdictSubEl) {
+      verdictSubEl.textContent = "";
+      verdictSubEl.hidden = true;
+    }
     gridAtSpark = null;
     lastCascadeResult = null;
     root.classList.remove("performance", "curtain-call", "cascade-active");
@@ -405,6 +428,12 @@ export function bootGame(root) {
     litSet = new Set();
     sparkOriginKey = null;
     coldTaxonomy = null;
+    primaryGapKey = null;
+    if (verdictEl) verdictEl.textContent = "";
+    if (verdictSubEl) {
+      verdictSubEl.textContent = "";
+      verdictSubEl.hidden = true;
+    }
     root.classList.remove("performance", "curtain-call", "cascade-active");
     stageWrap?.classList.remove("curtain-call");
     creditsEl.classList.remove("show");
@@ -454,6 +483,7 @@ export function bootGame(root) {
         let cls = blocked ? "cell blocked" : `cell ${v || "empty"}`;
         if (lockedKeys.has(k)) cls += " locked";
         if (anchorKey === k && phase === "build") cls += " anchor";
+        if (primaryGapKey === k && (phase === "done" || phase === "curtain")) cls += " gap-anchor";
         if (v && phase === "build") cls += " spark-ready";
         if (sparkOriginKey === k) cls += " spark-origin";
         if (litSet.has(k)) {
@@ -600,9 +630,11 @@ export function bootGame(root) {
     root.classList.remove("cascade-active", "curtain-call");
     stageWrap?.classList.remove("curtain-call");
     if (final > best) best = final;
-    scoreEl.textContent = String(final);
 
     if (encounterMode && currentEncounter && lastCascadeResult && gridAtSpark) {
+      scoreEl.textContent = String(final);
+      if (verdictEl) verdictEl.textContent = "";
+      if (verdictSubEl) verdictSubEl.hidden = true;
       const won = evaluateEncounter(currentEncounter, lastCascadeResult, gridAtSpark);
       lastEncounterWon = won;
       metaEl.textContent =
@@ -612,31 +644,56 @@ export function bootGame(root) {
       persistCampaignProgress();
       updateCreditsActions();
       updateTargetDisplay();
+      render();
       return;
     }
 
     lastEncounterWon = false;
-    const hit = final >= target;
-    if (trainingMode) {
-      metaEl.textContent =
-        `${chain}-rune chain · Scored ${final}` +
-        (target ? ` · Target ${target}` : "") +
-        (hit ? " · Nice!" : " · Tap Next level when ready") +
-        (trainingMode && currentPerformance && !nextTrainingLevel(currentPerformance.id)
-          ? isGraduationLevel(currentPerformance)
-            ? " · Training complete"
-            : " · Level complete"
-          : "");
+    const litCount = lastCascadeResult?.steps.length ?? chain;
+    const gridForVerdict = gridAtSpark ?? grid;
+    const verdict = runVerdict(coldTaxonomy, gridForVerdict, litCount);
+    primaryGapKey = verdict.primaryGapKey;
+
+    const isRandomHand = !trainingMode && !encounterMode;
+
+    if (isRandomHand && verdictEl) {
+      verdictEl.textContent = verdict.headline;
+      if (verdictSubEl) {
+        verdictSubEl.textContent = verdict.subline;
+        verdictSubEl.hidden = false;
+      }
+      scoreEl.textContent = String(final);
+      metaEl.textContent = `${chain}-rune chain · score ${final}`;
+      creditsEl.classList.add("verdict-led");
     } else {
-      metaEl.textContent =
-        `${chain}-rune chain · Target ${target}` +
-        (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
-        (best ? ` · Best this session ${best}` : "");
+      if (verdictEl) verdictEl.textContent = "";
+      if (verdictSubEl) verdictSubEl.hidden = true;
+      creditsEl.classList.remove("verdict-led");
+      scoreEl.textContent = String(final);
+      const hit = final >= target;
+      if (trainingMode) {
+        metaEl.textContent =
+          `${chain}-rune chain · Scored ${final}` +
+          (target ? ` · Target ${target}` : "") +
+          (hit ? " · Nice!" : " · Tap Next level when ready") +
+          (trainingMode && currentPerformance && !nextTrainingLevel(currentPerformance.id)
+            ? isGraduationLevel(currentPerformance)
+              ? " · Training complete"
+              : " · Level complete"
+            : "");
+      } else {
+        metaEl.textContent =
+          `${chain}-rune chain · Target ${target}` +
+          (hit ? " · Beat it!" : ` · Short by ${target - final}`) +
+          (best ? ` · Best this session ${best}` : "");
+      }
     }
+
     creditsEl.classList.add("show");
     persistCurrentLevel();
     updateCreditsActions();
     updateTargetDisplay();
+    render();
   }
 
   function startTraining(reset = false) {
