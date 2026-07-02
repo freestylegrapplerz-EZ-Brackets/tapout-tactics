@@ -4,6 +4,7 @@ import {
   BOARD_MYSTERIES,
   MYSTERY_2,
   MYSTERY_4,
+  MYSTERY_5,
   MYSTERY_6,
   MYSTERY_7,
   nextBoard,
@@ -125,6 +126,52 @@ test("Mystery 4 The Current: only (2,2) placement wins", () => {
     }
   }
   assert.deepEqual(wins, ["2,2"]);
+});
+
+test("Mystery 5 The Heart: F at (2,1) and L at (2,3) awaken Crystal last", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_5), grid);
+  grid[2][1] = "F";
+  grid[2][3] = "L";
+  const result = simulateCascade(grid, 2, 0);
+  assert.ok(evaluateEncounter(asEncounter(MYSTERY_5), result, grid, 2, 0));
+  assert.equal(result.chainLength, 5);
+  assert.deepEqual(
+    result.steps.map((s) => `${s.r},${s.c}:${s.el}`),
+    ["2,0:F", "2,1:F", "2,2:W", "2,3:L", "2,4:C"],
+  );
+  const last = result.steps[result.steps.length - 1];
+  assert.equal(last.el, "C");
+  assert.equal(last.r, 2);
+  assert.equal(last.c, 4);
+});
+
+test("Mystery 5 The Heart: sparking Crystal fails even with full chain", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_5), grid);
+  grid[2][1] = "F";
+  grid[2][3] = "L";
+  const result = simulateCascade(grid, 2, 4);
+  assert.equal(evaluateEncounter(asEncounter(MYSTERY_5), result, grid, 2, 4), false);
+  assert.equal(result.steps[0].el, "C");
+});
+
+test("Mystery 5 The Heart: sparking Water fails required spark", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_5), grid);
+  grid[2][1] = "F";
+  grid[2][3] = "L";
+  const result = simulateCascade(grid, 2, 2);
+  assert.equal(evaluateEncounter(asEncounter(MYSTERY_5), result, grid, 2, 2), false);
+});
+
+test("Mystery 5 The Heart: disconnected Crystal fails", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_5), grid);
+  grid[0][0] = "F";
+  grid[0][1] = "L";
+  const result = simulateCascade(grid, 2, 0);
+  assert.equal(evaluateEncounter(asEncounter(MYSTERY_5), result, grid, 2, 0), false);
 });
 
 test("Mystery 6: tapping Water alone fails", () => {

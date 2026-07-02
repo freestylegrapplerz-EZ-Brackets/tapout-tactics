@@ -6,6 +6,7 @@
  * @property {"score"|"chain"|"break"|"full_lit"} type
  * @property {number} [value]
  * @property {number} [minChain] - for break/full_lit: reject trivial anchor-only sparks
+ * @property {boolean} [mustActivateLast] - anchor rune must be the final activation in the chain
  */
 
 /**
@@ -197,6 +198,12 @@ export function evaluateEncounter(enc, result, gridAtSpark, sparkRow, sparkCol) 
     if (sparkRow !== enc.requiredSpark.row || sparkCol !== enc.requiredSpark.col) {
       return false;
     }
+  }
+
+  if (enc.objective.mustActivateLast) {
+    if (!enc.anchor || result.steps.length === 0) return false;
+    const last = result.steps[result.steps.length - 1];
+    if (last.r !== enc.anchor.row || last.c !== enc.anchor.col) return false;
   }
 
   switch (enc.objective.type) {

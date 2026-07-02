@@ -98,23 +98,23 @@ export const MYSTERY_4 = {
 
 /** @type {BoardMystery} */
 export const MYSTERY_5 = {
-  id: "mystery-5-wall",
-  name: "The Wall",
-  question: "Stone blocks the straight path. Where does the chain go instead?",
-  invite: "You cannot cross the center. Route over or under.",
-  handElements: ["F", "W"],
+  id: "mystery-5-heart",
+  name: "The Heart",
+  question: "Which rune should the chain reach last?",
+  invite: "The Crystal is the heart of this board. Build the chain so the energy reaches it at the very end.",
+  handElements: ["F", "L"],
   preset: [
     { row: 2, col: 0, el: "F" },
-    { row: 2, col: 1, el: "F" },
-    { row: 2, col: 3, el: "F" },
-    { row: 2, col: 4, el: "F" },
+    { row: 2, col: 2, el: "W" },
+    { row: 2, col: 4, el: "C" },
   ],
-  blocked: [{ row: 2, col: 2, el: "F" }],
-  objective: { type: "chain", value: 6 },
-  objectiveLabel: "Cross the Wall · 6-rune chain",
-  victoryLine: "The wall is irrelevant — your chain found the way around.",
-  defeatLine: "The stone holds. Build a path that routes around it.",
-  tip: "Blocked cells are questions disguised as obstacles.",
+  anchor: { row: 2, col: 4 },
+  requiredSpark: { row: 2, col: 0 },
+  objective: { type: "chain", value: 5, mustActivateLast: true },
+  objectiveLabel: "Awaken the Crystal last.",
+  victoryLine: "The Crystal awakened at the perfect moment.",
+  defeatLine: "The Crystal awakened too soon.",
+  tip: "Some runes are strongest when the entire chain leads into them.",
 };
 
 /** @type {BoardMystery} */

@@ -12,6 +12,7 @@ import {
   evaluateEncounter,
   nextEncounter,
 } from "./encounters.js";
+import { MYSTERY_5, asEncounter } from "./boardMysteries.js";
 
 describe("encounters", () => {
   it("ENCOUNTER_RUN has five stages ending in a boss", () => {
@@ -55,6 +56,20 @@ describe("encounters", () => {
     applyEncounterPreset(ENCOUNTER_5, grid);
     const result = simulateCascade(grid, 2, 0);
     assert.ok(evaluateEncounter(ENCOUNTER_5, result, grid));
+  });
+
+  it("mustActivateLast rejects when anchor is not the final activation", () => {
+    const grid = emptyGrid();
+    applyEncounterPreset(asEncounter(MYSTERY_5), grid);
+    grid[2][1] = "F";
+    grid[2][3] = "L";
+    const crystalFirst = simulateCascade(grid, 2, 4);
+    assert.equal(
+      evaluateEncounter(asEncounter(MYSTERY_5), crystalFirst, grid, 2, 4),
+      false,
+    );
+    const proper = simulateCascade(grid, 2, 0);
+    assert.ok(evaluateEncounter(asEncounter(MYSTERY_5), proper, grid, 2, 0));
   });
 
   it("nextEncounter advances the run", () => {
