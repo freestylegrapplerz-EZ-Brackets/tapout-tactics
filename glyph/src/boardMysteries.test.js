@@ -46,13 +46,15 @@ test("Mystery 2: column path from corner Fire", () => {
   assert.equal(evaluateEncounter(asEncounter(MYSTERY_2), result, grid, 4, 0), false);
 });
 
-test("Mystery 3: L placement enables 5-rune chain", () => {
+test("Mystery 3: L leaps across open space to unite both shores", () => {
   const board = BOARD_MYSTERIES[2];
   const grid = emptyGrid();
   applyEncounterPreset(asEncounter(board), grid);
-  grid[2][2] = "L";
-  const result = simulateCascade(grid, 2, 0);
-  assert.ok(evaluateEncounter(asEncounter(board), result, grid, 2, 0));
+  grid[1][3] = "L";
+  const result = simulateCascade(grid, 1, 1);
+  assert.ok(evaluateEncounter(asEncounter(board), result, grid, 1, 1));
+  assert.equal(result.chainLength, 5);
+  assert.ok(result.steps.some((s) => s.r === 3 && s.c === 3));
 });
 
 test("Mystery 4: left spark reaches Crystal, right spark fails", () => {

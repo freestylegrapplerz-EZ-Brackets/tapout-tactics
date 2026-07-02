@@ -63,20 +63,20 @@ export const MYSTERY_2 = {
 export const MYSTERY_3 = {
   id: "mystery-3-jump",
   name: "The Jump",
-  question: "Two shores, one gap — can a single Lightning bolt unite them?",
-  invite: "Two clusters wait. The gap between them is the whole puzzle.",
+  question: "Two shores across open space — can Lightning leap from one to the other?",
+  invite: "Upper-left Fires. Lower-right Fires. Open space between. Lightning must jump — not bridge.",
   handElements: ["L"],
   preset: [
-    { row: 2, col: 0, el: "F" },
-    { row: 2, col: 1, el: "F" },
-    { row: 2, col: 3, el: "F" },
-    { row: 2, col: 4, el: "F" },
+    { row: 1, col: 1, el: "F" },
+    { row: 1, col: 2, el: "F" },
+    { row: 3, col: 3, el: "F" },
+    { row: 3, col: 4, el: "F" },
   ],
   objective: { type: "chain", value: 5 },
-  objectiveLabel: "Make the Jump · 5-rune chain",
-  victoryLine: "The bolt lands — both shores share one frontier.",
-  defeatLine: "The halves stay split. Lightning must sit where it can see both.",
-  tip: "Lightning jumps gaps. Position it before you spark.",
+  objectiveLabel: "Make the Leap · 5-rune chain across open space",
+  victoryLine: "The bolt leapt — both shores share one frontier.",
+  defeatLine: "The shores stay split. Place Lightning where it can see both sides.",
+  tip: "Lightning skips empty cells. It jumps — it doesn't fill the gap.",
 };
 
 /** @type {BoardMystery} */
