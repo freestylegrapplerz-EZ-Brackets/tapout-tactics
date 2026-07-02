@@ -41,22 +41,20 @@ export const MYSTERY_1 = {
 
 /** @type {BoardMystery} */
 export const MYSTERY_2 = {
-  id: "mystery-2-column",
-  name: "The Column",
-  question: "Can the corner Fire wake the Water straight below?",
-  invite: "One Fire at the top. Water waits at the bottom of the same column.",
+  id: "mystery-2-firestarter",
+  name: "Firestarter",
+  question: "Can Fire travel diagonally?",
+  invite: "Try to wake both Fires using only the Fire runes in your hand.",
   handElements: ["F", "F", "F"],
   preset: [
-    { row: 0, col: 0, el: "F" },
-    { row: 4, col: 0, el: "W" },
+    { row: 1, col: 1, el: "F" },
+    { row: 3, col: 3, el: "F" },
   ],
-  anchor: { row: 4, col: 0 },
-  requiredSpark: { row: 0, col: 0 },
-  objective: { type: "break", value: 1, minChain: 5 },
-  objectiveLabel: "Descend the Column · chain from the corner Fire",
-  victoryLine: "Steam rises at the bottom — the corner Fire led the way.",
-  defeatLine: "The Water stays cold. Build the column and spark from the top.",
-  tip: "Fire walks in straight lines. Fill every step between.",
+  objective: { type: "chain", value: 5 },
+  objectiveLabel: "Awaken every Fire.",
+  victoryLine: "Fire only spreads in straight lines.",
+  defeatLine: "Something interrupted the flame.",
+  tip: "Fire spreads up, down, left, and right—not diagonally.",
 };
 
 /** @type {BoardMystery} */
