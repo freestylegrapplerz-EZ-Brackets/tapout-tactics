@@ -88,7 +88,6 @@ export const MYSTERY_4 = {
     { row: 2, col: 3, el: "F" },
     { row: 1, col: 2, el: "L" },
   ],
-  requiredSpark: { row: 2, col: 1 },
   objective: { type: "chain", value: 4 },
   objectiveLabel: "Awaken every rune.",
   victoryLine: "Water carried the energy through.",

@@ -89,7 +89,7 @@ test("Mystery 3 The Jump: L beside only right Fire fails", () => {
   assert.equal(evaluateEncounter(asEncounter(board), result, grid, 2, 0), false);
 });
 
-test("Mystery 4 The Current: Water at (2,2) connects full chain", () => {
+test("Mystery 4 The Current: Water at (2,2) connects full chain from left Fire", () => {
   const grid = emptyGrid();
   applyEncounterPreset(asEncounter(MYSTERY_4), grid);
   grid[2][2] = "W";
@@ -99,6 +99,19 @@ test("Mystery 4 The Current: Water at (2,2) connects full chain", () => {
   assert.deepEqual(
     result.steps.map((s) => `${s.r},${s.c}:${s.el}`),
     ["2,1:F", "2,2:W", "1,2:L", "2,3:F"],
+  );
+});
+
+test("Mystery 4 The Current: Water at (2,2) also wins from right Fire spark", () => {
+  const grid = emptyGrid();
+  applyEncounterPreset(asEncounter(MYSTERY_4), grid);
+  grid[2][2] = "W";
+  const result = simulateCascade(grid, 2, 3);
+  assert.ok(evaluateEncounter(asEncounter(MYSTERY_4), result, grid, 2, 3));
+  assert.equal(result.chainLength, 4);
+  assert.deepEqual(
+    result.steps.map((s) => `${s.r},${s.c}:${s.el}`),
+    ["2,3:F", "2,2:W", "1,2:L", "2,1:F"],
   );
 });
 
